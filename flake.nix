@@ -32,10 +32,25 @@
                   "rust-analyzer"
                   "clippy"
                   "cargo"
-                  "llvm-tools"
                 ];
 
                 targets = [
+                  "aarch64-apple-darwin"
+                  "aarch64-apple-ios"
+                  "aarch64-apple-ios-sim"
+                  "aarch64-linux-android"
+                  "aarch64-pc-windows-msvc"
+                  "aarch64-unknown-linux-gnu"
+
+                  "armv7-linux-androideabi"
+
+                  "wasm32-unknown-unknown"
+
+                  "x86_64-apple-darwin"
+                  "x86_64-apple-ios"
+                  "x86_64-linux-android"
+                  "x86_64-pc-windows-msvc"
+                  "x86_64-unknown-linux-gnu"
                 ];
               };
         })
@@ -57,6 +72,7 @@
 
         env = with pkgs; rec {
           LD_LIBRARY_PATH = lib.makeLibraryPath packages;
+          FLUTTER_ROOT = "${flutter}";
           RUST_SRC_PATH = "${rustToolchain}/lib/rustlib/src/rust/library";
         };
 
