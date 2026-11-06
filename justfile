@@ -23,7 +23,7 @@ test:
   flutter test
 
 fmt:
-  dart format lib hook test test_driver
+  dart format lib hook test
   cargo fmt --all
   nixfmt flake.nix nix/*.nix
 
