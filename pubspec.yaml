@@ -11,16 +11,23 @@ dependencies:
     sdk: flutter
   flutter_rust_bridge: 2.13.0
   flutter_rust_bridge_hooks: 2.13.0
-  flutter_localizations:
-    sdk: flutter
-  intl: any
-  cupertino_icons: ^2.0.0
+
   dio: ^5.11.1
   dio_http2_adapter: ^2.9.0
   native_dio_adapter: ^1.8.0
 
-  cupertino_ui: any
+  talker: ^5.2.0
+  talker_flutter: ^5.2.0
+  talker_riverpod_logger: ^5.2.0
+  talker_dio_logger: ^5.2.0
+
+  flutter_localizations:
+    sdk: flutter
+  intl: any
+
   material_ui: any
+  cupertino_ui: any
+  cupertino_icons: ^2.0.0
 
 dev_dependencies:
   flutter_test:
