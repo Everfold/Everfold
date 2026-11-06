@@ -17,12 +17,15 @@ dependencies:
   dio: ^5.11.1
   dio_http2_adapter: ^2.9.0
 
+  path_provider: ^2.1.6
+  file_selector: ^1.1.0
+  flutter_secure_storage: ^11.2.0
+  shared_preferences: ^2.5.6
+
   talker: ^5.2.0
   talker_flutter: ^5.2.0
   talker_riverpod_logger: ^5.2.0
   talker_dio_logger: ^5.2.0
-
-  shared_preferences: ^2.5.6
 
   flutter_localizations:
     sdk: flutter
@@ -31,8 +34,6 @@ dependencies:
   material_ui: any
   cupertino_ui: any
   cupertino_icons: ^2.0.0
-  flutter_secure_storage: ^11.2.0
-  file_selector: ^1.1.0
 
 dev_dependencies:
   flutter_test:
