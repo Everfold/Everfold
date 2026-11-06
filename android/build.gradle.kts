@@ -1,5 +1,14 @@
 allprojects {
+    // Flutter plugins such as share_plus resolve AGP in their own buildscript.
+    // Configure this before their scripts add google(), so the mirror is tried first.
+    buildscript {
+        repositories {
+            maven("https://maven.aliyun.com/repository/google")
+        }
+    }
+
     repositories {
+        maven("https://maven.aliyun.com/repository/google")
         google()
         mavenCentral()
     }

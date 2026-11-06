@@ -11,6 +11,8 @@ pluginManagement {
     includeBuild("$flutterSdkPath/packages/flutter_tools/gradle")
 
     repositories {
+        // Google Maven intermittently returns 404 through some network routes.
+        maven("https://maven.aliyun.com/repository/google")
         google()
         mavenCentral()
         gradlePluginPortal()
