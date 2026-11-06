@@ -2,13 +2,11 @@ import 'package:cupertino_ui/cupertino_ui.dart' as c;
 import 'package:material_ui/material_ui.dart';
 
 import '../../domain/models.dart';
+import 'app_colors.dart';
 import 'app_scope.dart';
+import 'desktop_title_bar.dart';
 
-const appInk = Color(0xFF202824);
-const appMuted = Color(0xFF6B756F);
-const appAccent = Color(0xFF35634B);
-const appCanvas = Color(0xFFF7F8F5);
-const appLine = Color(0xFFE3E8E1);
+export 'app_colors.dart';
 
 bool usesCupertino(BuildContext context) =>
     AppScope.of(context).style == InterfaceStyle.cupertino;
@@ -20,7 +18,9 @@ class AppPage extends StatelessWidget {
     required this.child,
     this.leading,
     this.trailing,
+    this.reserveNativeButtons = true,
   });
+  final bool reserveNativeButtons;
   final String title;
   final Widget child;
   final Widget? leading;
@@ -28,29 +28,49 @@ class AppPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final window = DesktopWindowScope.of(context);
     if (usesCupertino(context)) {
       return c.CupertinoPageScaffold(
-        navigationBar: c.CupertinoNavigationBar(
-          middle: Text(title),
-          leading: leading,
-          trailing: trailing,
-          backgroundColor: appCanvas,
-          border: const Border(bottom: BorderSide(color: appLine)),
-        ),
+        navigationBar: window.enabled
+            ? DesktopTitleBar(
+                title: title,
+                cupertino: true,
+                leading: leading,
+                trailing: trailing,
+                reserveNativeButtons: reserveNativeButtons,
+              )
+            : c.CupertinoNavigationBar(
+                middle: Text(title),
+                leading: leading,
+                trailing: trailing,
+                backgroundColor: appCanvas,
+                border: const Border(bottom: BorderSide(color: appLine)),
+              ),
         child: SafeArea(child: child),
       );
     }
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          title,
-          style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
-        ),
-        leading: leading,
-        actions: [?trailing],
-        backgroundColor: appCanvas,
-        surfaceTintColor: Colors.transparent,
-      ),
+      appBar: window.enabled
+          ? DesktopTitleBar(
+              title: title,
+              cupertino: false,
+              leading: leading,
+              trailing: trailing,
+              reserveNativeButtons: reserveNativeButtons,
+            )
+          : AppBar(
+              title: Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              leading: leading,
+              actions: [?trailing],
+              backgroundColor: appCanvas,
+              surfaceTintColor: Colors.transparent,
+            ),
       body: SafeArea(top: false, child: child),
     );
   }

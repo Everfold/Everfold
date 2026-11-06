@@ -5,6 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../domain/models.dart';
 import '../core/adaptive.dart';
 import '../core/app_scope.dart';
+import '../core/desktop_title_bar.dart';
 
 class WorkspaceShell extends StatefulWidget {
   const WorkspaceShell({
@@ -35,6 +36,7 @@ class _WorkspaceShellState extends State<WorkspaceShell> {
 
   Widget _sidebar({bool closable = false}) {
     final app = AppScope.of(context);
+    final window = DesktopWindowScope.of(context);
     final sessions = app.conversations
         .where(
           (item) =>
@@ -45,13 +47,28 @@ class _WorkspaceShellState extends State<WorkspaceShell> {
       color: const Color(0xFFF0F3ED),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(14, 18, 14, 12),
+          padding: EdgeInsets.fromLTRB(
+            14,
+            18 + (window.nativeButtonsInset > 0 ? 28 : 0),
+            14,
+            12,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Row(
                 children: [
-                  const Expanded(child: SectionHeading('Everfold', size: 22)),
+                  Expanded(
+                    child: window.dragRegion(
+                      const SizedBox(
+                        height: 36,
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: SectionHeading('Everfold', size: 22),
+                        ),
+                      ),
+                    ),
+                  ),
                   if (closable)
                     AppIconButton(
                       icon: Icons.close,
@@ -185,6 +202,7 @@ class _WorkspaceShellState extends State<WorkspaceShell> {
         final wide = constraints.maxWidth >= 900;
         final page = AppPage(
           title: title,
+          reserveNativeButtons: !wide,
           leading: settings
               ? AppIconButton(
                   icon: Icons.arrow_back_rounded,

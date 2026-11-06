@@ -8,16 +8,24 @@ import 'application/app_controller.dart';
 import 'data/agent_service.dart';
 import 'data/workspace_repository.dart';
 import 'domain/models.dart';
+import 'platform/desktop_window_controller.dart';
 import 'ui/core/adaptive.dart';
 import 'ui/core/app_scope.dart';
+import 'ui/core/desktop_title_bar.dart';
 
 @Preview(name: 'Everfold 工作台 · 桌面', size: Size(1200, 820))
 @Preview(name: 'Everfold 工作台 · 手机', size: Size(390, 844))
 Widget workspacePreview() => const MyApp(initialLocation: '/');
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key, this.service, this.initialLocation = '/welcome'});
+  const MyApp({
+    super.key,
+    this.service,
+    this.window,
+    this.initialLocation = '/welcome',
+  });
   final AgentService? service;
+  final DesktopWindowController? window;
   final String initialLocation;
 
   @override
@@ -25,12 +33,14 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  late final DesktopWindowController _window;
   late final AppController _controller;
   late final GoRouter _router;
 
   @override
   void initState() {
     super.initState();
+    _window = widget.window ?? DesktopWindowController();
     _controller = AppController(
       repository: WorkspaceRepository(),
       service: widget.service ?? const UnavailableAgentService(),
@@ -41,6 +51,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void dispose() {
     _router.dispose();
+    _window.dispose();
     _controller.dispose();
     super.dispose();
   }
@@ -62,6 +73,7 @@ class _MyAppState extends State<MyApp> {
             scaffoldBackgroundColor: appCanvas,
           ),
           routerConfig: _router,
+          builder: (context, child) => DesktopWindowFrame(child: child!),
         );
       } else {
         app = MaterialApp.router(
@@ -76,9 +88,13 @@ class _MyAppState extends State<MyApp> {
             dividerColor: appLine,
           ),
           routerConfig: _router,
+          builder: (context, child) => DesktopWindowFrame(child: child!),
         );
       }
-      return AppScope(controller: _controller, child: app);
+      return AppScope(
+        controller: _controller,
+        child: DesktopWindowScope(controller: _window, child: app),
+      );
     },
   );
 }
