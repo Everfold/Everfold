@@ -21,9 +21,15 @@ dependencies:
   dio: ^5.11.1
   dio_http2_adapter: ^2.9.0
 
-  path_provider: ^2.1.6
   file_selector: ^1.1.0
+  cross_file: ^0.3.5+5
   path: ^1.9.1
+  path_provider: ^2.1.6
+  xdg_directories: ^1.1.0
+
+  animations: ^3.0.0
+  quick_actions: ^1.1.1
+  webview_flutter: ^4.14.1
   url_launcher: ^6.3.3
   package_info_plus: ^10.2.2
 
@@ -44,11 +50,8 @@ dependencies:
   material_ui: ^1.10.0
   cupertino_ui: ^1.1.6
   cupertino_icons: ^2.0.0
-  cross_file: ^0.3.5+5
-  animations: ^3.0.0
-  quick_actions: ^1.1.1
-  webview_flutter: ^4.14.1
-  xdg_directories: ^1.1.0
+  a2ui_core: ^0.5.0
+  a2ui_flutter: ^0.1.0
 
 dev_dependencies:
   flutter_test:
