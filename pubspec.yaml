@@ -48,6 +48,7 @@ dependencies:
   animations: ^3.0.0
   quick_actions: ^1.1.1
   webview_flutter: ^4.14.1
+  xdg_directories: ^1.1.0
 
 dev_dependencies:
   flutter_test:
