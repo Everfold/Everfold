@@ -24,3 +24,29 @@ plugins {
 }
 
 include(":app")
+
+// Gradle 9 requires writable project directories, unlike Nix's immutable SDK.
+val integrationTest = findProject(":integration_test")
+if (integrationTest != null) {
+    val source = integrationTest.projectDir
+    if (source.toPath().startsWith(
+            java.nio.file.Path
+                .of("/nix/store"),
+        )
+    ) {
+        val sdkKey =
+            java.security.MessageDigest
+                .getInstance("SHA-256")
+                .digest(source.absolutePath.toByteArray())
+                .joinToString("") { "%02x".format(it) }
+        val writableProject = file(".gradle/flutter-sdk-plugins/$sdkKey/integration_test")
+        val complete = java.io.File(writableProject, ".copy-complete")
+        if (!complete.exists()) {
+            check(source.copyRecursively(writableProject, overwrite = true)) {
+                "Could not copy integration_test to a writable Gradle project"
+            }
+            complete.writeText(source.absolutePath)
+        }
+        integrationTest.projectDir = writableProject
+    }
+}

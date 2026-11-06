@@ -39,6 +39,25 @@ direnv allow
 # Dev Tools
 just install-dev
 
+# Run
+just run
+
 # Update
 just update
+```
+
+#### Android
+
+Set up Android development: [Setup](https://docs.flutter.dev/platform-integration/android/setup)
+
+```bash
+# Env check
+flutter doctor
+
+# Create AVD
+avdmanager create avd --name everfold-api-36-x86_64 --package 'system-images;android-36;google_apis;x86_64' --device pixel_7
+
+# Run in Android Emulator
+flutter devices
+just run
 ```

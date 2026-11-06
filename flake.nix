@@ -10,6 +10,11 @@
     flakelight ./. {
       inherit inputs;
 
+      nixpkgs.config = {
+        allowUnfree = true;
+        android_sdk.accept_license = true;
+      };
+
       withOverlays = [
         inputs.rust-overlay.overlays.default
 
@@ -59,6 +64,23 @@
       devShell =
         pkgs:
         let
+          androidPackages = pkgs.androidenv.composeAndroidPackages {
+            platformVersions = [ "36" ];
+            buildToolsVersions = [ "36.0.0" ];
+            cmdLineToolsVersion = "19.0";
+            platformToolsVersion = "37.0.1";
+            includeNDK = true;
+            ndkVersions = [ "28.2.13676358" ];
+            includeCmake = false;
+            includeEmulator = true;
+            emulatorVersion = "37.2.13";
+            includeSystemImages = true;
+            systemImageTypes = [ "google_apis" ];
+            abiVersions = [ "x86_64" ];
+            useGoogleAPIs = false;
+          };
+          androidSdkRoot = "${androidPackages.androidsdk}/libexec/android-sdk";
+
           # Only the rustup calls used by native_toolchain_rust are supported.
           # Rust components and targets remain managed exclusively by Nix.
           rustupCompat = pkgs.writeShellApplication {
@@ -96,12 +118,15 @@
           packages = with pkgs; [
             pkg-config
 
+            flutter
+            dart
+
             rustToolchain
             rustupCompat
             cargo-binstall
 
-            flutter
-            dart
+            jdk17
+            androidPackages.androidsdk
 
             just
             just-lsp
@@ -111,9 +136,16 @@
             LD_LIBRARY_PATH = lib.makeLibraryPath packages;
             FLUTTER_ROOT = "${flutter}";
             RUST_SRC_PATH = "${rustToolchain}/lib/rustlib/src/rust/library";
+            JAVA_HOME = "${jdk17}";
+            ANDROID_HOME = androidSdkRoot;
+            ANDROID_SDK_ROOT = androidSdkRoot;
+            ANDROID_NDK_HOME = "${androidSdkRoot}/ndk/28.2.13676358";
+            GRADLE_OPTS = "-Dorg.gradle.project.android.aapt2FromMavenOverride=${androidSdkRoot}/build-tools/36.0.0/aapt2";
           };
 
           shellHook = ''
+            export ANDROID_AVD_HOME="$HOME/.android/avd"
+            mkdir -p "$ANDROID_AVD_HOME"
             export CARGO_HOME="$PWD/.cargo"
             export PATH="$CARGO_HOME/bin:$PWD/target/debug:$PATH"
           '';
