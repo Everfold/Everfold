@@ -39,17 +39,23 @@ direnv allow
 # Dev Tools
 just install-dev
 
-# Run
-just run
+# Build
+just build
+
+# Run on specify platform
+just run -d linux
+
+# Regenerate Rust bindings
+just generate
 
 # Lint
 just lint
 
+# Test
+just test
+
 # Format
 just fmt
-
-# Regenerate bindings after changing the Rust API
-just generate
 
 # Update
 just update
@@ -64,10 +70,13 @@ Set up Android development: [Setup](https://docs.flutter.dev/platform-integratio
 flutter doctor
 
 # Create AVD
-avdmanager create avd --name everfold-api-36-x86_64 --package 'system-images;android-36;google_apis;x86_64' --device pixel_7
+avdmanager create avd --name everfold --device pixel_9_pro --package 'system-images;android-36;google_apis;x86_64'
 
 # Run in Android Emulator
 just android-emulator
 flutter devices
-just run
+just run -d emulator
+
+# Build APK
+just build apk --debug --target-platform android-arm64
 ```

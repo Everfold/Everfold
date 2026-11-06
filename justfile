@@ -4,27 +4,36 @@ default:
   @just --list
 
 install-dev:
-  cargo binstall cargo-update prek flutter_rust_bridge_codegen -y
+  cargo binstall cargo-update cargo-expand prek flutter_rust_bridge_codegen -y
+
+build +args:
+  flutter build "$@"
 
 run *args:
   flutter run "$@"
 
-android-emulator:
-  emulator -avd everfold-api-36-x86_64 -gpu host
+generate:
+  flutter_rust_bridge_codegen generate
+
+lint:
+  prek run --all-files
+
+test:
+  cargo test
+  flutter test
 
 fmt:
   dart format lib hook integration_test test_driver
   cargo fmt --all
   nixfmt flake.nix nix/*.nix
 
-lint:
-  prek run --all-files
-
-generate *args:
-  flutter_rust_bridge_codegen generate "$@"
-
 update:
+  flutter pub upgrade
+  cargo update
   cargo install-update -a
   prek autoupdate
-  nix flake update
   npx skills update
+  nix flake update
+
+android-emulator:
+  emulator -avd everfold -gpu host

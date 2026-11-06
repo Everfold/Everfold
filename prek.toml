@@ -1,7 +1,6 @@
 #:schema https://www.schemastore.org/prek.json
 
 fail_fast = false
-exclude = '^(licenses\.html|Cargo\.lock)$'
 
 [[repos]]
 repo = "builtin"
@@ -27,21 +26,12 @@ hooks = [
 repo = "https://github.com/tombi-toml/tombi-pre-commit"
 rev = "v1.10.0"
 hooks = [
-  { id = "tombi-format", args = ["--offline"] },
+  { id = "tombi-format", args = ["--offline"], exclude = '(^|/)Cargo\.lock$' },
   { id = "tombi-lint", args = ["--offline"] },
 ]
 
 [[repos]]
 repo = "local"
-
-[[repos.hooks]]
-id = "cargo-fmt"
-name = "cargo fmt"
-description = "Format files with rustfmt."
-entry = "cargo fmt --all -- --check"
-language = "system"
-files = '(\.rs$|(^|/)\.?rustfmt\.toml$)'
-pass_filenames = false
 
 [[repos.hooks]]
 id = "cargo-check"
@@ -53,6 +43,15 @@ files = '(\.rs$|(^|/)(Cargo\.(toml|lock)|rust-toolchain(\.toml)?)$|^\.cargo/conf
 pass_filenames = false
 
 [[repos.hooks]]
+id = "cargo-fmt"
+name = "cargo fmt"
+description = "Format files with rustfmt."
+entry = "cargo fmt --all -- --check"
+language = "system"
+files = '(\.rs$|(^|/)\.?rustfmt\.toml$)'
+pass_filenames = false
+
+[[repos.hooks]]
 id = "cargo-clippy"
 name = "cargo clippy"
 description = "Lint rust sources"
@@ -60,6 +59,14 @@ entry = "cargo clippy --workspace --all-targets --all-features -- -D warnings"
 language = "system"
 files = '(\.rs$|(^|/)(Cargo\.(toml|lock)|rust-toolchain(\.toml)?)$|^\.cargo/config(\.toml)?$)'
 pass_filenames = false
+
+[[repos.hooks]]
+id = "cargo-test"
+name = "cargo test"
+entry = "cargo test"
+language = "system"
+pass_filenames = false
+always_run = true
 
 [[repos.hooks]]
 id = "dart-format"
@@ -75,3 +82,11 @@ entry = "flutter analyze"
 language = "system"
 files = '(\.dart$|(^|/)(pubspec\.(yaml|lock)|analysis_options\.yaml)$)'
 pass_filenames = false
+
+[[repos.hooks]]
+id = "flutter-test"
+name = "flutter test"
+entry = "flutter test"
+language = "system"
+pass_filenames = false
+always_run = true
