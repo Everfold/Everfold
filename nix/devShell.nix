@@ -7,6 +7,7 @@ in
 rec {
   packages = with pkgs; [
     pkg-config
+    libsecret
 
     flutter
     dart
