@@ -3,7 +3,7 @@ default:
     @just --list
 
 install-dev:
-    cargo binstall cargo-update prek flutter_rust_bridge_codegen -y --force
+    cargo binstall cargo-update prek wasm-pack flutter_rust_bridge_codegen -y --force
 
 update:
     cargo install-update -a
