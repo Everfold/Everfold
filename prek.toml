@@ -39,7 +39,7 @@ id = "cargo-fmt"
 name = "cargo fmt"
 description = "Format files with rustfmt."
 entry = "cargo fmt --all -- --check"
-language = "rust"
+language = "system"
 files = '(\.rs$|(^|/)\.?rustfmt\.toml$)'
 pass_filenames = false
 
@@ -48,7 +48,7 @@ id = "cargo-check"
 name = "cargo check"
 description = "Check the package for errors."
 entry = "cargo check --all"
-language = "rust"
+language = "system"
 files = '(\.rs$|(^|/)(Cargo\.(toml|lock)|rust-toolchain(\.toml)?)$|^\.cargo/config(\.toml)?$)'
 pass_filenames = false
 
@@ -57,6 +57,21 @@ id = "cargo-clippy"
 name = "cargo clippy"
 description = "Lint rust sources"
 entry = "cargo clippy --workspace --all-targets --all-features -- -D warnings"
-language = "rust"
+language = "system"
 files = '(\.rs$|(^|/)(Cargo\.(toml|lock)|rust-toolchain(\.toml)?)$|^\.cargo/config(\.toml)?$)'
+pass_filenames = false
+
+[[repos.hooks]]
+id = "dart-format"
+name = "dart format"
+entry = "dart format"
+language = "system"
+types = ["dart"]
+
+[[repos.hooks]]
+id = "flutter-analyze"
+name = "flutter analyze"
+entry = "flutter analyze"
+language = "system"
+files = '(\.dart$|(^|/)(pubspec\.(yaml|lock)|analysis_options\.yaml)$)'
 pass_filenames = false

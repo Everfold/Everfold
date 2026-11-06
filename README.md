@@ -42,6 +42,15 @@ just install-dev
 # Run
 just run
 
+# Lint
+just lint
+
+# Format
+just fmt
+
+# Regenerate bindings after changing the Rust API
+just generate
+
 # Update
 just update
 ```
@@ -58,6 +67,7 @@ flutter doctor
 avdmanager create avd --name everfold-api-36-x86_64 --package 'system-images;android-36;google_apis;x86_64' --device pixel_7
 
 # Run in Android Emulator
+just android-emulator
 flutter devices
 just run
 ```

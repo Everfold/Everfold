@@ -130,6 +130,7 @@
 
             just
             just-lsp
+            nixfmt
           ];
 
           env = with pkgs; rec {
