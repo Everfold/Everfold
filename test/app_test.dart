@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:everfold/main.dart';
 import 'package:everfold/src/rust/frb_generated.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart'
     show ExternalLibrary;
 import 'package:flutter_test/flutter_test.dart';
