@@ -1,22 +1,29 @@
 pkgs:
 let
   androidPackages = import ./android.nix pkgs;
-  androidSdkRoot = "${androidPackages.androidsdk}/libexec/android-sdk";
   rustupCompat = import ./rustup-compat.nix pkgs;
+  nativePkgConfig = import ./native-pkg-config.nix pkgs;
+  androidSdkRoot = "${androidPackages.androidsdk}/libexec/android-sdk";
 in
-rec {
-  packages = with pkgs; [
-    pkg-config
+pkgs.mkShell rec {
+  buildInputs = with pkgs; [
+    gtk3
+    libx11
+    libxi
     libsecret
+  ];
+
+  packages = with pkgs; [
+    (nativePkgConfig buildInputs)
 
     flutter
     dart
 
     rustToolchain
-    rustupCompat
     cargo-binstall
+    rustupCompat
 
-    jdk17
+    temurin-bin
     androidPackages.androidsdk
 
     just
@@ -24,8 +31,8 @@ rec {
     nixfmt
   ];
 
-  env = with pkgs; rec {
-    LD_LIBRARY_PATH = lib.makeLibraryPath packages;
+  env = with pkgs; {
+    LD_LIBRARY_PATH = lib.makeLibraryPath buildInputs;
     FLUTTER_ROOT = "${flutter}";
     RUST_SRC_PATH = "${rustToolchain}/lib/rustlib/src/rust/library";
     JAVA_HOME = "${jdk17}";
@@ -36,9 +43,9 @@ rec {
   };
 
   shellHook = ''
-    export ANDROID_AVD_HOME="$HOME/.android/avd"
-    mkdir -p "$ANDROID_AVD_HOME"
     export CARGO_HOME="$PWD/.cargo"
+    export ANDROID_AVD_HOME="$HOME/.android/avd"
     export PATH="$CARGO_HOME/bin:$PWD/target/debug:$PATH"
+    mkdir -p "$ANDROID_AVD_HOME"
   '';
 }
