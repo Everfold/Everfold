@@ -56,30 +56,67 @@
         })
       ];
 
-      devShell = pkgs: rec {
-        packages = with pkgs; [
-          pkg-config
+      devShell =
+        pkgs:
+        let
+          # Only the rustup calls used by native_toolchain_rust are supported.
+          # Rust components and targets remain managed exclusively by Nix.
+          rustupCompat = pkgs.writeShellApplication {
+            name = "rustup";
+            text = ''
+              version=${pkgs.lib.escapeShellArg pkgs.rustToolchain.version}
 
-          rustToolchain
-          cargo-binstall
+              if [[ $# -eq 2 && $1 == show && $2 == active-toolchain ]]; then
+                printf '%s (Nix toolchain)\n' "$version"
+                exit 0
+              fi
 
-          flutter
-          dart
+              if [[ $# -ge 3 && $1 == run ]]; then
+                if [[ $2 != "$version" ]]; then
+                  printf 'Nix provides Rust %s, but rustup run requested %s. Update rust-toolchain.toml and reload the Nix shell.\n' "$version" "$2" >&2
+                  exit 64
+                fi
+                shift 2
+                tool=$1
+                shift
+                case "$tool" in
+                  cargo|rustc)
+                    export RUSTC="${pkgs.rustToolchain}/bin/rustc"
+                    exec "${pkgs.rustToolchain}/bin/$tool" "$@"
+                    ;;
+                esac
+              fi
 
-          just
-          just-lsp
-        ];
+              printf 'This is the Nix rustup adapter, not a toolchain installer. Supported: show active-toolchain; run %s {cargo|rustc} ...\n' "$version" >&2
+              exit 64
+            '';
+          };
+        in
+        rec {
+          packages = with pkgs; [
+            pkg-config
 
-        env = with pkgs; rec {
-          LD_LIBRARY_PATH = lib.makeLibraryPath packages;
-          FLUTTER_ROOT = "${flutter}";
-          RUST_SRC_PATH = "${rustToolchain}/lib/rustlib/src/rust/library";
+            rustToolchain
+            rustupCompat
+            cargo-binstall
+
+            flutter
+            dart
+
+            just
+            just-lsp
+          ];
+
+          env = with pkgs; rec {
+            LD_LIBRARY_PATH = lib.makeLibraryPath packages;
+            FLUTTER_ROOT = "${flutter}";
+            RUST_SRC_PATH = "${rustToolchain}/lib/rustlib/src/rust/library";
+          };
+
+          shellHook = ''
+            export CARGO_HOME="$PWD/.cargo"
+            export PATH="$CARGO_HOME/bin:$PWD/target/debug:$PATH"
+          '';
         };
-
-        shellHook = ''
-          export CARGO_HOME="$PWD/.cargo"
-          export PATH="$CARGO_HOME/bin:$PWD/target/debug:$PATH"
-        '';
-      };
     };
 }
