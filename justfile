@@ -15,7 +15,7 @@ android-emulator:
 fmt:
   dart format lib hook integration_test test_driver
   cargo fmt --all
-  nixfmt flake.nix
+  nixfmt flake.nix nix/*.nix
 
 lint:
   prek run --all-files
