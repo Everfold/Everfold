@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../l10n/app_localizations.dart';
 import '../widgets/button_examples.dart';
@@ -21,6 +22,11 @@ class MaterialHomePage extends StatelessWidget {
           appBar: AppBar(
             title: const Text('Everfold'),
             actions: [
+              IconButton(
+                tooltip: strings.openSettings,
+                onPressed: () => context.push('/settings'),
+                icon: const Icon(Icons.settings_outlined),
+              ),
               IconButton(
                 tooltip: strings.more,
                 onPressed: () {},

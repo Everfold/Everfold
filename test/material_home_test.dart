@@ -44,7 +44,8 @@ void main() {
     expect(find.text('Material 控件展示'), findsOneWidget);
     final app = tester.widget<MaterialApp>(find.byType(MaterialApp));
     expect(app.theme, isNull);
-    expect(app.darkTheme, isNull);
+    expect(app.darkTheme, ThemeData.dark());
+    expect(app.themeMode, ThemeMode.system);
     final theme = Theme.of(tester.element(find.byType(MaterialHomePage)));
     expect(theme.useMaterial3, isTrue);
     expect(theme.colorScheme, ThemeData().colorScheme);

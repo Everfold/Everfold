@@ -1,35 +1,97 @@
+import 'package:cupertino_ui/cupertino_ui.dart' as c;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:material_ui/material_ui.dart' as m;
 
 import '../application/settings/app_settings_controller.dart';
 import '../domain/settings/app_settings.dart';
 import '../l10n/app_localizations.dart';
+import '../ui/core/error/failure_message.dart';
 import '../ui/core/widgets/async_value_view.dart';
+import 'providers/design_system_provider.dart';
 import 'router/app_router.dart';
 
-/// 使用标准 Material 外观的应用装配入口
-///
-/// 只负责路由与本地化装配, 不定义主题. 未来的 Cupertino 应用入口可复用
-/// ProviderScope 与非 UI 依赖, 而不把两套设计系统混在同一个页面中
+/// 只在装配层选择设计系统, 保留上层作用域与共享业务状态
 class EverfoldApp extends ConsumerWidget {
   const EverfoldApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  m.Widget build(m.BuildContext context, WidgetRef ref) {
     final settings = ref.watch(appSettingsControllerProvider);
-    return MaterialApp.router(
+    final router = ref.watch(appRouterProvider);
+    final cupertino =
+        ref.watch(effectiveDesignSystemProvider) == AppDesignSystem.cupertino;
+    final locale = switch (settings.asData?.value.language) {
+      AppLanguage.english => const m.Locale('en'),
+      AppLanguage.chinese => const m.Locale('zh'),
+      AppLanguage.system || null => null,
+    };
+    final appearance =
+        settings.asData?.value.appearance ?? AppAppearance.system;
+    if (cupertino) {
+      return c.CupertinoApp.router(
+        title: 'Everfold',
+        debugShowCheckedModeBanner: false,
+        routerConfig: router,
+        theme: c.CupertinoThemeData(
+          brightness: switch (appearance) {
+            AppAppearance.system => null,
+            AppAppearance.light => m.Brightness.light,
+            AppAppearance.dark => m.Brightness.dark,
+          },
+        ),
+        locale: locale,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          // 路由切换的过渡帧可能仍有上一套组件, 同时提供两套标准委托
+          ...m.GlobalMaterialLocalizations.delegates,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
+        builder: (context, child) {
+          if (settings is AsyncData<AppSettings>) return child!;
+          final strings = AppLocalizations.of(context)!;
+          return c.CupertinoPageScaffold(
+            child: c.SafeArea(
+              child: c.Center(
+                child: settings.when(
+                  data: (_) => child!,
+                  loading: () => const c.CupertinoActivityIndicator(),
+                  error: (error, _) => c.Column(
+                    mainAxisSize: c.MainAxisSize.min,
+                    children: [
+                      c.Padding(
+                        padding: const c.EdgeInsets.all(24),
+                        child: c.Text(failureMessage(error, strings)),
+                      ),
+                      c.CupertinoButton(
+                        onPressed: () =>
+                            ref.invalidate(appSettingsControllerProvider),
+                        child: c.Text(strings.retry),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    }
+    return m.MaterialApp.router(
       title: 'Everfold',
       debugShowCheckedModeBanner: false,
-      routerConfig: ref.watch(appRouterProvider),
-      locale: switch (settings.asData?.value.language) {
-        AppLanguage.english => const Locale('en'),
-        AppLanguage.chinese => const Locale('zh'),
-        AppLanguage.system || null => null,
+      routerConfig: router,
+      // 仅使用库提供的默认浅色与深色主题
+      darkTheme: m.ThemeData.dark(),
+      themeMode: switch (appearance) {
+        AppAppearance.system => m.ThemeMode.system,
+        AppAppearance.light => m.ThemeMode.light,
+        AppAppearance.dark => m.ThemeMode.dark,
       },
+      locale: locale,
       builder: (context, child) {
         if (settings is AsyncData<AppSettings>) return child!;
-        return Scaffold(
-          body: SafeArea(
+        return m.Scaffold(
+          body: m.SafeArea(
             child: AsyncValueView<AppSettings>(
               value: settings,
               data: (_) => child!,
@@ -38,11 +100,9 @@ class EverfoldApp extends ConsumerWidget {
           ),
         );
       },
-
-      // l10n
       localizationsDelegates: const [
         AppLocalizations.delegate,
-        ...GlobalMaterialLocalizations.delegates,
+        ...m.GlobalMaterialLocalizations.delegates,
       ],
       supportedLocales: AppLocalizations.supportedLocales,
     );

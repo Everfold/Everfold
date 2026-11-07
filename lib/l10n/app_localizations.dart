@@ -463,6 +463,72 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'操作未完成, 请重试'**
   String get unexpectedFailure;
+
+  /// No description provided for @appearanceTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'界面风格'**
+  String get appearanceTitle;
+
+  /// No description provided for @followPlatform.
+  ///
+  /// In zh, this message translates to:
+  /// **'跟随平台'**
+  String get followPlatform;
+
+  /// No description provided for @saveFailure.
+  ///
+  /// In zh, this message translates to:
+  /// **'无法保存设置, 请重试'**
+  String get saveFailure;
+
+  /// No description provided for @cupertinoHomeTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'Cupertino 控件展示'**
+  String get cupertinoHomeTitle;
+
+  /// No description provided for @openSettings.
+  ///
+  /// In zh, this message translates to:
+  /// **'打开设置'**
+  String get openSettings;
+
+  /// No description provided for @backHome.
+  ///
+  /// In zh, this message translates to:
+  /// **'返回首页'**
+  String get backHome;
+
+  /// No description provided for @brightnessTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'明暗模式'**
+  String get brightnessTitle;
+
+  /// No description provided for @followSystem.
+  ///
+  /// In zh, this message translates to:
+  /// **'跟随系统'**
+  String get followSystem;
+
+  /// No description provided for @lightAppearance.
+  ///
+  /// In zh, this message translates to:
+  /// **'浅色'**
+  String get lightAppearance;
+
+  /// No description provided for @darkAppearance.
+  ///
+  /// In zh, this message translates to:
+  /// **'深色'**
+  String get darkAppearance;
+
+  /// No description provided for @languageTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'语言'**
+  String get languageTitle;
 }
 
 class _AppLocalizationsDelegate

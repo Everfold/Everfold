@@ -59,5 +59,16 @@
   "serverFailure": "The service is unavailable. Try again later",
   "invalidDataFailure": "The data format is invalid",
   "storageFailure": "Unable to access local storage. Try again",
-  "unexpectedFailure": "The operation could not be completed. Try again"
+  "unexpectedFailure": "The operation could not be completed. Try again",
+  "appearanceTitle": "Interface style",
+  "followPlatform": "Follow platform",
+  "saveFailure": "Unable to save settings. Try again",
+  "cupertinoHomeTitle": "Cupertino components",
+  "openSettings": "Open settings",
+  "backHome": "Back to home",
+  "brightnessTitle": "Appearance",
+  "followSystem": "Follow system",
+  "lightAppearance": "Light",
+  "darkAppearance": "Dark",
+  "languageTitle": "Language"
 }
