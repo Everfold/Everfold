@@ -63,7 +63,32 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('mode-cloud')));
     await tester.pumpAndSettle();
     await tap(tester, '继续');
-    expect(find.text('云服务登录暂未接入'), findsOneWidget);
+    expect(find.text('集群登录暂未接入'), findsOneWidget);
+    final dropdown = tester.widget<DropdownMenu<String>>(
+      find.byType(DropdownMenu<String>),
+    );
+    expect(dropdown.initialSelection, 'lan');
+    expect(dropdown.dropdownMenuEntries.map((entry) => entry.label), [
+      '局域网',
+      '自部署',
+      '测试云',
+    ]);
+    for (final name in ['自部署', '测试云', '局域网']) {
+      await tester.tap(find.byType(DropdownMenu<String>));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(name).last);
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<DropdownMenu<String>>(find.byType(DropdownMenu<String>))
+            .initialSelection,
+        switch (name) {
+          '自部署' => 'selfHosted',
+          '测试云' => 'testCloud',
+          _ => 'lan',
+        },
+      );
+    }
     expect(
       tester
           .widget<FilledButton>(find.widgetWithText(FilledButton, '登录'))
@@ -73,7 +98,7 @@ void main() {
     await tester.pumpWidget(const SizedBox());
     await tester.pumpAndSettle();
     await pumpApp(tester, store);
-    expect(find.text('云服务登录暂未接入'), findsOneWidget);
+    expect(find.text('集群登录暂未接入'), findsOneWidget);
     await tap(tester, '使用本地模式继续');
     await tap(tester, '进入 Everfold');
     expect(find.byType(SessionPage), findsOneWidget);

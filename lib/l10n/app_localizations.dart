@@ -185,7 +185,7 @@ abstract class AppLocalizations {
   /// No description provided for @serverFailure.
   ///
   /// In zh, this message translates to:
-  /// **'服务暂时不可用, 请稍后重试'**
+  /// **'集群暂时不可用, 请稍后重试'**
   String get serverFailure;
 
   /// No description provided for @invalidDataFailure.
@@ -299,7 +299,7 @@ abstract class AppLocalizations {
   /// No description provided for @welcomeTagline.
   ///
   /// In zh, this message translates to:
-  /// **'你的跨平台 Agent 工作台'**
+  /// **'你的无界人工智能工作台'**
   String get welcomeTagline;
 
   /// No description provided for @featureSessions.
@@ -341,7 +341,7 @@ abstract class AppLocalizations {
   /// No description provided for @startSetup.
   ///
   /// In zh, this message translates to:
-  /// **'开始初始化'**
+  /// **'初始化'**
   String get startSetup;
 
   /// No description provided for @skipSetup.
@@ -365,19 +365,19 @@ abstract class AppLocalizations {
   /// No description provided for @localModeBody.
   ///
   /// In zh, this message translates to:
-  /// **'不连接 Everfold 云服务, 可自行接入第三方模型'**
+  /// **'不使用跨节点模式, 仅在本机使用'**
   String get localModeBody;
 
   /// No description provided for @cloudMode.
   ///
   /// In zh, this message translates to:
-  /// **'连接云服务'**
+  /// **'连接集群'**
   String get cloudMode;
 
   /// No description provided for @cloudModeBody.
   ///
   /// In zh, this message translates to:
-  /// **'登录服务账户后使用云端能力'**
+  /// **'连接集群, 使用多端能力'**
   String get cloudModeBody;
 
   /// No description provided for @continueAction.
@@ -395,14 +395,32 @@ abstract class AppLocalizations {
   /// No description provided for @loginTitle.
   ///
   /// In zh, this message translates to:
-  /// **'登录云服务'**
+  /// **'连接集群'**
   String get loginTitle;
 
   /// No description provided for @identityProvider.
   ///
   /// In zh, this message translates to:
-  /// **'登录提供商'**
+  /// **'供应商'**
   String get identityProvider;
+
+  /// No description provided for @lanProvider.
+  ///
+  /// In zh, this message translates to:
+  /// **'局域网'**
+  String get lanProvider;
+
+  /// No description provided for @selfHostedProvider.
+  ///
+  /// In zh, this message translates to:
+  /// **'自部署'**
+  String get selfHostedProvider;
+
+  /// No description provided for @testCloudProvider.
+  ///
+  /// In zh, this message translates to:
+  /// **'测试云'**
+  String get testCloudProvider;
 
   /// No description provided for @loginAction.
   ///
@@ -413,13 +431,13 @@ abstract class AppLocalizations {
   /// No description provided for @loginUnavailable.
   ///
   /// In zh, this message translates to:
-  /// **'云服务登录暂未接入'**
+  /// **'集群登录暂未接入'**
   String get loginUnavailable;
 
   /// No description provided for @continueLocal.
   ///
   /// In zh, this message translates to:
-  /// **'使用本地模式继续'**
+  /// **'跳过, 使用本地模式'**
   String get continueLocal;
 
   /// No description provided for @preferencesTitle.
@@ -455,7 +473,7 @@ abstract class AppLocalizations {
   /// No description provided for @cloudServices.
   ///
   /// In zh, this message translates to:
-  /// **'云服务'**
+  /// **'集群'**
   String get cloudServices;
 
   /// No description provided for @promptHint.

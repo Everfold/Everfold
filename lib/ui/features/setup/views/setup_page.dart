@@ -20,7 +20,7 @@ class SetupPage extends HookConsumerWidget {
     final busy = useState(false);
     final failed = useState(false);
     final selectedMode = useState(settings.connectionMode);
-    final provider = useState('GitHub');
+    final provider = useState('lan');
     Future<void> run(Future<Result<void>> Function() operation) async {
       if (busy.value) return;
       busy.value = true;
@@ -105,10 +105,16 @@ class SetupPage extends HookConsumerWidget {
           enabled: !busy.value,
           label: Text(strings.identityProvider),
           dropdownMenuEntries: [
-            'GitHub',
-            'Google',
-            'Microsoft',
-          ].map((name) => DropdownMenuEntry(value: name, label: name)).toList(),
+            DropdownMenuEntry(value: 'lan', label: strings.lanProvider),
+            DropdownMenuEntry(
+              value: 'selfHosted',
+              label: strings.selfHostedProvider,
+            ),
+            DropdownMenuEntry(
+              value: 'testCloud',
+              label: strings.testCloudProvider,
+            ),
+          ],
           onSelected: (value) {
             if (value != null) provider.value = value;
           },

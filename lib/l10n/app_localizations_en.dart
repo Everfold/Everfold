@@ -170,6 +170,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get identityProvider => 'Sign-in provider';
 
   @override
+  String get lanProvider => 'Local network';
+
+  @override
+  String get selfHostedProvider => 'Self-hosted';
+
+  @override
+  String get testCloudProvider => 'Test cloud';
+
+  @override
   String get loginAction => 'Sign in';
 
   @override

@@ -52,7 +52,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get validationFailure => '输入内容不符合要求';
 
   @override
-  String get serverFailure => '服务暂时不可用, 请稍后重试';
+  String get serverFailure => '集群暂时不可用, 请稍后重试';
 
   @override
   String get invalidDataFailure => '数据格式不正确, 无法完成操作';
@@ -109,7 +109,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get save => '保存';
 
   @override
-  String get welcomeTagline => '你的跨平台 Agent 工作台';
+  String get welcomeTagline => '你的无界人工智能工作台';
 
   @override
   String get featureSessions => '按会话组织任务';
@@ -130,7 +130,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get featureWorkspaceBody => '将提示, 预设和工作区放在同一个工作流中';
 
   @override
-  String get startSetup => '开始初始化';
+  String get startSetup => '初始化';
 
   @override
   String get skipSetup => '跳过';
@@ -142,13 +142,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get localMode => '仅本地';
 
   @override
-  String get localModeBody => '不连接 Everfold 云服务, 可自行接入第三方模型';
+  String get localModeBody => '不使用跨节点模式, 仅在本机使用';
 
   @override
-  String get cloudMode => '连接云服务';
+  String get cloudMode => '连接集群';
 
   @override
-  String get cloudModeBody => '登录服务账户后使用云端能力';
+  String get cloudModeBody => '连接集群, 使用多端能力';
 
   @override
   String get continueAction => '继续';
@@ -157,19 +157,28 @@ class AppLocalizationsZh extends AppLocalizations {
   String get back => '返回';
 
   @override
-  String get loginTitle => '登录云服务';
+  String get loginTitle => '连接集群';
 
   @override
-  String get identityProvider => '登录提供商';
+  String get identityProvider => '供应商';
+
+  @override
+  String get lanProvider => '局域网';
+
+  @override
+  String get selfHostedProvider => '自部署';
+
+  @override
+  String get testCloudProvider => '测试云';
 
   @override
   String get loginAction => '登录';
 
   @override
-  String get loginUnavailable => '云服务登录暂未接入';
+  String get loginUnavailable => '集群登录暂未接入';
 
   @override
-  String get continueLocal => '使用本地模式继续';
+  String get continueLocal => '跳过, 使用本地模式';
 
   @override
   String get preferencesTitle => '个性化设置';
@@ -187,7 +196,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get sessionsTitle => '会话';
 
   @override
-  String get cloudServices => '云服务';
+  String get cloudServices => '集群';
 
   @override
   String get promptHint => '你想处理什么任务?';
