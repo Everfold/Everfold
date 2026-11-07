@@ -50,10 +50,12 @@ Controller 不导入 Data, App 或设计系统. 页面不直接创建 Dio, 访�
 
 中文使用半角标点, 段落末尾不加句号
 
-Material 页面使用 `package:material_ui/material_ui.dart` 与默认主题, 不混用旧 Material 导入, 不新增主题类
+Material 页面使用 `package:material_ui/material_ui.dart` 与标准主题 API, 不混用旧 Material 导入, 不新增主题类
 
-首页设置入口提供 appearance 和 language, 默认均跟随系统, 分别持久化在 AppSettings 的对应字段. 通过 Controller 的 setAppearance 与 setLanguage 修改, 使用 copyWith 保留其他字段
+首页设置入口提供 appearance, colorMode 与 language, 另外保存自选种子色 seedColor. 明暗与语言默认跟随系统, 配色默认 standard. 通过 Controller 的 setAppearance, setColorMode, setSeedColor 与 setLanguage 修改, 使用 copyWith 保留其他字段. setSeedColor 只接受不透明 ARGB, 原子保存颜色与 custom 模式
 
-Locale 与主题明暗映射位于 app/everfold_app.dart, 不把 Flutter 类型放进纯 Dart 领域模型. Material 使用默认 ThemeData.dark 和 ThemeMode, 不新增主题类或自定义调色板
+Locale, ThemeMode 和 ColorScheme 映射位于 app/everfold_app.dart, 不把 Flutter 类型放进纯 Dart 领域模型. 默认配色保持 ThemeData 默认值, 自选颜色使用 ColorScheme.fromSeed, 系统颜色通过 DynamicColorBuilder 提供. 系统颜色为空或插件失败时独立回退默认浅色和深色主题, 不新增主题类
 
-路由实例独立于设置, 修改明暗与语言不重建导航栈. 窄屏和宽屏布局按可用窗口空间适配, 不通过切换设计系统实现
+测试系统颜色时通过 DynamicColorPlugin.channel 替换平台回复, 不访问真实系统设置. 系统色平台支持与刷新限制见 architecture.md, 原生插件变更需要完整重启应用
+
+路由实例独立于设置, 修改明暗, 配色与语言不重建导航栈. 窄屏和宽屏布局按可用窗口空间适配, 不通过切换设计系统实现
