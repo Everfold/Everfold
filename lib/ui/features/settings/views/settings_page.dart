@@ -6,8 +6,9 @@ import '../../../../application/settings/app_settings_controller.dart';
 import '../../../../domain/common/result.dart';
 import '../../../../domain/settings/app_settings.dart';
 import '../../../../l10n/app_localizations.dart';
+import 'seed_color_dialog.dart';
 
-/// 明暗与语言选择只在保存成功后生效
+/// 明暗, 配色与语言选择只在保存成功后生效
 class SettingsPage extends HookConsumerWidget {
   const SettingsPage({super.key});
 
@@ -55,6 +56,79 @@ class SettingsPage extends HookConsumerWidget {
                     onChanged: (value) =>
                         save(() => controller.setAppearance(value)),
                   ),
+                  _ChoiceSection<AppColorMode>(
+                    id: 'colorMode',
+                    title: strings.colorTitle,
+                    enabled: !busy.value,
+                    selected: settings.colorMode,
+                    choices: {
+                      AppColorMode.standard: strings.defaultColor,
+                      AppColorMode.system: strings.followSystem,
+                      AppColorMode.custom: strings.customColor,
+                    },
+                    onChanged: (value) =>
+                        save(() => controller.setColorMode(value)),
+                  ),
+                  if (settings.colorMode == AppColorMode.custom) ...[
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        for (final color in [
+                          Colors.red,
+                          Colors.teal,
+                          Colors.blue,
+                          Colors.amber,
+                          Colors.green,
+                          Colors.purple,
+                        ])
+                          IconButton(
+                            key: ValueKey('seed-${color.toARGB32()}'),
+                            tooltip:
+                                '#${color.toARGB32().toRadixString(16).substring(2).toUpperCase()}',
+                            isSelected: settings.seedColor == color.toARGB32(),
+                            icon: Icon(Icons.circle, color: color),
+                            selectedIcon: Icon(
+                              Icons.check_circle,
+                              color: color,
+                            ),
+                            onPressed: busy.value
+                                ? null
+                                : () => save(
+                                    () => controller.setSeedColor(
+                                      color.toARGB32(),
+                                    ),
+                                  ),
+                          ),
+                      ],
+                    ),
+                    ListTile(
+                      title: Text(strings.hexColor),
+                      subtitle: Text(
+                        '#${settings.seedColor.toRadixString(16).substring(2).toUpperCase()}',
+                      ),
+                      trailing: IconButton(
+                        tooltip: strings.editColor,
+                        icon: const Icon(Icons.colorize),
+                        onPressed: busy.value
+                            ? null
+                            : () async {
+                                final color = await showDialog<int>(
+                                  context: context,
+                                  builder: (_) => SeedColorDialog(
+                                    initialColor: settings.seedColor,
+                                  ),
+                                );
+                                if (context.mounted && color != null) {
+                                  await save(
+                                    () => controller.setSeedColor(color),
+                                  );
+                                }
+                              },
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
                   _ChoiceSection<AppLanguage>(
                     id: 'language',
                     title: strings.languageTitle,

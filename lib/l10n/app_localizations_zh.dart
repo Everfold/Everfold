@@ -119,7 +119,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get cardTitle => '标准 Material 卡片';
 
   @override
-  String get cardDescription => '保留默认配色, 字形, 圆角与层级, 不添加自定义主题';
+  String get cardDescription => '采用选定配色, 保留标准字形, 圆角与层级, 不添加自定义主题类';
 
   @override
   String get listTitle => '列表项目';
@@ -213,4 +213,28 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get languageTitle => '语言';
+
+  @override
+  String get colorTitle => '配色';
+
+  @override
+  String get defaultColor => '默认';
+
+  @override
+  String get customColor => '自选颜色';
+
+  @override
+  String get editColor => '编辑颜色';
+
+  @override
+  String get hexColor => '十六进制颜色';
+
+  @override
+  String get invalidColor => '请输入 6 位十六进制颜色';
+
+  @override
+  String get cancel => '取消';
+
+  @override
+  String get save => '保存';
 }

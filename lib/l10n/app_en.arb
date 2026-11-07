@@ -35,7 +35,7 @@
   "chipLabel": "Chip",
   "contentTitle": "Cards and lists",
   "cardTitle": "Standard Material card",
-  "cardDescription": "Default colors, typography, shapes, and hierarchy, with no custom theme.",
+  "cardDescription": "Selected colors with standard typography, shapes, and hierarchy, without custom theme classes.",
   "listTitle": "List item",
   "listSubtitle": "Avatar and supporting text",
   "badgeTitle": "Badge",
@@ -66,5 +66,13 @@
   "followSystem": "Follow system",
   "lightAppearance": "Light",
   "darkAppearance": "Dark",
-  "languageTitle": "Language"
+  "languageTitle": "Language",
+  "colorTitle": "Colors",
+  "defaultColor": "Default",
+  "customColor": "Custom color",
+  "editColor": "Edit color",
+  "hexColor": "Hex color",
+  "invalidColor": "Enter a 6-digit hex color",
+  "cancel": "Cancel",
+  "save": "Save"
 }

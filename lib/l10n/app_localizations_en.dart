@@ -120,7 +120,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cardDescription =>
-      'Default colors, typography, shapes, and hierarchy, with no custom theme.';
+      'Selected colors with standard typography, shapes, and hierarchy, without custom theme classes.';
 
   @override
   String get listTitle => 'List item';
@@ -217,4 +217,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get languageTitle => 'Language';
+
+  @override
+  String get colorTitle => 'Colors';
+
+  @override
+  String get defaultColor => 'Default';
+
+  @override
+  String get customColor => 'Custom color';
+
+  @override
+  String get editColor => 'Edit color';
+
+  @override
+  String get hexColor => 'Hex color';
+
+  @override
+  String get invalidColor => 'Enter a 6-digit hex color';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get save => 'Save';
 }

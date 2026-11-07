@@ -35,7 +35,7 @@
   "chipLabel": "普通标签",
   "contentTitle": "卡片与列表",
   "cardTitle": "标准 Material 卡片",
-  "cardDescription": "保留默认配色, 字形, 圆角与层级, 不添加自定义主题",
+  "cardDescription": "采用选定配色, 保留标准字形, 圆角与层级, 不添加自定义主题类",
   "listTitle": "列表项目",
   "listSubtitle": "头像与辅助文本",
   "badgeTitle": "徽标",
@@ -66,5 +66,13 @@
   "followSystem": "跟随系统",
   "lightAppearance": "浅色",
   "darkAppearance": "深色",
-  "languageTitle": "语言"
+  "languageTitle": "语言",
+  "colorTitle": "配色",
+  "defaultColor": "默认",
+  "customColor": "自选颜色",
+  "editColor": "编辑颜色",
+  "hexColor": "十六进制颜色",
+  "invalidColor": "请输入 6 位十六进制颜色",
+  "cancel": "取消",
+  "save": "保存"
 }

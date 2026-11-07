@@ -317,7 +317,7 @@ abstract class AppLocalizations {
   /// No description provided for @cardDescription.
   ///
   /// In zh, this message translates to:
-  /// **'保留默认配色, 字形, 圆角与层级, 不添加自定义主题'**
+  /// **'采用选定配色, 保留标准字形, 圆角与层级, 不添加自定义主题类'**
   String get cardDescription;
 
   /// No description provided for @listTitle.
@@ -505,6 +505,54 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'语言'**
   String get languageTitle;
+
+  /// No description provided for @colorTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'配色'**
+  String get colorTitle;
+
+  /// No description provided for @defaultColor.
+  ///
+  /// In zh, this message translates to:
+  /// **'默认'**
+  String get defaultColor;
+
+  /// No description provided for @customColor.
+  ///
+  /// In zh, this message translates to:
+  /// **'自选颜色'**
+  String get customColor;
+
+  /// No description provided for @editColor.
+  ///
+  /// In zh, this message translates to:
+  /// **'编辑颜色'**
+  String get editColor;
+
+  /// No description provided for @hexColor.
+  ///
+  /// In zh, this message translates to:
+  /// **'十六进制颜色'**
+  String get hexColor;
+
+  /// No description provided for @invalidColor.
+  ///
+  /// In zh, this message translates to:
+  /// **'请输入 6 位十六进制颜色'**
+  String get invalidColor;
+
+  /// No description provided for @cancel.
+  ///
+  /// In zh, this message translates to:
+  /// **'取消'**
+  String get cancel;
+
+  /// No description provided for @save.
+  ///
+  /// In zh, this message translates to:
+  /// **'保存'**
+  String get save;
 }
 
 class _AppLocalizationsDelegate

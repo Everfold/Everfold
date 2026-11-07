@@ -1,3 +1,4 @@
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -20,35 +21,56 @@ class EverfoldApp extends ConsumerWidget {
       AppLanguage.chinese => const Locale('zh'),
       AppLanguage.system || null => null,
     };
-    return MaterialApp.router(
-      title: 'Everfold',
-      debugShowCheckedModeBanner: false,
-      routerConfig: router,
-      // 仅使用库提供的默认浅色与深色主题
-      darkTheme: ThemeData.dark(),
-      themeMode: switch (settings.asData?.value.appearance) {
-        AppAppearance.light => ThemeMode.light,
-        AppAppearance.dark => ThemeMode.dark,
-        AppAppearance.system || null => ThemeMode.system,
-      },
-      locale: locale,
-      builder: (context, child) {
-        if (settings is AsyncData<AppSettings>) return child!;
-        return Scaffold(
-          body: SafeArea(
-            child: AsyncValueView<AppSettings>(
-              value: settings,
-              data: (_) => child!,
-              onRetry: () => ref.invalidate(appSettingsControllerProvider),
-            ),
-          ),
+    final preferences = settings.asData?.value ?? const AppSettings();
+    // 固定外层结构, 配色变化不替换 Navigator 或共享业务作用域
+    return DynamicColorBuilder(
+      builder: (lightDynamic, darkDynamic) {
+        ColorScheme? scheme(Brightness brightness) =>
+            switch (preferences.colorMode) {
+              AppColorMode.standard => null,
+              AppColorMode.system =>
+                brightness == Brightness.light ? lightDynamic : darkDynamic,
+              AppColorMode.custom => ColorScheme.fromSeed(
+                seedColor: Color(preferences.seedColor),
+                brightness: brightness,
+              ),
+            };
+        final light = scheme(Brightness.light);
+        final dark = scheme(Brightness.dark);
+        return MaterialApp.router(
+          title: 'Everfold',
+          debugShowCheckedModeBanner: false,
+          routerConfig: router,
+          // 无系统颜色时独立回退默认配色, 不修改用户保存的模式
+          theme: light == null ? null : ThemeData(colorScheme: light),
+          darkTheme: dark == null
+              ? ThemeData.dark()
+              : ThemeData(colorScheme: dark),
+          themeMode: switch (settings.asData?.value.appearance) {
+            AppAppearance.light => ThemeMode.light,
+            AppAppearance.dark => ThemeMode.dark,
+            AppAppearance.system || null => ThemeMode.system,
+          },
+          locale: locale,
+          builder: (context, child) {
+            if (settings is AsyncData<AppSettings>) return child!;
+            return Scaffold(
+              body: SafeArea(
+                child: AsyncValueView<AppSettings>(
+                  value: settings,
+                  data: (_) => child!,
+                  onRetry: () => ref.invalidate(appSettingsControllerProvider),
+                ),
+              ),
+            );
+          },
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            ...GlobalMaterialLocalizations.delegates,
+          ],
+          supportedLocales: AppLocalizations.supportedLocales,
         );
       },
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        ...GlobalMaterialLocalizations.delegates,
-      ],
-      supportedLocales: AppLocalizations.supportedLocales,
     );
   }
 }
