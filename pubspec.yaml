@@ -53,8 +53,6 @@ dependencies:
   intl: any
 
   material_ui: ^1.10.0
-  cupertino_ui: ^1.1.6
-  cupertino_icons: ^2.0.0
   a2ui_core: ^0.5.0
   a2ui_flutter: ^0.1.0
 
