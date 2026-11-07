@@ -14,14 +14,19 @@ class ConnectionForm extends StatefulWidget {
   const ConnectionForm({
     super.key,
     required this.saving,
-    required this.onConnectionStarted,
     required this.onNext,
+    this.onConnectionStarted,
+    this.advanceOnSuccess = false,
+    this.layoutBuilder,
     this.initialConfiguration = const ClusterConfiguration(),
   });
 
   final bool saving;
-  final VoidCallback onConnectionStarted;
+  final VoidCallback? onConnectionStarted;
   final ValueChanged<ClusterConfiguration> onNext;
+  final bool advanceOnSuccess;
+  final Widget Function(Widget fields, Widget action, bool locked)?
+  layoutBuilder;
   final ClusterConfiguration initialConfiguration;
 
   @override
@@ -41,7 +46,9 @@ class _ConnectionFormState extends State<ConnectionForm> {
 
   bool get _locked => widget.saving || _status != _ConnectionStatus.idle;
   bool get _actionBusy =>
-      widget.saving || _status == _ConnectionStatus.connecting;
+      widget.saving ||
+      _status == _ConnectionStatus.connecting ||
+      (widget.advanceOnSuccess && _status == _ConnectionStatus.succeeded);
 
   @override
   void initState() {
@@ -88,29 +95,34 @@ class _ConnectionFormState extends State<ConnectionForm> {
     });
   }
 
+  void _advance() {
+    final selfHosted = _provider == 'selfHosted';
+    widget.onNext(
+      ClusterConfiguration(
+        service: ClusterService.values.byName(_provider),
+        ip: selfHosted ? _ip.text.trim() : '',
+        port: selfHosted ? _port.text.trim() : '',
+        verification: selfHosted
+            ? ClusterVerification.values.byName(_verification)
+            : ClusterVerification.none,
+      ),
+    );
+  }
+
   void _connect() {
     if (_actionBusy) return;
     if (_status == _ConnectionStatus.succeeded) {
-      final selfHosted = _provider == 'selfHosted';
-      widget.onNext(
-        ClusterConfiguration(
-          service: ClusterService.values.byName(_provider),
-          ip: selfHosted ? _ip.text.trim() : '',
-          port: selfHosted ? _port.text.trim() : '',
-          verification: selfHosted
-              ? ClusterVerification.values.byName(_verification)
-              : ClusterVerification.none,
-        ),
-      );
+      _advance();
       return;
     }
     FocusScope.of(context).unfocus();
     setState(() => _status = _ConnectionStatus.connecting);
-    widget.onConnectionStarted();
+    widget.onConnectionStarted?.call();
     // 后端接入前固定等待 1 秒, 不做地址校验, 认证或 TLS 握手
     _timer = Timer(const Duration(seconds: 1), () {
       if (!mounted) return;
       setState(() => _status = _ConnectionStatus.succeeded);
+      if (widget.advanceOnSuccess) _advance();
     });
   }
 
@@ -213,7 +225,9 @@ class _ConnectionFormState extends State<ConnectionForm> {
     final credentials = cloud || (selfHosted && _verification == 'credentials');
     final connecting = _status == _ConnectionStatus.connecting;
     final succeeded = _status == _ConnectionStatus.succeeded;
-    return Column(
+    final awaitingNext = succeeded && !widget.advanceOnSuccess;
+    final fields = Column(
+      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         DropdownMenu<String>(
@@ -294,24 +308,29 @@ class _ConnectionFormState extends State<ConnectionForm> {
           const SizedBox(height: 8),
           const LinearProgressIndicator(),
         ],
+      ],
+    );
+    final action = FilledButton.icon(
+      key: const ValueKey('connection-connect'),
+      onPressed: _actionBusy ? null : _connect,
+      icon: Icon(
+        awaitingNext ? Icons.arrow_forward : (cloud ? Icons.login : Icons.link),
+      ),
+      label: Text(
+        awaitingNext
+            ? strings.nextStep
+            : (cloud ? strings.loginAction : strings.connectAction),
+      ),
+    );
+    final layoutBuilder = widget.layoutBuilder;
+    if (layoutBuilder != null) return layoutBuilder(fields, action, _locked);
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        fields,
         const SizedBox(height: 24),
-        Align(
-          alignment: Alignment.centerRight,
-          child: FilledButton.icon(
-            key: const ValueKey('connection-connect'),
-            onPressed: _actionBusy ? null : _connect,
-            icon: Icon(
-              succeeded
-                  ? Icons.arrow_forward
-                  : (cloud ? Icons.login : Icons.link),
-            ),
-            label: Text(
-              succeeded
-                  ? strings.nextStep
-                  : (cloud ? strings.loginAction : strings.connectAction),
-            ),
-          ),
-        ),
+        Align(alignment: Alignment.centerRight, child: action),
       ],
     );
   }

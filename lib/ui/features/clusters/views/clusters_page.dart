@@ -184,7 +184,6 @@ class _ClusterConnectionDialog extends StatefulWidget {
 
 class _ClusterConnectionDialogState extends State<_ClusterConnectionDialog> {
   late final _name = TextEditingController(text: widget.cluster?.name ?? '');
-  bool _locked = false;
 
   @override
   void dispose() {
@@ -195,57 +194,55 @@ class _ClusterConnectionDialogState extends State<_ClusterConnectionDialog> {
   @override
   Widget build(BuildContext context) {
     final strings = AppLocalizations.of(context)!;
-    return PopScope(
-      canPop: !_locked,
-      child: AlertDialog(
-        title: Text(
-          widget.cluster == null
-              ? strings.addCluster
-              : strings.configureCluster,
-        ),
-        content: SizedBox(
-          width: 560,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                TextField(
-                  key: const ValueKey('cluster-name-input'),
-                  controller: _name,
-                  enabled: !_locked,
-                  decoration: InputDecoration(
-                    labelText: strings.clusterName,
-                    border: const OutlineInputBorder(),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                ConnectionForm(
-                  initialConfiguration:
-                      widget.cluster?.configuration ??
-                      const ClusterConfiguration(),
-                  saving: false,
-                  onConnectionStarted: () => setState(() => _locked = true),
-                  onNext: (configuration) => Navigator.pop<_ConnectionChoice>(
-                    context,
-                    (
-                      name: _name.text.trim().isEmpty
-                          ? clusterServiceLabel(strings, configuration.service)
-                          : _name.text.trim(),
-                      configuration: configuration,
+    return ConnectionForm(
+      initialConfiguration:
+          widget.cluster?.configuration ?? const ClusterConfiguration(),
+      saving: false,
+      advanceOnSuccess: true,
+      onNext: (configuration) => Navigator.pop<_ConnectionChoice>(context, (
+        name: _name.text.trim().isEmpty
+            ? clusterServiceLabel(strings, configuration.service)
+            : _name.text.trim(),
+        configuration: configuration,
+      )),
+      layoutBuilder: (fields, action, locked) => PopScope(
+        canPop: !locked,
+        child: AlertDialog(
+          title: Text(
+            widget.cluster == null
+                ? strings.addCluster
+                : strings.configureCluster,
+          ),
+          content: SizedBox(
+            width: 560,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  TextField(
+                    key: const ValueKey('cluster-name-input'),
+                    controller: _name,
+                    enabled: !locked,
+                    decoration: InputDecoration(
+                      labelText: strings.clusterName,
+                      border: const OutlineInputBorder(),
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 16),
+                  fields,
+                ],
+              ),
             ),
           ),
+          actions: [
+            TextButton(
+              onPressed: locked ? null : () => Navigator.pop(context),
+              child: Text(strings.cancel),
+            ),
+            action,
+          ],
         ),
-        actions: [
-          TextButton(
-            onPressed: _locked ? null : () => Navigator.pop(context),
-            child: Text(strings.cancel),
-          ),
-        ],
       ),
     );
   }

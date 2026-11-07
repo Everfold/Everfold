@@ -61,15 +61,23 @@ void main() {
           .onPressed,
       isNull,
     );
-    await tester.pump(const Duration(seconds: 1));
-    await tester.pumpAndSettle();
     expect(
       tester
           .widget<TextField>(find.byKey(const ValueKey('cluster-name-input')))
           .enabled,
       isFalse,
     );
-    await tap(tester, button);
+    await tester.binding.handlePopRoute();
+    await tester.pump();
+    expect(find.byType(AlertDialog), findsOneWidget);
+    await tester.pump(const Duration(milliseconds: 999));
+    expect(find.byType(AlertDialog), findsOneWidget);
+    expect(find.text('下一步'), findsNothing);
+    await tester.pump(const Duration(milliseconds: 1));
+    expect(find.text('下一步'), findsNothing);
+    await tester.pumpAndSettle();
+    expect(find.byType(AlertDialog), findsNothing);
+    expect(find.text('下一步'), findsNothing);
   }
 
   Future<void> add(WidgetTester tester, String name) async {
@@ -79,6 +87,41 @@ void main() {
       name,
     );
     await finishConnection(tester);
+  }
+
+  testWidgets('添加集群的取消与连接在同一操作区, 取消不增加集群', (tester) async {
+    await pumpApp(tester);
+    final container = ProviderScope.containerOf(
+      tester.element(find.byType(ClustersPage)),
+    );
+    await tap(tester, find.byKey(const ValueKey('add-cluster')));
+    final dialog = tester.widget<AlertDialog>(find.byType(AlertDialog));
+    expect(dialog.actions, hasLength(2));
+    expect(dialog.actions!.first, isA<TextButton>());
+    expect(dialog.actions!.last.key, const ValueKey('connection-connect'));
+    await tap(tester, find.text('取消'));
+    expect(find.byType(AlertDialog), findsNothing);
+    expect(container.read(clustersControllerProvider), isEmpty);
+  });
+
+  for (final provider in ['局域网', '自部署', '测试云']) {
+    testWidgets('$provider 成功后自动关闭并且仅添加一次', (tester) async {
+      await pumpApp(tester);
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(ClustersPage)),
+      );
+      await tap(tester, find.byKey(const ValueKey('add-cluster')));
+      if (provider != '局域网') {
+        await tap(tester, find.byKey(const ValueKey('login-provider')));
+        await tap(tester, find.text(provider).last);
+      }
+      expect(find.text('下一步'), findsNothing);
+      await finishConnection(tester);
+      expect(container.read(clustersControllerProvider).single.name, provider);
+      await tester.pump(const Duration(seconds: 2));
+      expect(container.read(clustersControllerProvider), hasLength(1));
+      expect(tester.takeException(), isNull);
+    });
   }
 
   testWidgets('集群与设置并列, 可添加多个并独立断开, 重命名, 移除', (tester) async {
