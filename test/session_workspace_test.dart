@@ -19,12 +19,13 @@ void main() {
     WidgetTester tester, {
     Size size = const Size(1280, 900),
     double scale = 1,
+    Locale locale = const Locale('zh'),
     Future<String?> Function()? selectWorkspace,
   }) async {
     tester.view.devicePixelRatio = 1;
     tester.view.physicalSize = size;
     tester.platformDispatcher.textScaleFactorTestValue = scale;
-    tester.platformDispatcher.localesTestValue = [const Locale('zh')];
+    tester.platformDispatcher.localesTestValue = [locale];
     addTearDown(tester.view.resetDevicePixelRatio);
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
@@ -36,7 +37,7 @@ void main() {
         preferencesStore: MemoryPreferencesStore(
           initialValues: {
             'everfold.app_settings.v1':
-                '{"language":"zh","setupStage":"complete"}',
+                '{"language":"${locale.languageCode}","setupStage":"complete"}',
           },
         ),
         child: ProviderScope(
@@ -50,6 +51,128 @@ void main() {
     );
     await tester.pumpAndSettle();
   }
+
+  for (final locale in [const Locale('zh'), const Locale('en')]) {
+    for (final (width, scale, inline) in [
+      (320.0, 1.0, false),
+      (320.0, 2.0, false),
+      (390.0, 1.0, false),
+      (840.0, 1.0, false),
+      (1280.0, 1.0, true),
+      (1280.0, 2.0, false),
+      (1920.0, 2.0, true),
+    ]) {
+      testWidgets(
+        '${locale.languageCode} 宽度 $width 字号 $scale 操作分组对齐, 创建后保持发送可达',
+        (tester) async {
+          await pumpApp(
+            tester,
+            size: Size(width, 900),
+            scale: scale,
+            locale: locale,
+          );
+          final input = find.byKey(const ValueKey('prompt-input'));
+          final model = find.byKey(const ValueKey('model-selector'));
+          final send = find.byKey(const ValueKey('send-prompt'));
+          final preset = find.byKey(const ValueKey('preset-selector'));
+          final contextActions = find.byKey(
+            const ValueKey('composer-context-actions'),
+          );
+          expect(
+            tester.getTopLeft(preset).dx,
+            closeTo(tester.getTopLeft(input).dx, 0.1),
+          );
+          expect(
+            tester.getBottomRight(send).dx,
+            closeTo(tester.getBottomRight(input).dx, 0.1),
+          );
+          expect(
+            tester.getCenter(model).dy,
+            closeTo(tester.getCenter(send).dy, 0.1),
+          );
+          expect(
+            tester.getBottomRight(model).dx,
+            lessThanOrEqualTo(tester.getTopLeft(send).dx),
+          );
+          if (inline) {
+            expect(
+              tester.getCenter(preset).dy,
+              closeTo(tester.getCenter(send).dy, 0.1),
+            );
+          } else {
+            expect(
+              tester.getTopLeft(model).dy,
+              greaterThanOrEqualTo(tester.getBottomRight(contextActions).dy),
+            );
+          }
+          await tester.enterText(input, '保存分组后的输入');
+          await tester.pumpAndSettle();
+          await tester.ensureVisible(send);
+          await tester.pumpAndSettle();
+          expect(send.hitTestable(), findsOneWidget);
+          await tester.tap(send);
+          await tester.pumpAndSettle();
+          expect(find.byType(SessionTranscript), findsOneWidget);
+          final stop = find.byKey(const ValueKey('stop-run'));
+          expect(tester.widget<IconButton>(stop).onPressed, isNull);
+          expect(
+            tester.getBottomRight(send).dx,
+            closeTo(tester.getBottomRight(input).dx, 0.1),
+          );
+          expect(
+            tester.getCenter(model).dy,
+            closeTo(tester.getCenter(send).dy, 0.1),
+          );
+          expect(tester.takeException(), isNull);
+        },
+      );
+    }
+  }
+
+  testWidgets('分组切换保留输入焦点, 草稿和上下文, 键盘下模型菜单仍可用', (tester) async {
+    final workspace = '/projects/${List.filled(60, '长目录').join()}';
+    await pumpApp(tester, selectWorkspace: () async => workspace);
+    final container = ProviderScope.containerOf(
+      tester.element(find.byType(SessionPage)),
+    );
+    final controller = container.read(sessionsControllerProvider.notifier);
+    await tester.tap(find.byKey(const ValueKey('workspace-selector')));
+    await tester.pumpAndSettle();
+    controller.setPreset(null, SessionPreset.plan);
+    final input = find.byKey(const ValueKey('prompt-input'));
+    await tester.enterText(input, '分组切换期间保留草稿');
+    await tester.pumpAndSettle();
+    final inputController = tester.widget<TextField>(input).controller!;
+    final focus = tester.widget<TextField>(input).focusNode!;
+    expect(focus.hasFocus, isTrue);
+    for (final width in [390.0, 840.0, 1280.0, 320.0]) {
+      tester.view.physicalSize = Size(width, 900);
+      await tester.pumpAndSettle();
+      expect(tester.widget<TextField>(input).controller, same(inputController));
+      expect(tester.widget<TextField>(input).focusNode, same(focus));
+      expect(focus.hasFocus, isTrue);
+      expect(inputController.text, '分组切换期间保留草稿');
+    }
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    tester.view.viewInsets = const FakeViewPadding(bottom: 360);
+    addTearDown(tester.view.resetViewInsets);
+    await tester.pumpAndSettle();
+    final model = find.byKey(const ValueKey('model-selector'));
+    await tester.ensureVisible(model);
+    await tester.pumpAndSettle();
+    expect(model.hitTestable(), findsOneWidget);
+    await tester.tap(model);
+    await tester.pumpAndSettle();
+    expect(find.text('接入模型'), findsOneWidget);
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(find.byType(Dialog), findsNothing);
+    expect(controller.state.newSession.workspace, workspace);
+    expect(controller.state.newSession.preset, SessionPreset.plan);
+    expect(controller.state.newSession.draft, '分组切换期间保留草稿');
+    expect(find.byKey(const ValueKey('stop-run')), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
 
   for (final width in [320.0, 390.0, 840.0, 1280.0]) {
     testWidgets('宽度 $width 双倍字号下提示居中, 输入区贴底且键盘不丢失草稿', (tester) async {

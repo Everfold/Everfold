@@ -171,6 +171,51 @@ class _EmptySessionBody extends StatelessWidget {
   }
 }
 
+// 环境配置靠左, 提交操作靠右, 只负责分组排列, 不持有交互状态
+class _ComposerActionGroups extends StatelessWidget {
+  const _ComposerActionGroups({
+    required this.contextActions,
+    required this.submissionActions,
+  });
+
+  final Widget contextActions;
+  final Widget submissionActions;
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) {
+      final labelSize = Theme.of(context).textTheme.labelLarge?.fontSize ?? 14;
+      final labelScale =
+          MediaQuery.textScalerOf(context).scale(labelSize) / labelSize;
+      // 600dp 是本页的排版选择, 随按钮字号扩大分行阈值, 不是 M3 规定
+      if (constraints.maxWidth >= 600 * labelScale) {
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          spacing: 16,
+          children: [
+            Expanded(child: contextActions),
+            submissionActions,
+          ],
+        );
+      }
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: contextActions,
+          ),
+          const SizedBox(height: 8),
+          Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: submissionActions,
+          ),
+        ],
+      );
+    },
+  );
+}
+
 // 输入区分为文本输入和可换行的操作栏, 不自行读写应用状态
 class _SessionComposer extends StatelessWidget {
   const _SessionComposer({
@@ -221,92 +266,107 @@ class _SessionComposer extends StatelessWidget {
             onChanged: (text) => onDraftChanged(text),
           ),
           const SizedBox(height: 8),
-          Wrap(
-            spacing: 4,
-            runSpacing: 4,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              MenuAnchor(
-                menuChildren: [
-                  // 模型接入仅预留入口, 不打开配置界面或模拟接入成功
-                  MenuItemButton(
-                    leadingIcon: const Icon(Icons.add),
-                    onPressed: () {},
-                    child: Text(strings.modelConnections),
-                  ),
-                ],
-                builder: (context, menu, _) => TextButton.icon(
-                  key: const ValueKey('model-selector'),
-                  onPressed: () => menu.isOpen ? menu.close() : menu.open(),
-                  icon: const Icon(Icons.smart_toy_outlined),
-                  label: Text(strings.noModel),
-                ),
-              ),
-              MenuAnchor(
-                menuChildren: [
-                  for (final preset in SessionPreset.values)
-                    RadioMenuButton<SessionPreset>(
-                      value: preset,
-                      groupValue: session.preset,
-                      onChanged: (value) {
-                        if (value != null) {
-                          onPresetChanged(value);
-                        }
-                      },
-                      child: Text(
-                        preset == SessionPreset.standard
-                            ? strings.standardPreset
-                            : strings.planPreset,
+          _ComposerActionGroups(
+            contextActions: Wrap(
+              key: const ValueKey('composer-context-actions'),
+              spacing: 4,
+              runSpacing: 4,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                MenuAnchor(
+                  menuChildren: [
+                    for (final preset in SessionPreset.values)
+                      RadioMenuButton<SessionPreset>(
+                        value: preset,
+                        groupValue: session.preset,
+                        onChanged: (value) {
+                          if (value != null) {
+                            onPresetChanged(value);
+                          }
+                        },
+                        child: Text(
+                          preset == SessionPreset.standard
+                              ? strings.standardPreset
+                              : strings.planPreset,
+                        ),
                       ),
+                  ],
+                  builder: (context, menu, _) => TextButton.icon(
+                    key: const ValueKey('preset-selector'),
+                    onPressed: () => menu.isOpen ? menu.close() : menu.open(),
+                    icon: const Icon(Icons.tune),
+                    label: Text(
+                      session.preset == SessionPreset.standard
+                          ? strings.standardPreset
+                          : strings.planPreset,
                     ),
-                ],
-                builder: (context, menu, _) => TextButton.icon(
-                  key: const ValueKey('preset-selector'),
-                  onPressed: () => menu.isOpen ? menu.close() : menu.open(),
-                  icon: const Icon(Icons.tune),
-                  label: Text(
-                    session.preset == SessionPreset.standard
-                        ? strings.standardPreset
-                        : strings.planPreset,
                   ),
                 ),
-              ),
-              if (session.workspace == null)
-                TextButton.icon(
-                  key: const ValueKey('workspace-selector'),
-                  onPressed: pickingWorkspace ? null : onPickWorkspace,
-                  icon: const Icon(Icons.folder_open),
-                  label: Text(strings.noWorkspace),
-                )
-              else
-                InputChip(
-                  key: const ValueKey('workspace-selector'),
-                  avatar: const Icon(Icons.folder_open, size: 18),
-                  label: Text(
-                    p.basename(p.normalize(session.workspace!)),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                if (session.workspace == null)
+                  TextButton.icon(
+                    key: const ValueKey('workspace-selector'),
+                    onPressed: pickingWorkspace ? null : onPickWorkspace,
+                    icon: const Icon(Icons.folder_open),
+                    label: Text(strings.noWorkspace),
+                  )
+                else
+                  InputChip(
+                    key: const ValueKey('workspace-selector'),
+                    avatar: const Icon(Icons.folder_open, size: 18),
+                    label: Text(
+                      p.basename(p.normalize(session.workspace!)),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    tooltip: session.workspace,
+                    onPressed: pickingWorkspace ? null : onOpenWorkspace,
+                    onDeleted: pickingWorkspace
+                        ? null
+                        : () => onClearWorkspace(),
+                    deleteButtonTooltipMessage: strings.clearWorkspace,
                   ),
-                  tooltip: session.workspace,
-                  onPressed: pickingWorkspace ? null : onOpenWorkspace,
-                  onDeleted: pickingWorkspace ? null : () => onClearWorkspace(),
-                  deleteButtonTooltipMessage: strings.clearWorkspace,
+              ],
+            ),
+            submissionActions: Row(
+              key: const ValueKey('composer-submission-actions'),
+              mainAxisSize: MainAxisSize.min,
+              spacing: 4,
+              children: [
+                // 模型与发送保持同一行, 极窄空间仅让标准按钮内的文字换行
+                Flexible(
+                  child: MenuAnchor(
+                    menuChildren: [
+                      // 模型接入仅预留入口, 不打开配置界面或模拟接入成功
+                      MenuItemButton(
+                        leadingIcon: const Icon(Icons.add),
+                        onPressed: () {},
+                        child: Text(strings.modelConnections),
+                      ),
+                    ],
+                    builder: (context, menu, _) => TextButton.icon(
+                      key: const ValueKey('model-selector'),
+                      onPressed: () => menu.isOpen ? menu.close() : menu.open(),
+                      icon: const Icon(Icons.smart_toy_outlined),
+                      label: Text(strings.noModel),
+                    ),
+                  ),
                 ),
-              if (showStop)
-                IconButton(
-                  key: const ValueKey('stop-run'),
-                  tooltip: strings.stopRun,
-                  // 已有会话仍未接入执行引擎, 不提供虚假的停止行为
-                  onPressed: null,
-                  icon: const Icon(Icons.stop_circle_outlined),
+                if (showStop)
+                  IconButton(
+                    key: const ValueKey('stop-run'),
+                    tooltip: strings.stopRun,
+                    // 已有会话仍未接入执行引擎, 不提供虚假的停止行为
+                    onPressed: null,
+                    icon: const Icon(Icons.stop_circle_outlined),
+                  ),
+                IconButton.filled(
+                  key: const ValueKey('send-prompt'),
+                  tooltip: strings.sendPrompt,
+                  onPressed: session.draft.trim().isEmpty ? null : onSubmit,
+                  icon: const Icon(Icons.arrow_upward),
                 ),
-              IconButton.filled(
-                key: const ValueKey('send-prompt'),
-                tooltip: strings.sendPrompt,
-                onPressed: session.draft.trim().isEmpty ? null : onSubmit,
-                icon: const Icon(Icons.arrow_upward),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
