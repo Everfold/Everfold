@@ -6,6 +6,7 @@ import '../../../../l10n/app_localizations.dart';
 /// 校验 RGB 输入后返回不透明 ARGB, 保存由设置页统一处理
 class SeedColorDialog extends HookWidget {
   const SeedColorDialog({super.key, required this.initialColor});
+
   final int initialColor;
 
   @override
@@ -27,6 +28,7 @@ class SeedColorDialog extends HookWidget {
       }
     }
 
+    // 输入校验留在弹窗, 取消不返回颜色, 也不会触发设置保存
     return AlertDialog(
       constraints: const BoxConstraints(maxWidth: 560),
       title: Text(strings.editColor),

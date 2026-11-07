@@ -9,7 +9,9 @@ enum _ConnectionStatus { idle, connecting, succeeded }
 
 enum _CertificateSource { file, qr }
 
-// 连接界面尚未接入后端, 不访问网络, 文件, 摄像头或凭据存储
+/// 组合连接字段和主操作, 支持引导内联布局与集群弹窗布局
+///
+/// 尚未接入后端, 不访问网络, 文件, 摄像头或凭据存储
 class ConnectionForm extends StatefulWidget {
   const ConnectionForm({
     super.key,
@@ -23,8 +25,14 @@ class ConnectionForm extends StatefulWidget {
 
   final bool saving;
   final VoidCallback? onConnectionStarted;
+
+  /// 仅返回非敏感配置, 不携带账号, 密码或证书内容
   final ValueChanged<ClusterConfiguration> onNext;
+
+  /// 为 `true` 时连接成功后自动提交, 否则等待用户点击下一步
   final bool advanceOnSuccess;
+
+  /// 调用方可安排字段与主按钮的位置, 锁定状态仍由表单统一提供
   final Widget Function(Widget fields, Widget action, bool locked)?
   layoutBuilder;
   final ClusterConfiguration initialConfiguration;
@@ -44,6 +52,7 @@ class _ConnectionFormState extends State<ConnectionForm> {
   _ConnectionStatus _status = _ConnectionStatus.idle;
   Timer? _timer;
 
+  // 字段锁与主按钮锁分开: 引导成功后字段冻结, 但下一步仍需可点击
   bool get _locked => widget.saving || _status != _ConnectionStatus.idle;
   bool get _actionBusy =>
       widget.saving ||
@@ -151,6 +160,7 @@ class _ConnectionFormState extends State<ConnectionForm> {
     );
   }
 
+  // 这里只显示来源选择状态, 不读取文件或启动摄像头
   Widget _certificate(String slot, String label) {
     final strings = AppLocalizations.of(context)!;
     final selected = _certificates[slot];
@@ -220,13 +230,32 @@ class _ConnectionFormState extends State<ConnectionForm> {
   @override
   Widget build(BuildContext context) {
     final strings = AppLocalizations.of(context)!;
+    final fields = _buildFields(strings);
+    final action = _buildAction(strings);
+
+    // 集群弹窗接管布局, 将主按钮与取消放在 actions; 引导使用下方默认排列
+    final layoutBuilder = widget.layoutBuilder;
+    if (layoutBuilder != null) return layoutBuilder(fields, action, _locked);
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        fields,
+        const SizedBox(height: 24),
+        Align(alignment: Alignment.centerRight, child: action),
+      ],
+    );
+  }
+
+  // 字段区根据服务类型和验证方式展开, 控制器与证书来源状态仍由本 State 持有
+  Widget _buildFields(AppLocalizations strings) {
     final cloud = _provider == 'testCloud';
     final selfHosted = _provider == 'selfHosted';
     final credentials = cloud || (selfHosted && _verification == 'credentials');
     final connecting = _status == _ConnectionStatus.connecting;
     final succeeded = _status == _ConnectionStatus.succeeded;
-    final awaitingNext = succeeded && !widget.advanceOnSuccess;
-    final fields = Column(
+
+    return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -310,7 +339,14 @@ class _ConnectionFormState extends State<ConnectionForm> {
         ],
       ],
     );
-    final action = FilledButton.icon(
+  }
+
+  // 主操作区独立于字段排列, 供引导页面和连接弹窗使用同一套按钮状态
+  Widget _buildAction(AppLocalizations strings) {
+    final cloud = _provider == 'testCloud';
+    final awaitingNext =
+        _status == _ConnectionStatus.succeeded && !widget.advanceOnSuccess;
+    return FilledButton.icon(
       key: const ValueKey('connection-connect'),
       onPressed: _actionBusy ? null : _connect,
       icon: Icon(
@@ -321,17 +357,6 @@ class _ConnectionFormState extends State<ConnectionForm> {
             ? strings.nextStep
             : (cloud ? strings.loginAction : strings.connectAction),
       ),
-    );
-    final layoutBuilder = widget.layoutBuilder;
-    if (layoutBuilder != null) return layoutBuilder(fields, action, _locked);
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        fields,
-        const SizedBox(height: 24),
-        Align(alignment: Alignment.centerRight, child: action),
-      ],
     );
   }
 }

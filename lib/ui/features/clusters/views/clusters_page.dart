@@ -10,6 +10,7 @@ import 'cluster_labels.dart';
 
 typedef _ConnectionChoice = ({String name, ClusterConfiguration configuration});
 
+/// 组合添加入口, 空状态与集群列表, 协调弹窗结果和 Application 命令
 class ClustersPage extends ConsumerWidget {
   const ClustersPage({super.key});
 
@@ -18,6 +19,7 @@ class ClustersPage extends ConsumerWidget {
     final strings = AppLocalizations.of(context)!;
     final clusters = ref.watch(clustersControllerProvider);
     final controller = ref.read(clustersControllerProvider.notifier);
+    // 交互入口集中在页面: 先等待弹窗确认, 再更新对应集群
     Future<void> connect([ClusterConnection? cluster]) async {
       final choice = await showDialog<_ConnectionChoice>(
         context: context,
@@ -86,79 +88,13 @@ class ClustersPage extends ConsumerWidget {
             Text(strings.clusterEmptyBody),
           ],
           for (final cluster in clusters)
-            ExpansionTile(
-              key: PageStorageKey('cluster-${cluster.id}'),
-              leading: Icon(
-                cluster.status == ClusterStatus.connected
-                    ? Icons.cloud_done_outlined
-                    : Icons.cloud_off_outlined,
-              ),
-              title: Text(cluster.name),
-              subtitle: Text(
-                [
-                  clusterServiceLabel(strings, cluster.configuration.service),
-                  cluster.status == ClusterStatus.connected
-                      ? strings.clusterConnected
-                      : strings.clusterDisconnected,
-                ].join(' · '),
-              ),
-              children: [
-                if (cluster.configuration.service ==
-                    ClusterService.selfHosted) ...[
-                  ListTile(
-                    title: Text(strings.serverIp),
-                    subtitle: Text(cluster.configuration.ip),
-                  ),
-                  ListTile(
-                    title: Text(strings.serverPort),
-                    subtitle: Text(cluster.configuration.port),
-                  ),
-                  ListTile(
-                    title: Text(strings.verificationLabel),
-                    subtitle: Text(
-                      clusterVerificationLabel(
-                        strings,
-                        cluster.configuration.verification,
-                      ),
-                    ),
-                  ),
-                ],
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      OutlinedButton.icon(
-                        key: ValueKey('cluster-connect-${cluster.id}'),
-                        onPressed: cluster.status == ClusterStatus.connected
-                            ? () => controller.disconnect(cluster.id)
-                            : () => connect(cluster),
-                        icon: Icon(
-                          cluster.status == ClusterStatus.connected
-                              ? Icons.link_off
-                              : Icons.link,
-                        ),
-                        label: Text(
-                          cluster.status == ClusterStatus.connected
-                              ? strings.disconnectCluster
-                              : strings.configureCluster,
-                        ),
-                      ),
-                      TextButton(
-                        key: ValueKey('cluster-rename-${cluster.id}'),
-                        onPressed: () => rename(cluster),
-                        child: Text(strings.renameCluster),
-                      ),
-                      TextButton(
-                        key: ValueKey('cluster-remove-${cluster.id}'),
-                        onPressed: () => remove(cluster),
-                        child: Text(strings.removeCluster),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+            _ClusterEntry(
+              cluster: cluster,
+              onConnectionAction: cluster.status == ClusterStatus.connected
+                  ? () => controller.disconnect(cluster.id)
+                  : () => connect(cluster),
+              onRename: () => rename(cluster),
+              onRemove: () => remove(cluster),
             ),
         ],
       ),
@@ -166,6 +102,99 @@ class ClustersPage extends ConsumerWidget {
   }
 }
 
+// 单个集群的展开区: 摘要, 自部署配置, 操作按钮, 不自行读写连接状态
+class _ClusterEntry extends StatelessWidget {
+  const _ClusterEntry({
+    required this.cluster,
+    required this.onConnectionAction,
+    required this.onRename,
+    required this.onRemove,
+  });
+
+  final ClusterConnection cluster;
+  final VoidCallback onConnectionAction;
+  final VoidCallback onRename;
+  final VoidCallback onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = AppLocalizations.of(context)!;
+    // 保留原 PageStorageKey, 连接状态变化时不会丢失该集群的展开状态
+    return ExpansionTile(
+      key: PageStorageKey('cluster-${cluster.id}'),
+      leading: Icon(
+        cluster.status == ClusterStatus.connected
+            ? Icons.cloud_done_outlined
+            : Icons.cloud_off_outlined,
+      ),
+      title: Text(cluster.name),
+      subtitle: Text(
+        [
+          clusterServiceLabel(strings, cluster.configuration.service),
+          cluster.status == ClusterStatus.connected
+              ? strings.clusterConnected
+              : strings.clusterDisconnected,
+        ].join(' · '),
+      ),
+      children: [
+        if (cluster.configuration.service == ClusterService.selfHosted) ...[
+          ListTile(
+            title: Text(strings.serverIp),
+            subtitle: Text(cluster.configuration.ip),
+          ),
+          ListTile(
+            title: Text(strings.serverPort),
+            subtitle: Text(cluster.configuration.port),
+          ),
+          ListTile(
+            title: Text(strings.verificationLabel),
+            subtitle: Text(
+              clusterVerificationLabel(
+                strings,
+                cluster.configuration.verification,
+              ),
+            ),
+          ),
+        ],
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              OutlinedButton.icon(
+                key: ValueKey('cluster-connect-${cluster.id}'),
+                onPressed: onConnectionAction,
+                icon: Icon(
+                  cluster.status == ClusterStatus.connected
+                      ? Icons.link_off
+                      : Icons.link,
+                ),
+                label: Text(
+                  cluster.status == ClusterStatus.connected
+                      ? strings.disconnectCluster
+                      : strings.configureCluster,
+                ),
+              ),
+              TextButton(
+                key: ValueKey('cluster-rename-${cluster.id}'),
+                onPressed: onRename,
+                child: Text(strings.renameCluster),
+              ),
+              TextButton(
+                key: ValueKey('cluster-remove-${cluster.id}'),
+                onPressed: onRemove,
+                child: Text(strings.removeCluster),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// 弹窗只收集配置并返回结果, 列表更新仍由 ClustersPage 处理
 class _ClusterConnectionDialog extends StatefulWidget {
   const _ClusterConnectionDialog({this.cluster});
   final ClusterConnection? cluster;
@@ -198,6 +227,7 @@ class _ClusterConnectionDialogState extends State<_ClusterConnectionDialog> {
             : _name.text.trim(),
         configuration: configuration,
       )),
+      // 表单提供字段, 主操作和锁定状态, 弹窗只把取消与主操作排在同一区域
       layoutBuilder: (fields, action, locked) => PopScope(
         canPop: !locked,
         child: AlertDialog(
