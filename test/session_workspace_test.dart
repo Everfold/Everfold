@@ -109,7 +109,7 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('cloud-navigation')));
     await tester.pumpAndSettle();
     expect(find.byType(SessionPage), findsNothing);
-    expect(find.text('云服务'), findsNWidgets(2));
+    expect(find.text('集群'), findsNWidgets(2));
     container.read(appRouterProvider).pop();
     await tester.pumpAndSettle();
     expect(find.byType(SessionPage), findsOneWidget);

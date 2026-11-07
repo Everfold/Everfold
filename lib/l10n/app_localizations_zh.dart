@@ -175,7 +175,67 @@ class AppLocalizationsZh extends AppLocalizations {
   String get loginAction => '登录';
 
   @override
-  String get loginUnavailable => '集群登录暂未接入';
+  String get connectAction => '连接';
+
+  @override
+  String get nextStep => '下一步';
+
+  @override
+  String get serverIp => 'IP';
+
+  @override
+  String get serverPort => '端口';
+
+  @override
+  String get verificationLabel => '验证';
+
+  @override
+  String get verificationNone => '无';
+
+  @override
+  String get verificationCredentials => '用户名/密码';
+
+  @override
+  String get serverCertificate => '服务端证书';
+
+  @override
+  String get usernameLabel => '用户名';
+
+  @override
+  String get passwordLabel => '密码';
+
+  @override
+  String get publicKey => '公钥';
+
+  @override
+  String get privateKey => '私钥';
+
+  @override
+  String get chooseLocalFile => '选择本地文件';
+
+  @override
+  String get scanQrCode => '扫描二维码';
+
+  @override
+  String get certificateFileSelected => '已选择文件';
+
+  @override
+  String get certificateQrSelected => '已获取二维码内容';
+
+  @override
+  String get clearCertificate => '清除选择';
+
+  @override
+  String get connectingStatus => '正在尝试连接';
+
+  @override
+  String get signingInStatus => '正在尝试登录';
+
+  @override
+  String get connectionSucceeded => '连接成功';
+
+  @override
+  String get signInSucceeded => '登录成功';
 
   @override
   String get continueLocal => '跳过, 使用本地模式';

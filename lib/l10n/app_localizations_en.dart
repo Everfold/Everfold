@@ -182,7 +182,67 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginAction => 'Sign in';
 
   @override
-  String get loginUnavailable => 'Cloud sign-in is not connected yet';
+  String get connectAction => 'Connect';
+
+  @override
+  String get nextStep => 'Next';
+
+  @override
+  String get serverIp => 'IP';
+
+  @override
+  String get serverPort => 'Port';
+
+  @override
+  String get verificationLabel => 'Verification';
+
+  @override
+  String get verificationNone => 'None';
+
+  @override
+  String get verificationCredentials => 'Username/password';
+
+  @override
+  String get serverCertificate => 'Server certificate';
+
+  @override
+  String get usernameLabel => 'Username';
+
+  @override
+  String get passwordLabel => 'Password';
+
+  @override
+  String get publicKey => 'Public key';
+
+  @override
+  String get privateKey => 'Private key';
+
+  @override
+  String get chooseLocalFile => 'Choose local file';
+
+  @override
+  String get scanQrCode => 'Scan QR code';
+
+  @override
+  String get certificateFileSelected => 'File selected';
+
+  @override
+  String get certificateQrSelected => 'QR content received';
+
+  @override
+  String get clearCertificate => 'Clear selection';
+
+  @override
+  String get connectingStatus => 'Connecting';
+
+  @override
+  String get signingInStatus => 'Signing in';
+
+  @override
+  String get connectionSucceeded => 'Connected';
+
+  @override
+  String get signInSucceeded => 'Signed in';
 
   @override
   String get continueLocal => 'Continue in local mode';

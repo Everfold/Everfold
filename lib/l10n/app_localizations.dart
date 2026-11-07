@@ -428,11 +428,131 @@ abstract class AppLocalizations {
   /// **'登录'**
   String get loginAction;
 
-  /// No description provided for @loginUnavailable.
+  /// No description provided for @connectAction.
   ///
   /// In zh, this message translates to:
-  /// **'集群登录暂未接入'**
-  String get loginUnavailable;
+  /// **'连接'**
+  String get connectAction;
+
+  /// No description provided for @nextStep.
+  ///
+  /// In zh, this message translates to:
+  /// **'下一步'**
+  String get nextStep;
+
+  /// No description provided for @serverIp.
+  ///
+  /// In zh, this message translates to:
+  /// **'IP'**
+  String get serverIp;
+
+  /// No description provided for @serverPort.
+  ///
+  /// In zh, this message translates to:
+  /// **'端口'**
+  String get serverPort;
+
+  /// No description provided for @verificationLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'验证'**
+  String get verificationLabel;
+
+  /// No description provided for @verificationNone.
+  ///
+  /// In zh, this message translates to:
+  /// **'无'**
+  String get verificationNone;
+
+  /// No description provided for @verificationCredentials.
+  ///
+  /// In zh, this message translates to:
+  /// **'用户名/密码'**
+  String get verificationCredentials;
+
+  /// No description provided for @serverCertificate.
+  ///
+  /// In zh, this message translates to:
+  /// **'服务端证书'**
+  String get serverCertificate;
+
+  /// No description provided for @usernameLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'用户名'**
+  String get usernameLabel;
+
+  /// No description provided for @passwordLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'密码'**
+  String get passwordLabel;
+
+  /// No description provided for @publicKey.
+  ///
+  /// In zh, this message translates to:
+  /// **'公钥'**
+  String get publicKey;
+
+  /// No description provided for @privateKey.
+  ///
+  /// In zh, this message translates to:
+  /// **'私钥'**
+  String get privateKey;
+
+  /// No description provided for @chooseLocalFile.
+  ///
+  /// In zh, this message translates to:
+  /// **'选择本地文件'**
+  String get chooseLocalFile;
+
+  /// No description provided for @scanQrCode.
+  ///
+  /// In zh, this message translates to:
+  /// **'扫描二维码'**
+  String get scanQrCode;
+
+  /// No description provided for @certificateFileSelected.
+  ///
+  /// In zh, this message translates to:
+  /// **'已选择文件'**
+  String get certificateFileSelected;
+
+  /// No description provided for @certificateQrSelected.
+  ///
+  /// In zh, this message translates to:
+  /// **'已获取二维码内容'**
+  String get certificateQrSelected;
+
+  /// No description provided for @clearCertificate.
+  ///
+  /// In zh, this message translates to:
+  /// **'清除选择'**
+  String get clearCertificate;
+
+  /// No description provided for @connectingStatus.
+  ///
+  /// In zh, this message translates to:
+  /// **'正在尝试连接'**
+  String get connectingStatus;
+
+  /// No description provided for @signingInStatus.
+  ///
+  /// In zh, this message translates to:
+  /// **'正在尝试登录'**
+  String get signingInStatus;
+
+  /// No description provided for @connectionSucceeded.
+  ///
+  /// In zh, this message translates to:
+  /// **'连接成功'**
+  String get connectionSucceeded;
+
+  /// No description provided for @signInSucceeded.
+  ///
+  /// In zh, this message translates to:
+  /// **'登录成功'**
+  String get signInSucceeded;
 
   /// No description provided for @continueLocal.
   ///

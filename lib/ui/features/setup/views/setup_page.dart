@@ -7,8 +7,9 @@ import '../../../../domain/common/result.dart';
 import '../../../../domain/settings/app_settings.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../settings/views/settings_page.dart';
+import 'connection_form.dart';
 
-/// 首次启动流程只推进本地配置, 不模拟认证成功
+// 首次启动的连接界面暂不执行真实认证
 class SetupPage extends HookConsumerWidget {
   const SetupPage({super.key, required this.settings});
   final AppSettings settings;
@@ -20,7 +21,8 @@ class SetupPage extends HookConsumerWidget {
     final busy = useState(false);
     final failed = useState(false);
     final selectedMode = useState(settings.connectionMode);
-    final provider = useState('lan');
+    final connecting = useState(false);
+    final pageBusy = busy.value || connecting.value;
     Future<void> run(Future<Result<void>> Function() operation) async {
       if (busy.value) return;
       busy.value = true;
@@ -98,41 +100,17 @@ class SetupPage extends HookConsumerWidget {
             ],
           ),
         ),
-      if (stage == AppSetupStage.login) ...[
-        DropdownMenu<String>(
-          initialSelection: provider.value,
-          expandedInsets: EdgeInsets.zero,
-          enabled: !busy.value,
-          label: Text(strings.identityProvider),
-          dropdownMenuEntries: [
-            DropdownMenuEntry(value: 'lan', label: strings.lanProvider),
-            DropdownMenuEntry(
-              value: 'selfHosted',
-              label: strings.selfHostedProvider,
-            ),
-            DropdownMenuEntry(
-              value: 'testCloud',
-              label: strings.testCloudProvider,
-            ),
-          ],
-          onSelected: (value) {
-            if (value != null) provider.value = value;
-          },
+      if (stage == AppSetupStage.login)
+        ConnectionForm(
+          saving: busy.value,
+          onConnectingChanged: (value) => connecting.value = value,
+          onNext: () => run(controller.continueConnectionSetup),
         ),
-        const SizedBox(height: 24),
-        Text(strings.loginUnavailable),
-        const SizedBox(height: 16),
-        FilledButton.icon(
-          onPressed: null,
-          icon: const Icon(Icons.login),
-          label: Text(strings.loginAction),
-        ),
-      ],
     ];
     return PopScope(
       canPop: intro,
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop && !busy.value) back();
+        if (!didPop && !pageBusy) back();
       },
       child: Scaffold(
         appBar: intro
@@ -142,7 +120,7 @@ class SetupPage extends HookConsumerWidget {
                 automaticallyImplyLeading: false,
                 leading: IconButton(
                   tooltip: strings.back,
-                  onPressed: busy.value ? null : back,
+                  onPressed: pageBusy ? null : back,
                   icon: const Icon(Icons.arrow_back),
                 ),
               ),
@@ -185,7 +163,7 @@ class SetupPage extends HookConsumerWidget {
                           ),
                         if (stage == AppSetupStage.login)
                           TextButton(
-                            onPressed: busy.value
+                            onPressed: pageBusy
                                 ? null
                                 : () => run(
                                     () => controller.chooseConnectionMode(
