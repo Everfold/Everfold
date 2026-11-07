@@ -18,7 +18,6 @@
   "storageFailure": "无法访问本地存储, 请重试",
   "unexpectedFailure": "操作未完成, 请重试",
   "saveFailure": "无法保存设置, 请重试",
-  "openSettings": "打开设置",
   "brightnessTitle": "明暗模式",
   "followSystem": "跟随系统",
   "lightAppearance": "浅色",

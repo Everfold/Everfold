@@ -47,6 +47,13 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  Future<void> openSettings(WidgetTester tester) async {
+    await tester.tap(find.byIcon(Icons.menu));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('settings-navigation')));
+    await tester.pumpAndSettle();
+  }
+
   Future<void> tap(WidgetTester tester, Finder target) async {
     final scrollable = find
         .descendant(
@@ -82,8 +89,7 @@ void main() {
       tester.element(find.byType(SessionPage)),
     );
     final router = container.read(appRouterProvider);
-    await tester.tap(find.byTooltip('打开设置'));
-    await tester.pumpAndSettle();
+    await openSettings(tester);
     await choice(tester, 'colorMode-custom');
     await tap(tester, find.byKey(ValueKey('seed-${Colors.teal.toARGB32()}')));
     expect(
@@ -185,8 +191,7 @@ void main() {
       tester.element(find.byType(SessionPage)),
     );
     final before = container.read(appSettingsControllerProvider).requireValue;
-    await tester.tap(find.byTooltip('打开设置'));
-    await tester.pumpAndSettle();
+    await openSettings(tester);
     await tap(tester, find.byKey(ValueKey('seed-${Colors.red.toARGB32()}')));
     expect(find.text('无法保存设置, 请重试'), findsOneWidget);
     expect(container.read(appSettingsControllerProvider).requireValue, before);
@@ -230,8 +235,7 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
     await pumpApp(tester, MemoryPreferencesStore());
-    await tester.tap(find.byTooltip('打开设置'));
-    await tester.pumpAndSettle();
+    await openSettings(tester);
     await choice(tester, 'colorMode-custom');
     await tap(tester, find.byTooltip('编辑颜色'));
     await tester.enterText(

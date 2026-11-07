@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -65,9 +64,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get saveFailure => '无法保存设置, 请重试';
-
-  @override
-  String get openSettings => '打开设置';
 
   @override
   String get brightnessTitle => '明暗模式';

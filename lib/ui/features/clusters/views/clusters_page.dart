@@ -65,9 +65,9 @@ class ClustersPage extends ConsumerWidget {
     return SafeArea(
       child: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 840),
+          constraints: const BoxConstraints(maxWidth: 920),
           child: ListView(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(16),
             children: [
               Align(
                 alignment: Alignment.centerLeft,

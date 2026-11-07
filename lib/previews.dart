@@ -20,6 +20,16 @@ Widget setupPreview() => _preview(initialized: false);
 /// 已初始化的会话工作区预览
 @Preview(name: 'Workspace · Mobile', size: Size(390, 844))
 @Preview(name: 'Workspace · Desktop', size: Size(1280, 900))
+@Preview(
+  name: 'Workspace · Compact large text',
+  size: Size(320, 900),
+  textScaleFactor: 2,
+)
+@Preview(
+  name: 'Workspace · Sidebar breakpoint',
+  size: Size(840, 900),
+  textScaleFactor: 2,
+)
 Widget workspacePreview() => _preview(initialized: true);
 
 @Preview(name: 'Connection · Mobile', size: Size(390, 844))

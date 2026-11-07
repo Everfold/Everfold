@@ -51,6 +51,103 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  testWidgets('桌面没有全局顶栏, 正文标题与内容左边缘对齐且设置入口唯一', (tester) async {
+    await pumpApp(tester);
+    final heading = find.byKey(const ValueKey('workspace-page-title'));
+    expect(find.byType(AppBar), findsNothing);
+    expect(find.byIcon(Icons.settings_outlined), findsOneWidget);
+    expect(find.text('Everfold'), findsOneWidget);
+    expect(heading, findsNothing);
+
+    await tester.tap(find.byKey(const ValueKey('settings-navigation')));
+    await tester.pumpAndSettle();
+    expect(tester.widget<Text>(heading).data, '设置');
+    expect(
+      tester.getTopLeft(heading).dx,
+      tester.getTopLeft(find.text('明暗模式')).dx,
+    );
+    expect(
+      tester.getTopLeft(heading).dy,
+      lessThan(tester.getTopLeft(find.text('明暗模式')).dy),
+    );
+
+    await tester.tap(find.byKey(const ValueKey('cloud-navigation')));
+    await tester.pumpAndSettle();
+    expect(tester.widget<Text>(heading).data, '集群');
+    expect(
+      tester.getTopLeft(heading).dx,
+      tester.getTopLeft(find.byKey(const ValueKey('add-cluster'))).dx,
+    );
+    expect(find.byType(AppBar), findsNothing);
+    expect(find.byIcon(Icons.settings_outlined), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('切换窗口宽度保留会话草稿和路由, 会话标题随重命名更新', (tester) async {
+    await pumpApp(tester);
+    final container = ProviderScope.containerOf(
+      tester.element(find.byType(SessionPage)),
+    );
+    final controller = container.read(sessionsControllerProvider.notifier);
+    final router = container.read(appRouterProvider);
+    controller.setDraft(null, '当前会话');
+    final id = controller.submit(null)!;
+    router.go('/sessions/$id');
+    await tester.pumpAndSettle();
+    final heading = find.byKey(const ValueKey('workspace-page-title'));
+    expect(tester.widget<Text>(heading).data, '当前会话');
+    final input = find.byKey(const ValueKey('prompt-input'));
+    await tester.enterText(input, '尚未发送的草稿');
+
+    for (final width in [390.0, 840.0, 1280.0, 320.0]) {
+      tester.view.physicalSize = Size(width, 900);
+      await tester.pumpAndSettle();
+      expect(container.read(appRouterProvider), same(router));
+      expect(router.routeInformationProvider.value.uri.path, '/sessions/$id');
+      expect(tester.widget<TextField>(input).controller!.text, '尚未发送的草稿');
+      expect(heading, findsOneWidget);
+      expect(
+        find.ancestor(of: heading, matching: find.byType(AppBar)),
+        width < 840 ? findsOneWidget : findsNothing,
+      );
+    }
+    final longTitle = List.filled(25, '长会话名称').join();
+    controller.rename(id, longTitle);
+    await tester.pumpAndSettle();
+    expect(tester.widget<Text>(heading).data, longTitle);
+    expect(tester.widget<Text>(heading).overflow, TextOverflow.ellipsis);
+    expect(tester.takeException(), isNull);
+  });
+
+  for (final width in [320.0, 390.0, 839.0, 840.0, 1280.0]) {
+    testWidgets('宽度 $width 双倍字号下设置和集群标题只在正确位置显示', (tester) async {
+      await pumpApp(tester, size: Size(width, 900), scale: 2);
+      final heading = find.byKey(const ValueKey('workspace-page-title'));
+      for (final destination in [
+        (key: 'settings-navigation', title: '设置'),
+        (key: 'cloud-navigation', title: '集群'),
+      ]) {
+        if (width < 840) {
+          await tester.tap(find.byIcon(Icons.menu));
+          await tester.pumpAndSettle();
+        }
+        await tester.tap(find.byKey(ValueKey(destination.key)));
+        await tester.pumpAndSettle();
+        expect(heading, findsOneWidget);
+        expect(tester.widget<Text>(heading).data, destination.title);
+        expect(
+          find.ancestor(of: heading, matching: find.byType(AppBar)),
+          width < 840 ? findsOneWidget : findsNothing,
+        );
+        expect(
+          find.byIcon(Icons.settings_outlined),
+          width < 840 ? findsNothing : findsOneWidget,
+        );
+        expect(tester.takeException(), isNull);
+      }
+    });
+  }
+
   testWidgets('提交成为未发送会话, 草稿和会话切换保留, 停止不可用', (tester) async {
     await pumpApp(tester);
     expect(find.byType(NavigationBar), findsNothing);
@@ -282,7 +379,13 @@ void main() {
     );
     await tester.tap(find.text('保存'));
     await tester.pumpAndSettle();
-    expect(find.text('新的会话名称'), findsOneWidget);
+    expect(find.text('新的会话名称'), findsNWidgets(2));
+    expect(
+      tester
+          .widget<Text>(find.byKey(const ValueKey('workspace-page-title')))
+          .data,
+      '新的会话名称',
+    );
     await tester.tap(menu);
     await tester.pumpAndSettle();
     await tester.tap(find.text('删除'));

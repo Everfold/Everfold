@@ -19,7 +19,7 @@ class SessionTranscript extends StatelessWidget {
     final strings = AppLocalizations.of(context)!;
     return ListView.builder(
       key: PageStorageKey('transcript-$storageId'),
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(16),
       itemCount: messages.length,
       itemBuilder: (context, index) {
         final message = messages[index];

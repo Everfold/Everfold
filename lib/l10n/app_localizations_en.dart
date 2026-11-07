@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -31,8 +30,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get configurationFailure => 'The network service is not configured';
 
   @override
-  String get networkFailure =>
-      'Unable to connect. Check your network connection';
+  String get networkFailure => 'Unable to connect. Check your network connection';
 
   @override
   String get timeoutFailure => 'The request timed out. Try again later';
@@ -41,8 +39,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cancelledFailure => 'The operation was cancelled';
 
   @override
-  String get unauthorizedFailure =>
-      'Authentication is required for this action';
+  String get unauthorizedFailure => 'Authentication is required for this action';
 
   @override
   String get forbiddenFailure => 'You do not have permission for this action';
@@ -63,14 +60,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get storageFailure => 'Unable to access local storage. Try again';
 
   @override
-  String get unexpectedFailure =>
-      'The operation could not be completed. Try again';
+  String get unexpectedFailure => 'The operation could not be completed. Try again';
 
   @override
   String get saveFailure => 'Unable to save settings. Try again';
-
-  @override
-  String get openSettings => 'Open settings';
 
   @override
   String get brightnessTitle => 'Appearance';
@@ -118,22 +111,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get featureSessions => 'Keep tasks in sessions';
 
   @override
-  String get featureSessionsBody =>
-      'Prompts, responses, and tool activity stay together';
+  String get featureSessionsBody => 'Prompts, responses, and tool activity stay together';
 
   @override
   String get featureModels => 'Choose your models';
 
   @override
-  String get featureModelsBody =>
-      'Local mode can also connect to third-party model services';
+  String get featureModelsBody => 'Local mode can also connect to third-party model services';
 
   @override
   String get featureWorkspace => 'Work in context';
 
   @override
-  String get featureWorkspaceBody =>
-      'Keep prompts, presets, and workspaces in one workflow';
+  String get featureWorkspaceBody => 'Keep prompts, presets, and workspaces in one workflow';
 
   @override
   String get startSetup => 'Get started';
@@ -148,8 +138,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get localMode => 'Local only';
 
   @override
-  String get localModeBody =>
-      'Without Everfold cloud, with third-party model support';
+  String get localModeBody => 'Without Everfold cloud, with third-party model support';
 
   @override
   String get cloudMode => 'Connect to cloud';
@@ -272,8 +261,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clusterEmptyTitle => 'No clusters yet';
 
   @override
-  String get clusterEmptyBody =>
-      'Add local network, self-hosted, or test cloud clusters and manage each connection independently';
+  String get clusterEmptyBody => 'Add local network, self-hosted, or test cloud clusters and manage each connection independently';
 
   @override
   String get clusterName => 'Cluster name';
@@ -288,8 +276,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get removeClusterTitle => 'Remove this cluster?';
 
   @override
-  String get removeClusterBody =>
-      'Only this cluster will be removed. Other clusters and sessions are unaffected';
+  String get removeClusterBody => 'Only this cluster will be removed. Other clusters and sessions are unaffected';
 
   @override
   String get disconnectCluster => 'Disconnect';
@@ -340,8 +327,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get workspaceDirectory => 'Linked directory';
 
   @override
-  String get workspaceContextBody =>
-      'This directory is linked only to this session. Files are not read or sent automatically. Removing the link does not delete local files';
+  String get workspaceContextBody => 'This directory is linked only to this session. Files are not read or sent automatically. Removing the link does not delete local files';
 
   @override
   String get changeWorkspace => 'Change directory';
@@ -365,8 +351,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteSessionTitle => 'Delete session?';
 
   @override
-  String get deleteSessionBody =>
-      'This session and its prompts will be removed';
+  String get deleteSessionBody => 'This session and its prompts will be removed';
 
   @override
   String get messageUser => 'You';

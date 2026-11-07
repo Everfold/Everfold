@@ -35,7 +35,9 @@ void main() {
   }
 
   Future<void> openSettings(WidgetTester tester) async {
-    await tester.tap(find.byTooltip('打开设置'));
+    await tester.tap(find.byIcon(Icons.menu));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('settings-navigation')));
     await tester.pumpAndSettle();
   }
 

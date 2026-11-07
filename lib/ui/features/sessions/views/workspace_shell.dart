@@ -22,11 +22,16 @@ class WorkspaceShell extends ConsumerWidget {
     final strings = AppLocalizations.of(context)!;
     final sessions = ref.watch(sessionsControllerProvider).sessions;
     final controller = ref.read(sessionsControllerProvider.notifier);
+    final currentSession = sessions
+        .where((session) => location == '/sessions/${session.id}')
+        .firstOrNull;
     final title = location == '/settings'
         ? strings.settingsDestination
         : location == '/cloud'
         ? strings.cloudServices
-        : 'Everfold';
+        : currentSession == null || currentSession.title.isEmpty
+        ? strings.newSession
+        : currentSession.title;
     return LayoutBuilder(
       builder: (context, constraints) {
         final wide = constraints.maxWidth >= 840;
@@ -151,26 +156,55 @@ class WorkspaceShell extends ConsumerWidget {
           ),
         );
         return Scaffold(
-          appBar: AppBar(
-            title: Text(title, maxLines: 1, overflow: TextOverflow.ellipsis),
-            actions: [
-              if (location != '/settings')
-                IconButton(
-                  tooltip: strings.openSettings,
-                  onPressed: () => context.push('/settings'),
-                  icon: const Icon(Icons.settings_outlined),
+          appBar: wide
+              ? null
+              : AppBar(
+                  title: Text(
+                    title,
+                    key: const ValueKey('workspace-page-title'),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-            ],
-          ),
           drawer: wide ? null : Drawer(child: sidebar),
-          body: Row(
-            children: [
-              if (wide) ...[
-                SizedBox(width: 260, child: sidebar),
-                const VerticalDivider(width: 1),
+          body: SafeArea(
+            child: Row(
+              children: [
+                if (wide) ...[
+                  SizedBox(width: 260, child: sidebar),
+                  const VerticalDivider(width: 1),
+                ],
+                Expanded(
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 920),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          if (wide && location != '/')
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
+                              child: Semantics(
+                                header: true,
+                                child: Text(
+                                  title,
+                                  key: const ValueKey('workspace-page-title'),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineMedium,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ),
+                          Expanded(child: child),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ],
-              Expanded(child: child),
-            ],
+            ),
           ),
         );
       },
