@@ -27,6 +27,50 @@ void main() {
 
   tearDown(() => container.dispose());
 
+  test('配色与其他偏好并发修改不互相覆盖, 可恢复', () async {
+    await container.read(appSettingsControllerProvider.future);
+    final controller = container.read(appSettingsControllerProvider.notifier);
+    await Future.wait([
+      controller.setSeedColor(0xff008080),
+      controller.setAppearance(AppAppearance.dark),
+      controller.setLanguage(AppLanguage.chinese),
+    ]);
+    final saved = container.read(appSettingsControllerProvider).requireValue;
+    expect(
+      saved,
+      const AppSettings(
+        language: AppLanguage.chinese,
+        appearance: AppAppearance.dark,
+        colorMode: AppColorMode.custom,
+        seedColor: 0xff008080,
+      ),
+    );
+    expect(
+      (await LocalAppSettingsRepository(store).load()).getOrThrow(),
+      saved,
+    );
+    store.failWrite = true;
+    expect(
+      await controller.setColorMode(AppColorMode.system),
+      isA<Failure<void>>(),
+    );
+    expect(container.read(appSettingsControllerProvider).requireValue, saved);
+    store.failWrite = false;
+    await controller.setColorMode(AppColorMode.system);
+    expect(
+      container.read(appSettingsControllerProvider).requireValue.seedColor,
+      saved.seedColor,
+    );
+  });
+
+  test('非法种子色不写入存储', () async {
+    await container.read(appSettingsControllerProvider.future);
+    final controller = container.read(appSettingsControllerProvider.notifier);
+    expect(await controller.setSeedColor(0x00112233), isA<Failure<void>>());
+    expect(await controller.setSeedColor(0x100000000), isA<Failure<void>>());
+    expect(store.writes, 0);
+  });
+
   test('加载持久化设置', () async {
     store.value = '{"language":"zh"}';
     expect(

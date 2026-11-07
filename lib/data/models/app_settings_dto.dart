@@ -19,8 +19,25 @@ final class AppSettingsDto {
       'dark' => AppAppearance.dark,
       _ => throw const FormatException('Invalid appearance'),
     };
+    final colorMode = switch (map['colorMode']) {
+      null when !map.containsKey('colorMode') => AppColorMode.standard,
+      'standard' => AppColorMode.standard,
+      'system' => AppColorMode.system,
+      'custom' => AppColorMode.custom,
+      _ => throw const FormatException('Invalid color mode'),
+    };
+    final seedColor = switch (map['seedColor']) {
+      null when !map.containsKey('seedColor') => const AppSettings().seedColor,
+      int value when value >= 0xff000000 && value <= 0xffffffff => value,
+      _ => throw const FormatException('Invalid seed color'),
+    };
     return AppSettingsDto(
-      AppSettings(language: language, appearance: appearance),
+      AppSettings(
+        language: language,
+        appearance: appearance,
+        colorMode: colorMode,
+        seedColor: seedColor,
+      ),
     );
   }
 
@@ -28,6 +45,8 @@ final class AppSettingsDto {
 
   Map<String, Object?> toJson() => {
     'appearance': settings.appearance.name,
+    'colorMode': settings.colorMode.name,
+    'seedColor': settings.seedColor,
     'language': switch (settings.language) {
       AppLanguage.system => 'system',
       AppLanguage.english => 'en',

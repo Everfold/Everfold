@@ -38,6 +38,23 @@ final class AppSettingsController extends AsyncNotifier<AppSettings> {
   Future<Result<void>> setAppearance(AppAppearance appearance) =>
       _update((current) => current.copyWith(appearance: appearance));
 
+  /// 切换配色来源, 保留之前选择的种子色
+  Future<Result<void>> setColorMode(AppColorMode mode) =>
+      _update((current) => current.copyWith(colorMode: mode));
+
+  /// 原子保存不透明种子色与自选模式, 不覆盖其他偏好
+  Future<Result<void>> setSeedColor(int color) {
+    if (color < 0xff000000 || color > 0xffffffff) {
+      return Future.value(
+        const Failure<void>(AppFailure(FailureKind.validation)),
+      );
+    }
+    return _update(
+      (current) =>
+          current.copyWith(colorMode: AppColorMode.custom, seedColor: color),
+    );
+  }
+
   Future<Result<void>> _update(AppSettings Function(AppSettings) update) {
     final repository = ref.read(appSettingsRepositoryProvider);
     final operation = _pendingWrite.then((_) async {

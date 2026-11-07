@@ -9,7 +9,7 @@ void main() {
     expect(settings.appearance, AppAppearance.system);
   });
 
-  test('忽略已移除字段, 保存只包含明暗和语言', () {
+  test('忽略已移除字段, 保存只包含当前偏好', () {
     final settings = AppSettingsDto.fromJson({
       'language': 'zh',
       'appearance': 'dark',
@@ -25,6 +25,8 @@ void main() {
     expect(AppSettingsDto(settings).toJson(), {
       'language': 'zh',
       'appearance': 'dark',
+      'colorMode': 'standard',
+      'seedColor': const AppSettings().seedColor,
     });
   });
 
@@ -41,6 +43,37 @@ void main() {
         expect(restored, settings);
         expect(restored.hashCode, settings.hashCode);
       }
+    }
+  });
+
+  test('配色缺省兼容旧数据, 非法配色字段拒绝读取', () {
+    expect(
+      AppSettingsDto.fromJson({'language': 'en'}).settings.colorMode,
+      AppColorMode.standard,
+    );
+    for (final value in [null, 'bad', 2]) {
+      expect(
+        () => AppSettingsDto.fromJson({'language': 'en', 'colorMode': value}),
+        throwsFormatException,
+      );
+    }
+    for (final value in [null, 'red', 0, -1, 0x100000000, 1.5]) {
+      expect(
+        () => AppSettingsDto.fromJson({'language': 'en', 'seedColor': value}),
+        throwsFormatException,
+      );
+    }
+    for (final mode in AppColorMode.values) {
+      final settings = AppSettings(colorMode: mode, seedColor: 0xff008080);
+      final restored = AppSettingsDto.fromJson(
+        AppSettingsDto(settings).toJson(),
+      ).settings;
+      expect(restored, settings);
+      expect(restored.hashCode, settings.hashCode);
+      expect(
+        settings.copyWith(language: AppLanguage.chinese).seedColor,
+        settings.seedColor,
+      );
     }
   });
 
