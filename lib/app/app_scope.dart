@@ -3,6 +3,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:talker/talker.dart';
 
 import '../application/settings/app_settings_controller.dart';
+import '../application/sessions/sessions_controller.dart';
+import '../data/services/storage/workspace_selector.dart';
 import '../core/config/app_config.dart';
 import '../core/logging/app_error_reporter.dart';
 import '../data/repositories/local_app_settings_repository.dart';
@@ -32,6 +34,7 @@ class AppScope extends StatelessWidget {
     return ProviderScope(
       overrides: [
         appConfigProvider.overrideWithValue(config),
+        selectWorkspaceProvider.overrideWithValue(selectWorkspaceDirectory),
         talkerProvider.overrideWithValue(talker),
         if (preferencesStore != null)
           preferencesStoreProvider.overrideWithValue(preferencesStore!),

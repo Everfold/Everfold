@@ -309,4 +309,94 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get modelConnections => '接入模型';
+
+  @override
+  String get newSession => '新建会话';
+
+  @override
+  String get sessionsTitle => '会话';
+
+  @override
+  String get cloudServices => '云服务';
+
+  @override
+  String get promptHint => '你想处理什么任务?';
+
+  @override
+  String get promptLabel => '提示词';
+
+  @override
+  String get sendPrompt => '保存提示词';
+
+  @override
+  String get stopRun => '停止';
+
+  @override
+  String get noModel => '未选择模型';
+
+  @override
+  String get presetLabel => '预设';
+
+  @override
+  String get standardPreset => '默认';
+
+  @override
+  String get planPreset => '规划';
+
+  @override
+  String get noWorkspace => '未选择工作区';
+
+  @override
+  String get chooseWorkspace => '选择工作区';
+
+  @override
+  String get clearWorkspace => '清除工作区';
+
+  @override
+  String get workspaceFailure => '无法打开工作区选择器';
+
+  @override
+  String get renameSession => '重命名';
+
+  @override
+  String get deleteSession => '删除';
+
+  @override
+  String get sessionTitle => '会话名称';
+
+  @override
+  String get deleteSessionTitle => '删除会话?';
+
+  @override
+  String get deleteSessionBody => '此会话及其提示词将被移除';
+
+  @override
+  String get messageUser => '你';
+
+  @override
+  String get messageAssistant => '助手';
+
+  @override
+  String get unsentPrompt => '未发送: 尚未接入模型';
+
+  @override
+  String get reasoningSummary => '思考摘要';
+
+  @override
+  String get toolCalls => '工具调用';
+
+  @override
+  String get toolRunning => '运行中';
+
+  @override
+  String get toolCompleted => '已完成';
+
+  @override
+  String get toolFailed => '失败';
+
+  @override
+  String get sessionMissing => '会话不存在';
+
+  @override
+  String get newPromptTitle => '这次处理什么任务?';
 }

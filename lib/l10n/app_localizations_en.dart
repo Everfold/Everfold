@@ -317,4 +317,95 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get modelConnections => 'Connect a model';
+
+  @override
+  String get newSession => 'New session';
+
+  @override
+  String get sessionsTitle => 'Sessions';
+
+  @override
+  String get cloudServices => 'Cloud services';
+
+  @override
+  String get promptHint => 'What would you like to work on?';
+
+  @override
+  String get promptLabel => 'Prompt';
+
+  @override
+  String get sendPrompt => 'Save prompt';
+
+  @override
+  String get stopRun => 'Stop';
+
+  @override
+  String get noModel => 'No model selected';
+
+  @override
+  String get presetLabel => 'Preset';
+
+  @override
+  String get standardPreset => 'Default';
+
+  @override
+  String get planPreset => 'Plan';
+
+  @override
+  String get noWorkspace => 'No workspace';
+
+  @override
+  String get chooseWorkspace => 'Choose workspace';
+
+  @override
+  String get clearWorkspace => 'Clear workspace';
+
+  @override
+  String get workspaceFailure => 'Unable to open the workspace picker';
+
+  @override
+  String get renameSession => 'Rename';
+
+  @override
+  String get deleteSession => 'Delete';
+
+  @override
+  String get sessionTitle => 'Session name';
+
+  @override
+  String get deleteSessionTitle => 'Delete session?';
+
+  @override
+  String get deleteSessionBody =>
+      'This session and its prompts will be removed';
+
+  @override
+  String get messageUser => 'You';
+
+  @override
+  String get messageAssistant => 'Assistant';
+
+  @override
+  String get unsentPrompt => 'Not sent: no model connected';
+
+  @override
+  String get reasoningSummary => 'Reasoning summary';
+
+  @override
+  String get toolCalls => 'Tool activity';
+
+  @override
+  String get toolRunning => 'Running';
+
+  @override
+  String get toolCompleted => 'Completed';
+
+  @override
+  String get toolFailed => 'Failed';
+
+  @override
+  String get sessionMissing => 'Session not found';
+
+  @override
+  String get newPromptTitle => 'What are we working on?';
 }

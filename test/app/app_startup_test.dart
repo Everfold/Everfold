@@ -6,7 +6,7 @@ import 'package:everfold/app/router/app_router.dart';
 import 'package:everfold/application/settings/app_settings_controller.dart';
 import 'package:everfold/core/config/app_config.dart';
 import 'package:everfold/domain/settings/app_settings.dart';
-import 'package:everfold/ui/features/home/views/material_home_page.dart';
+import 'package:everfold/ui/features/sessions/views/session_page.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../support/initialized_preferences_store.dart';
@@ -35,10 +35,10 @@ void main() {
     final store = TestPreferencesStore()..readGate = Completer<void>();
     await pumpApp(tester, store);
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
-    expect(find.byType(MaterialHomePage), findsNothing);
+    expect(find.byType(SessionPage), findsNothing);
     store.readGate!.complete();
     await tester.pumpAndSettle();
-    expect(find.byType(MaterialHomePage), findsOneWidget);
+    expect(find.byType(SessionPage), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -53,14 +53,14 @@ void main() {
     await tester.tap(find.text('重试'));
     await tester.pumpAndSettle();
     expect(store.reads, 2);
-    expect(find.byType(MaterialHomePage), findsOneWidget);
+    expect(find.byType(SessionPage), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
   testWidgets('持久化语言优先于系统语言', (tester) async {
     await pumpApp(tester, TestPreferencesStore(value: '{"language":"en"}'));
     await tester.pumpAndSettle();
-    expect(find.text('Material components'), findsOneWidget);
+    expect(find.text('What are we working on?'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -68,17 +68,17 @@ void main() {
     await pumpApp(tester, TestPreferencesStore());
     await tester.pumpAndSettle();
     final container = ProviderScope.containerOf(
-      tester.element(find.byType(MaterialHomePage)),
+      tester.element(find.byType(SessionPage)),
     );
     final router = container.read(appRouterProvider);
     final controller = container.read(appSettingsControllerProvider.notifier);
     await controller.setLanguage(AppLanguage.english);
     await tester.pumpAndSettle();
-    expect(find.text('Material components'), findsOneWidget);
+    expect(find.text('What are we working on?'), findsOneWidget);
     expect(container.read(appRouterProvider), same(router));
     await controller.setLanguage(AppLanguage.system);
     await tester.pumpAndSettle();
-    expect(find.text('Material 控件展示'), findsOneWidget);
+    expect(find.text('这次处理什么任务?'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }

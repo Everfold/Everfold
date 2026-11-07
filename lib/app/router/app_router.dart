@@ -5,7 +5,8 @@ import 'package:material_ui/material_ui.dart';
 import '../../application/settings/app_settings_controller.dart';
 import '../../domain/settings/app_settings.dart';
 import '../../l10n/app_localizations.dart';
-import '../../ui/features/home/views/material_home_page.dart';
+import '../../ui/features/sessions/views/session_page.dart';
+import '../../ui/features/sessions/views/workspace_shell.dart';
 import '../../ui/features/settings/views/settings_page.dart';
 import '../../ui/features/setup/views/setup_page.dart';
 
@@ -36,19 +37,41 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           ),
         ),
       ),
-      GoRoute(
-        path: '/',
-        name: 'home',
-        pageBuilder: (context, state) => MaterialPage<void>(
-          key: state.pageKey,
-          child: const MaterialHomePage(),
-        ),
-      ),
-      GoRoute(
-        path: '/settings',
-        name: 'settings',
-        pageBuilder: (context, state) =>
-            MaterialPage<void>(key: state.pageKey, child: const SettingsPage()),
+      ShellRoute(
+        builder: (context, state, child) =>
+            WorkspaceShell(location: state.uri.path, child: child),
+        routes: [
+          GoRoute(
+            path: '/',
+            name: 'home',
+            pageBuilder: (context, state) => MaterialPage<void>(
+              key: state.pageKey,
+              child: const SessionPage(),
+            ),
+          ),
+          GoRoute(
+            path: '/sessions/:id',
+            pageBuilder: (context, state) => MaterialPage<void>(
+              key: state.pageKey,
+              child: SessionPage(sessionId: state.pathParameters['id']),
+            ),
+          ),
+          GoRoute(
+            path: '/settings',
+            name: 'settings',
+            pageBuilder: (context, state) => MaterialPage<void>(
+              key: state.pageKey,
+              child: const SettingsPage(),
+            ),
+          ),
+          GoRoute(
+            path: '/cloud',
+            pageBuilder: (context, state) => MaterialPage<void>(
+              key: state.pageKey,
+              child: const SizedBox.expand(),
+            ),
+          ),
+        ],
       ),
     ],
     errorPageBuilder: (context, state) => MaterialPage<void>(

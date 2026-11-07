@@ -697,6 +697,186 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'接入模型'**
   String get modelConnections;
+
+  /// No description provided for @newSession.
+  ///
+  /// In zh, this message translates to:
+  /// **'新建会话'**
+  String get newSession;
+
+  /// No description provided for @sessionsTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'会话'**
+  String get sessionsTitle;
+
+  /// No description provided for @cloudServices.
+  ///
+  /// In zh, this message translates to:
+  /// **'云服务'**
+  String get cloudServices;
+
+  /// No description provided for @promptHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'你想处理什么任务?'**
+  String get promptHint;
+
+  /// No description provided for @promptLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'提示词'**
+  String get promptLabel;
+
+  /// No description provided for @sendPrompt.
+  ///
+  /// In zh, this message translates to:
+  /// **'保存提示词'**
+  String get sendPrompt;
+
+  /// No description provided for @stopRun.
+  ///
+  /// In zh, this message translates to:
+  /// **'停止'**
+  String get stopRun;
+
+  /// No description provided for @noModel.
+  ///
+  /// In zh, this message translates to:
+  /// **'未选择模型'**
+  String get noModel;
+
+  /// No description provided for @presetLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'预设'**
+  String get presetLabel;
+
+  /// No description provided for @standardPreset.
+  ///
+  /// In zh, this message translates to:
+  /// **'默认'**
+  String get standardPreset;
+
+  /// No description provided for @planPreset.
+  ///
+  /// In zh, this message translates to:
+  /// **'规划'**
+  String get planPreset;
+
+  /// No description provided for @noWorkspace.
+  ///
+  /// In zh, this message translates to:
+  /// **'未选择工作区'**
+  String get noWorkspace;
+
+  /// No description provided for @chooseWorkspace.
+  ///
+  /// In zh, this message translates to:
+  /// **'选择工作区'**
+  String get chooseWorkspace;
+
+  /// No description provided for @clearWorkspace.
+  ///
+  /// In zh, this message translates to:
+  /// **'清除工作区'**
+  String get clearWorkspace;
+
+  /// No description provided for @workspaceFailure.
+  ///
+  /// In zh, this message translates to:
+  /// **'无法打开工作区选择器'**
+  String get workspaceFailure;
+
+  /// No description provided for @renameSession.
+  ///
+  /// In zh, this message translates to:
+  /// **'重命名'**
+  String get renameSession;
+
+  /// No description provided for @deleteSession.
+  ///
+  /// In zh, this message translates to:
+  /// **'删除'**
+  String get deleteSession;
+
+  /// No description provided for @sessionTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'会话名称'**
+  String get sessionTitle;
+
+  /// No description provided for @deleteSessionTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'删除会话?'**
+  String get deleteSessionTitle;
+
+  /// No description provided for @deleteSessionBody.
+  ///
+  /// In zh, this message translates to:
+  /// **'此会话及其提示词将被移除'**
+  String get deleteSessionBody;
+
+  /// No description provided for @messageUser.
+  ///
+  /// In zh, this message translates to:
+  /// **'你'**
+  String get messageUser;
+
+  /// No description provided for @messageAssistant.
+  ///
+  /// In zh, this message translates to:
+  /// **'助手'**
+  String get messageAssistant;
+
+  /// No description provided for @unsentPrompt.
+  ///
+  /// In zh, this message translates to:
+  /// **'未发送: 尚未接入模型'**
+  String get unsentPrompt;
+
+  /// No description provided for @reasoningSummary.
+  ///
+  /// In zh, this message translates to:
+  /// **'思考摘要'**
+  String get reasoningSummary;
+
+  /// No description provided for @toolCalls.
+  ///
+  /// In zh, this message translates to:
+  /// **'工具调用'**
+  String get toolCalls;
+
+  /// No description provided for @toolRunning.
+  ///
+  /// In zh, this message translates to:
+  /// **'运行中'**
+  String get toolRunning;
+
+  /// No description provided for @toolCompleted.
+  ///
+  /// In zh, this message translates to:
+  /// **'已完成'**
+  String get toolCompleted;
+
+  /// No description provided for @toolFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'失败'**
+  String get toolFailed;
+
+  /// No description provided for @sessionMissing.
+  ///
+  /// In zh, this message translates to:
+  /// **'会话不存在'**
+  String get sessionMissing;
+
+  /// No description provided for @newPromptTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'这次处理什么任务?'**
+  String get newPromptTitle;
 }
 
 class _AppLocalizationsDelegate

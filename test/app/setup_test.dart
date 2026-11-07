@@ -4,7 +4,7 @@ import 'package:everfold/core/config/app_config.dart';
 import 'package:everfold/data/models/app_settings_dto.dart';
 import 'package:everfold/data/services/storage/preferences_store.dart';
 import 'package:everfold/domain/settings/app_settings.dart';
-import 'package:everfold/ui/features/home/views/material_home_page.dart';
+import 'package:everfold/ui/features/sessions/views/session_page.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:talker/talker.dart';
@@ -36,11 +36,11 @@ void main() {
     await pumpApp(tester, store);
     expect(find.text('开始初始化'), findsOneWidget);
     await tap(tester, '跳过');
-    expect(find.byType(MaterialHomePage), findsOneWidget);
+    expect(find.byType(SessionPage), findsOneWidget);
     await tester.pumpWidget(const SizedBox());
     await tester.pumpAndSettle();
     await pumpApp(tester, store);
-    expect(find.byType(MaterialHomePage), findsOneWidget);
+    expect(find.byType(SessionPage), findsOneWidget);
   });
   testWidgets('本地初始化复用外观设置并完成', (tester) async {
     await pumpApp(tester, MemoryPreferencesStore());
@@ -54,7 +54,7 @@ void main() {
       Brightness.dark,
     );
     await tap(tester, '进入 Everfold');
-    expect(find.byType(MaterialHomePage), findsOneWidget);
+    expect(find.byType(SessionPage), findsOneWidget);
   });
   testWidgets('云模式显示提供商且不能伪登录, 可回到本地继续', (tester) async {
     final store = MemoryPreferencesStore();
@@ -76,7 +76,7 @@ void main() {
     expect(find.text('云服务登录暂未接入'), findsOneWidget);
     await tap(tester, '使用本地模式继续');
     await tap(tester, '进入 Everfold');
-    expect(find.byType(MaterialHomePage), findsOneWidget);
+    expect(find.byType(SessionPage), findsOneWidget);
   });
   testWidgets('保存失败停留介绍, 不写入完成状态', (tester) async {
     final store = TestPreferencesStore()..failWrite = true;
@@ -84,10 +84,10 @@ void main() {
     await tap(tester, '跳过');
     expect(find.text('无法保存设置, 请重试'), findsOneWidget);
     expect(find.text('开始初始化'), findsOneWidget);
-    expect(find.byType(MaterialHomePage), findsNothing);
+    expect(find.byType(SessionPage), findsNothing);
     store.failWrite = false;
     await tap(tester, '跳过');
-    expect(find.byType(MaterialHomePage), findsOneWidget);
+    expect(find.byType(SessionPage), findsOneWidget);
   });
   test('引导进度往返与非法字段验证', () {
     for (final stage in AppSetupStage.values) {

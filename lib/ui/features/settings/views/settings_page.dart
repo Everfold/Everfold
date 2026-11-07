@@ -12,12 +12,8 @@ import 'seed_color_dialog.dart';
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
   @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
-      title: Text(AppLocalizations.of(context)!.settingsDestination),
-    ),
-    body: const SafeArea(child: SettingsContent()),
-  );
+  Widget build(BuildContext context) =>
+      const SafeArea(child: SettingsContent());
 }
 
 /// 引导与正式设置共享同一组 Material 设置控件
@@ -53,6 +49,14 @@ class SettingsContent extends HookConsumerWidget {
           child: ListView(
             padding: const EdgeInsets.all(16),
             children: [
+              if (showModelEntry)
+                ListTile(
+                  key: const ValueKey('connect-model'),
+                  leading: const Icon(Icons.add_circle_outline),
+                  title: Text(strings.modelConnections),
+                  // 用户确认本阶段仅预留接入入口
+                  onTap: () {},
+                ),
               _ChoiceSection<AppAppearance>(
                 id: 'appearance',
                 title: strings.brightnessTitle,

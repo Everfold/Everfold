@@ -6,7 +6,7 @@ import 'package:everfold/application/settings/app_settings_controller.dart';
 import 'package:everfold/core/config/app_config.dart';
 import 'package:everfold/data/services/storage/preferences_store.dart';
 import 'package:everfold/domain/settings/app_settings.dart';
-import 'package:everfold/ui/features/home/views/material_home_page.dart';
+import 'package:everfold/ui/features/sessions/views/session_page.dart';
 import 'package:everfold/ui/features/settings/views/settings_page.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -79,7 +79,7 @@ void main() {
     final store = MemoryPreferencesStore();
     await pumpApp(tester, store);
     final container = ProviderScope.containerOf(
-      tester.element(find.byType(MaterialHomePage)),
+      tester.element(find.byType(SessionPage)),
     );
     final router = container.read(appRouterProvider);
     await tester.tap(find.byTooltip('打开设置'));
@@ -124,7 +124,7 @@ void main() {
     await tester.pumpWidget(const SizedBox());
     await tester.pumpAndSettle();
     await pumpApp(tester, store);
-    final context = tester.element(find.byType(MaterialHomePage));
+    final context = tester.element(find.byType(SessionPage));
     expect(
       ProviderScope.containerOf(context)
           .read(appSettingsControllerProvider)
@@ -153,7 +153,7 @@ void main() {
           },
         ),
       );
-      final home = find.byType(MaterialHomePage);
+      final home = find.byType(SessionPage);
       final controller = ProviderScope.containerOf(tester.element(home))
           .read(appSettingsControllerProvider.notifier);
       for (final appearance in [AppAppearance.light, AppAppearance.dark]) {
@@ -182,7 +182,7 @@ void main() {
     )..failWrite = true;
     await pumpApp(tester, store);
     final container = ProviderScope.containerOf(
-      tester.element(find.byType(MaterialHomePage)),
+      tester.element(find.byType(SessionPage)),
     );
     final before = container.read(appSettingsControllerProvider).requireValue;
     await tester.tap(find.byTooltip('打开设置'));

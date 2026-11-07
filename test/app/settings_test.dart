@@ -7,7 +7,7 @@ import 'package:everfold/application/settings/app_settings_controller.dart';
 import 'package:everfold/core/config/app_config.dart';
 import 'package:everfold/data/services/storage/preferences_store.dart';
 import 'package:everfold/domain/settings/app_settings.dart';
-import 'package:everfold/ui/features/home/views/material_home_page.dart';
+import 'package:everfold/ui/features/sessions/views/session_page.dart';
 import 'package:everfold/ui/features/settings/views/settings_page.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -60,7 +60,7 @@ void main() {
   testWidgets('所有平台均使用 Material', (tester) async {
     await pumpApp(tester, MemoryPreferencesStore());
     expect(find.byType(MaterialApp), findsOneWidget);
-    expect(find.byType(MaterialHomePage), findsOneWidget);
+    expect(find.byType(SessionPage), findsOneWidget);
     expect(tester.takeException(), isNull);
   }, variant: TargetPlatformVariant.all());
 
@@ -68,7 +68,7 @@ void main() {
     final store = MemoryPreferencesStore();
     await pumpApp(tester, store);
     final container = ProviderScope.containerOf(
-      tester.element(find.byType(MaterialHomePage)),
+      tester.element(find.byType(SessionPage)),
     );
     final router = container.read(appRouterProvider);
     await openSettings(tester);
@@ -102,11 +102,11 @@ void main() {
     expect(router.canPop(), isTrue);
     router.pop();
     await tester.pumpAndSettle();
-    expect(find.byType(MaterialHomePage), findsOneWidget);
+    expect(find.byType(SessionPage), findsOneWidget);
     await tester.pumpWidget(const SizedBox());
     await tester.pumpAndSettle();
     await pumpApp(tester, store);
-    final context = tester.element(find.byType(MaterialHomePage));
+    final context = tester.element(find.byType(SessionPage));
     expect(
       ProviderScope.containerOf(context)
           .read(appSettingsControllerProvider)
@@ -122,13 +122,13 @@ void main() {
     addTearDown(tester.platformDispatcher.clearPlatformBrightnessTestValue);
     await pumpApp(tester, MemoryPreferencesStore());
     Brightness brightness() =>
-        Theme.of(tester.element(find.byType(MaterialHomePage))).brightness;
+        Theme.of(tester.element(find.byType(SessionPage))).brightness;
     expect(brightness(), Brightness.dark);
     tester.platformDispatcher.platformBrightnessTestValue = Brightness.light;
     await tester.pumpAndSettle();
     expect(brightness(), Brightness.light);
     final controller = ProviderScope.containerOf(
-      tester.element(find.byType(MaterialHomePage)),
+      tester.element(find.byType(SessionPage)),
     ).read(appSettingsControllerProvider.notifier);
     await controller.setAppearance(AppAppearance.dark);
     await tester.pumpAndSettle();
@@ -144,7 +144,7 @@ void main() {
       ..failWrite = true;
     await pumpApp(tester, store);
     final container = ProviderScope.containerOf(
-      tester.element(find.byType(MaterialHomePage)),
+      tester.element(find.byType(SessionPage)),
     );
     await openSettings(tester);
     await select(tester, 'appearance-dark');
