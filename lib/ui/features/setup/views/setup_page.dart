@@ -45,11 +45,7 @@ class SetupPage extends HookConsumerWidget {
 
     final stage = settings.setupStage;
     final intro = stage == AppSetupStage.introduction;
-    void back() => run(
-      stage == AppSetupStage.mode
-          ? controller.backToIntroduction
-          : controller.startSetup,
-    );
+    void back() => run(controller.backSetup);
     final title = switch (stage) {
       AppSetupStage.introduction => 'Everfold',
       AppSetupStage.mode => strings.setupModeTitle,
@@ -146,7 +142,10 @@ class SetupPage extends HookConsumerWidget {
             children: [
               Expanded(
                 child: stage == AppSetupStage.preferences
-                    ? const SettingsContent(showModelEntry: false)
+                    ? const SettingsContent(
+                        showModelEntry: false,
+                        languageFirst: true,
+                      )
                     : ListView(
                         padding: const EdgeInsets.all(24),
                         children: content,
@@ -179,11 +178,7 @@ class SetupPage extends HookConsumerWidget {
                       TextButton(
                         onPressed: pageBusy
                             ? null
-                            : () => run(
-                                () => controller.chooseConnectionMode(
-                                  AppConnectionMode.local,
-                                ),
-                              ),
+                            : () => run(controller.skipSetup),
                         child: Text(strings.continueLocal),
                       )
                     else
@@ -197,12 +192,14 @@ class SetupPage extends HookConsumerWidget {
                                   () => controller.chooseConnectionMode(
                                     selectedMode.value,
                                   ),
-                                _ => controller.finishSetup,
+                                _ => controller.continuePreferencesSetup,
                               }),
                         child: Text(
                           intro
                               ? strings.startSetup
-                              : stage == AppSetupStage.preferences
+                              : stage == AppSetupStage.mode &&
+                                    selectedMode.value ==
+                                        AppConnectionMode.local
                               ? strings.finishSetup
                               : strings.continueAction,
                         ),

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/widget_previews.dart';
 import 'package:talker/talker.dart';
 import 'package:material_ui/material_ui.dart';
@@ -9,13 +11,24 @@ import 'data/services/storage/preferences_store.dart';
 import 'l10n/app_localizations.dart';
 import 'ui/features/clusters/views/clusters_page.dart';
 import 'domain/sessions/agent_session.dart';
+import 'domain/settings/app_settings.dart';
 import 'ui/features/sessions/views/session_transcript.dart';
 import 'ui/features/sessions/views/workspace_context_dialog.dart';
 
 /// 首次启动预览, 不访问生产偏好或原生服务
 @Preview(name: 'Setup · Mobile', size: Size(390, 844))
 @Preview(name: 'Setup · Desktop', size: Size(1280, 900))
-Widget setupPreview() => _preview(initialized: false);
+Widget setupPreview() => _preview();
+
+/// 引导的语言与外观预览, 使用独立内存偏好
+@Preview(name: 'Setup preferences · Mobile', size: Size(390, 844))
+@Preview(name: 'Setup preferences · Desktop', size: Size(1280, 900))
+@Preview(
+  name: 'Setup preferences · Compact large text',
+  size: Size(320, 900),
+  textScaleFactor: 2,
+)
+Widget setupPreferencesPreview() => _preview(stage: AppSetupStage.preferences);
 
 /// 已初始化的会话工作区预览
 @Preview(name: 'Workspace · Mobile', size: Size(390, 844))
@@ -31,11 +44,11 @@ Widget setupPreview() => _preview(initialized: false);
   size: Size(840, 900),
   textScaleFactor: 2,
 )
-Widget workspacePreview() => _preview(initialized: true);
+Widget workspacePreview() => _preview(stage: AppSetupStage.complete);
 
 @Preview(name: 'Connection · Mobile', size: Size(390, 844))
 @Preview(name: 'Connection · Desktop', size: Size(1280, 900))
-Widget connectionPreview() => _preview(initialized: false, login: true);
+Widget connectionPreview() => _preview(stage: AppSetupStage.login);
 
 @Preview(name: 'Clusters · Mobile', size: Size(390, 844))
 @Preview(name: 'Clusters · Desktop', size: Size(1280, 900))
@@ -106,20 +119,20 @@ Widget workspaceContextPreview() => MaterialApp(
   ),
 );
 
-Widget _preview({required bool initialized, bool login = false}) => AppScope(
+Widget _preview({AppSetupStage stage = AppSetupStage.introduction}) => AppScope(
   config: AppConfig(),
   talker: Talker(settings: TalkerSettings(enabled: false)),
   preferencesStore: MemoryPreferencesStore(
-    initialValues: login
-        ? {
-            'everfold.app_settings.v1': '{"language":"zh","setupStage":"login","connectionMode":"cloud"}',
-          }
-        : initialized
-        ? {
-            'everfold.app_settings.v1':
-                '{"language":"system","setupStage":"complete"}',
-          }
-        : {},
+    initialValues: {
+      'everfold.app_settings.v1': jsonEncode({
+        'language':
+            stage == AppSetupStage.login || stage == AppSetupStage.preferences
+            ? 'zh'
+            : 'system',
+        'setupStage': stage.name,
+        'connectionMode': stage == AppSetupStage.login ? 'cloud' : 'local',
+      }),
+    },
   ),
   child: const EverfoldApp(),
 );

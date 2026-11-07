@@ -18,8 +18,13 @@ class SettingsPage extends StatelessWidget {
 
 /// 引导与正式设置共享同一组 Material 设置控件
 class SettingsContent extends HookConsumerWidget {
-  const SettingsContent({super.key, this.showModelEntry = true});
+  const SettingsContent({
+    super.key,
+    this.showModelEntry = true,
+    this.languageFirst = false,
+  });
   final bool showModelEntry;
+  final bool languageFirst;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -43,12 +48,25 @@ class SettingsContent extends HookConsumerWidget {
       }
     }
 
+    final language = _ChoiceSection<AppLanguage>(
+      id: 'language',
+      title: strings.languageTitle,
+      enabled: !busy.value,
+      selected: settings.language,
+      choices: {
+        AppLanguage.system: strings.followSystem,
+        AppLanguage.chinese: '中文',
+        AppLanguage.english: 'English',
+      },
+      onChanged: (value) => save(() => controller.setLanguage(value)),
+    );
     return Column(
       children: [
         Expanded(
           child: ListView(
             padding: const EdgeInsets.all(16),
             children: [
+              if (languageFirst) language,
               if (showModelEntry)
                 ListTile(
                   key: const ValueKey('connect-model'),
@@ -136,18 +154,7 @@ class SettingsContent extends HookConsumerWidget {
                 ),
                 const SizedBox(height: 16),
               ],
-              _ChoiceSection<AppLanguage>(
-                id: 'language',
-                title: strings.languageTitle,
-                enabled: !busy.value,
-                selected: settings.language,
-                choices: {
-                  AppLanguage.system: strings.followSystem,
-                  AppLanguage.chinese: '中文',
-                  AppLanguage.english: 'English',
-                },
-                onChanged: (value) => save(() => controller.setLanguage(value)),
-              ),
+              if (!languageFirst) language,
             ],
           ),
         ),
