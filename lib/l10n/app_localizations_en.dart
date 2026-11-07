@@ -241,4 +241,80 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get save => 'Save';
+
+  @override
+  String get welcomeTagline => 'Your cross-platform agent workspace';
+
+  @override
+  String get featureSessions => 'Keep tasks in sessions';
+
+  @override
+  String get featureSessionsBody =>
+      'Prompts, responses, and tool activity stay together';
+
+  @override
+  String get featureModels => 'Choose your models';
+
+  @override
+  String get featureModelsBody =>
+      'Local mode can also connect to third-party model services';
+
+  @override
+  String get featureWorkspace => 'Work in context';
+
+  @override
+  String get featureWorkspaceBody =>
+      'Keep prompts, presets, and workspaces in one workflow';
+
+  @override
+  String get startSetup => 'Get started';
+
+  @override
+  String get skipSetup => 'Skip';
+
+  @override
+  String get setupModeTitle => 'Choose a mode';
+
+  @override
+  String get localMode => 'Local only';
+
+  @override
+  String get localModeBody =>
+      'Without Everfold cloud, with third-party model support';
+
+  @override
+  String get cloudMode => 'Connect to cloud';
+
+  @override
+  String get cloudModeBody => 'Sign in to use cloud services';
+
+  @override
+  String get continueAction => 'Continue';
+
+  @override
+  String get back => 'Back';
+
+  @override
+  String get loginTitle => 'Sign in to cloud';
+
+  @override
+  String get identityProvider => 'Sign-in provider';
+
+  @override
+  String get loginAction => 'Sign in';
+
+  @override
+  String get loginUnavailable => 'Cloud sign-in is not connected yet';
+
+  @override
+  String get continueLocal => 'Continue in local mode';
+
+  @override
+  String get preferencesTitle => 'Personalize';
+
+  @override
+  String get finishSetup => 'Open Everfold';
+
+  @override
+  String get modelConnections => 'Connect a model';
 }

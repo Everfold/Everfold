@@ -237,4 +237,76 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get save => '保存';
+
+  @override
+  String get welcomeTagline => '你的跨平台 Agent 工作台';
+
+  @override
+  String get featureSessions => '按会话组织任务';
+
+  @override
+  String get featureSessionsBody => '让每一次提问, 回复与工具记录都有清晰的归属';
+
+  @override
+  String get featureModels => '自由选择模型';
+
+  @override
+  String get featureModelsBody => '本地模式也可以接入第三方模型服务';
+
+  @override
+  String get featureWorkspace => '围绕工作区协作';
+
+  @override
+  String get featureWorkspaceBody => '将提示, 预设和工作区放在同一个工作流中';
+
+  @override
+  String get startSetup => '开始初始化';
+
+  @override
+  String get skipSetup => '跳过';
+
+  @override
+  String get setupModeTitle => '选择使用模式';
+
+  @override
+  String get localMode => '仅本地';
+
+  @override
+  String get localModeBody => '不连接 Everfold 云服务, 可自行接入第三方模型';
+
+  @override
+  String get cloudMode => '连接云服务';
+
+  @override
+  String get cloudModeBody => '登录服务账户后使用云端能力';
+
+  @override
+  String get continueAction => '继续';
+
+  @override
+  String get back => '返回';
+
+  @override
+  String get loginTitle => '登录云服务';
+
+  @override
+  String get identityProvider => '登录提供商';
+
+  @override
+  String get loginAction => '登录';
+
+  @override
+  String get loginUnavailable => '云服务登录暂未接入';
+
+  @override
+  String get continueLocal => '使用本地模式继续';
+
+  @override
+  String get preferencesTitle => '个性化设置';
+
+  @override
+  String get finishSetup => '进入 Everfold';
+
+  @override
+  String get modelConnections => '接入模型';
 }

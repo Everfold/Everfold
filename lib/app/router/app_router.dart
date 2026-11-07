@@ -2,14 +2,40 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../application/settings/app_settings_controller.dart';
+import '../../domain/settings/app_settings.dart';
 import '../../l10n/app_localizations.dart';
 import '../../ui/features/home/views/material_home_page.dart';
 import '../../ui/features/settings/views/settings_page.dart';
+import '../../ui/features/setup/views/setup_page.dart';
 
-/// 路由实例独立于语言与明暗设置, 修改设置不重建导航栈
+/// 保留路由实例, 设置变更仅重新评估引导入口, 不重建导航栈
 final appRouterProvider = Provider<GoRouter>((ref) {
+  final refresh = ValueNotifier(0);
+  ref.listen(appSettingsControllerProvider, (_, _) => refresh.value++);
   final router = GoRouter(
+    refreshListenable: refresh,
+    redirect: (context, state) {
+      final settings = ref.read(appSettingsControllerProvider).asData?.value;
+      if (settings == null) return null;
+      final setup = state.uri.path == '/setup';
+      if (settings.setupStage != AppSetupStage.complete) {
+        return setup ? null : '/setup';
+      }
+      return setup ? '/' : null;
+    },
     routes: [
+      GoRoute(
+        path: '/setup',
+        pageBuilder: (context, state) => MaterialPage<void>(
+          key: state.pageKey,
+          child: Consumer(
+            builder: (context, ref, _) => SetupPage(
+              settings: ref.watch(appSettingsControllerProvider).requireValue,
+            ),
+          ),
+        ),
+      ),
       GoRoute(
         path: '/',
         name: 'home',
@@ -38,6 +64,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
     ),
   );
-  ref.onDispose(router.dispose);
+  ref.onDispose(() {
+    router.dispose();
+    refresh.dispose();
+  });
   return router;
 });

@@ -27,6 +27,8 @@ void main() {
       'appearance': 'dark',
       'colorMode': 'standard',
       'seedColor': const AppSettings().seedColor,
+      'setupStage': 'introduction',
+      'connectionMode': 'local',
     });
   });
 

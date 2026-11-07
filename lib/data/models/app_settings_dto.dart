@@ -31,12 +31,29 @@ final class AppSettingsDto {
       int value when value >= 0xff000000 && value <= 0xffffffff => value,
       _ => throw const FormatException('Invalid seed color'),
     };
+    final setupStage = switch (map['setupStage']) {
+      null when !map.containsKey('setupStage') => AppSetupStage.introduction,
+      'introduction' => AppSetupStage.introduction,
+      'mode' => AppSetupStage.mode,
+      'login' => AppSetupStage.login,
+      'preferences' => AppSetupStage.preferences,
+      'complete' => AppSetupStage.complete,
+      _ => throw const FormatException('Invalid setup stage'),
+    };
+    final connectionMode = switch (map['connectionMode']) {
+      null when !map.containsKey('connectionMode') => AppConnectionMode.local,
+      'local' => AppConnectionMode.local,
+      'cloud' => AppConnectionMode.cloud,
+      _ => throw const FormatException('Invalid connection mode'),
+    };
     return AppSettingsDto(
       AppSettings(
         language: language,
         appearance: appearance,
         colorMode: colorMode,
         seedColor: seedColor,
+        setupStage: setupStage,
+        connectionMode: connectionMode,
       ),
     );
   }
@@ -47,6 +64,8 @@ final class AppSettingsDto {
     'appearance': settings.appearance.name,
     'colorMode': settings.colorMode.name,
     'seedColor': settings.seedColor,
+    'setupStage': settings.setupStage.name,
+    'connectionMode': settings.connectionMode.name,
     'language': switch (settings.language) {
       AppLanguage.system => 'system',
       AppLanguage.english => 'en',

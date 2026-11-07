@@ -27,6 +27,24 @@ void main() {
 
   tearDown(() => container.dispose());
 
+  test('云模式在队列中不能越过未接入的认证, 跳过切回本地', () async {
+    await container.read(appSettingsControllerProvider.future);
+    final controller = container.read(appSettingsControllerProvider.notifier);
+    await controller.startSetup();
+    final cloud = controller.chooseConnectionMode(AppConnectionMode.cloud);
+    final finish = controller.finishSetup();
+    await cloud;
+    expect(await finish, isA<Failure<void>>());
+    expect(
+      container.read(appSettingsControllerProvider).requireValue.setupStage,
+      AppSetupStage.login,
+    );
+    await controller.skipSetup();
+    final settings = container.read(appSettingsControllerProvider).requireValue;
+    expect(settings.setupStage, AppSetupStage.complete);
+    expect(settings.connectionMode, AppConnectionMode.local);
+  });
+
   test('配色与其他偏好并发修改不互相覆盖, 可恢复', () async {
     await container.read(appSettingsControllerProvider.future);
     final controller = container.read(appSettingsControllerProvider.notifier);

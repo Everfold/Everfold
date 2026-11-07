@@ -10,6 +10,9 @@ import 'package:everfold/ui/features/home/views/material_home_page.dart';
 import 'package:everfold/ui/features/settings/views/settings_page.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import '../support/initialized_preferences_store.dart';
+
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:talker/talker.dart';
@@ -37,7 +40,7 @@ void main() {
       AppScope(
         config: AppConfig(),
         talker: Talker(settings: TalkerSettings(enabled: false)),
-        preferencesStore: store,
+        preferencesStore: InitializedPreferencesStore(store),
         child: const EverfoldApp(),
       ),
     );

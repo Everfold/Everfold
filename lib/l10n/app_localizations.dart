@@ -553,6 +553,150 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'保存'**
   String get save;
+
+  /// No description provided for @welcomeTagline.
+  ///
+  /// In zh, this message translates to:
+  /// **'你的跨平台 Agent 工作台'**
+  String get welcomeTagline;
+
+  /// No description provided for @featureSessions.
+  ///
+  /// In zh, this message translates to:
+  /// **'按会话组织任务'**
+  String get featureSessions;
+
+  /// No description provided for @featureSessionsBody.
+  ///
+  /// In zh, this message translates to:
+  /// **'让每一次提问, 回复与工具记录都有清晰的归属'**
+  String get featureSessionsBody;
+
+  /// No description provided for @featureModels.
+  ///
+  /// In zh, this message translates to:
+  /// **'自由选择模型'**
+  String get featureModels;
+
+  /// No description provided for @featureModelsBody.
+  ///
+  /// In zh, this message translates to:
+  /// **'本地模式也可以接入第三方模型服务'**
+  String get featureModelsBody;
+
+  /// No description provided for @featureWorkspace.
+  ///
+  /// In zh, this message translates to:
+  /// **'围绕工作区协作'**
+  String get featureWorkspace;
+
+  /// No description provided for @featureWorkspaceBody.
+  ///
+  /// In zh, this message translates to:
+  /// **'将提示, 预设和工作区放在同一个工作流中'**
+  String get featureWorkspaceBody;
+
+  /// No description provided for @startSetup.
+  ///
+  /// In zh, this message translates to:
+  /// **'开始初始化'**
+  String get startSetup;
+
+  /// No description provided for @skipSetup.
+  ///
+  /// In zh, this message translates to:
+  /// **'跳过'**
+  String get skipSetup;
+
+  /// No description provided for @setupModeTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'选择使用模式'**
+  String get setupModeTitle;
+
+  /// No description provided for @localMode.
+  ///
+  /// In zh, this message translates to:
+  /// **'仅本地'**
+  String get localMode;
+
+  /// No description provided for @localModeBody.
+  ///
+  /// In zh, this message translates to:
+  /// **'不连接 Everfold 云服务, 可自行接入第三方模型'**
+  String get localModeBody;
+
+  /// No description provided for @cloudMode.
+  ///
+  /// In zh, this message translates to:
+  /// **'连接云服务'**
+  String get cloudMode;
+
+  /// No description provided for @cloudModeBody.
+  ///
+  /// In zh, this message translates to:
+  /// **'登录服务账户后使用云端能力'**
+  String get cloudModeBody;
+
+  /// No description provided for @continueAction.
+  ///
+  /// In zh, this message translates to:
+  /// **'继续'**
+  String get continueAction;
+
+  /// No description provided for @back.
+  ///
+  /// In zh, this message translates to:
+  /// **'返回'**
+  String get back;
+
+  /// No description provided for @loginTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'登录云服务'**
+  String get loginTitle;
+
+  /// No description provided for @identityProvider.
+  ///
+  /// In zh, this message translates to:
+  /// **'登录提供商'**
+  String get identityProvider;
+
+  /// No description provided for @loginAction.
+  ///
+  /// In zh, this message translates to:
+  /// **'登录'**
+  String get loginAction;
+
+  /// No description provided for @loginUnavailable.
+  ///
+  /// In zh, this message translates to:
+  /// **'云服务登录暂未接入'**
+  String get loginUnavailable;
+
+  /// No description provided for @continueLocal.
+  ///
+  /// In zh, this message translates to:
+  /// **'使用本地模式继续'**
+  String get continueLocal;
+
+  /// No description provided for @preferencesTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'个性化设置'**
+  String get preferencesTitle;
+
+  /// No description provided for @finishSetup.
+  ///
+  /// In zh, this message translates to:
+  /// **'进入 Everfold'**
+  String get finishSetup;
+
+  /// No description provided for @modelConnections.
+  ///
+  /// In zh, this message translates to:
+  /// **'接入模型'**
+  String get modelConnections;
 }
 
 class _AppLocalizationsDelegate

@@ -55,6 +55,35 @@ final class AppSettingsController extends AsyncNotifier<AppSettings> {
     );
   }
 
+  /// 引导仅允许回到介绍或模式选择, 完成状态通过明确命令提交
+  Future<Result<void>> startSetup() =>
+      _update((s) => s.copyWith(setupStage: AppSetupStage.mode));
+  Future<Result<void>> backToIntroduction() =>
+      _update((s) => s.copyWith(setupStage: AppSetupStage.introduction));
+  Future<Result<void>> chooseConnectionMode(AppConnectionMode mode) => _update(
+    (s) => s.copyWith(
+      connectionMode: mode,
+      setupStage: mode == AppConnectionMode.local
+          ? AppSetupStage.preferences
+          : AppSetupStage.login,
+    ),
+  );
+
+  /// 尚未接入认证, 云模式不能标记初始化完成
+  Future<Result<void>> finishSetup() => _update((s) {
+    if (s.connectionMode != AppConnectionMode.local) {
+      throw const AppFailure(FailureKind.validation);
+    }
+    return s.copyWith(setupStage: AppSetupStage.complete);
+  });
+
+  Future<Result<void>> skipSetup() => _update(
+    (s) => s.copyWith(
+      connectionMode: AppConnectionMode.local,
+      setupStage: AppSetupStage.complete,
+    ),
+  );
+
   Future<Result<void>> _update(AppSettings Function(AppSettings) update) {
     final repository = ref.read(appSettingsRepositoryProvider);
     final operation = _pendingWrite.then((_) async {
@@ -67,7 +96,12 @@ final class AppSettingsController extends AsyncNotifier<AppSettings> {
       if (!ref.mounted) {
         return const Failure<void>(AppFailure(FailureKind.cancelled));
       }
-      final next = update(current);
+      final AppSettings next;
+      try {
+        next = update(current);
+      } on AppFailure catch (error) {
+        return Failure<void>(error);
+      }
       final result = await repository.save(next);
       if (ref.mounted && result is Success<void>) {
         state = AsyncData(next);
