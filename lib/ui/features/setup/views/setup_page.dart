@@ -3,11 +3,13 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../application/settings/app_settings_controller.dart';
+import '../../../../application/clusters/clusters_controller.dart';
 import '../../../../domain/common/result.dart';
 import '../../../../domain/settings/app_settings.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../settings/views/settings_page.dart';
 import 'connection_form.dart';
+import '../../clusters/views/cluster_labels.dart';
 
 // 首次启动的连接界面暂不执行真实认证
 class SetupPage extends HookConsumerWidget {
@@ -108,9 +110,17 @@ class SetupPage extends HookConsumerWidget {
         ConnectionForm(
           saving: busy.value,
           onConnectionStarted: () => connectionLocked.value = true,
-          onNext: () async {
+          onNext: (configuration) async {
             final advanced = await run(controller.continueConnectionSetup);
-            if (context.mounted && advanced) connectionLocked.value = false;
+            if (context.mounted && advanced) {
+              ref
+                  .read(clustersControllerProvider.notifier)
+                  .addConnected(
+                    clusterServiceLabel(strings, configuration.service),
+                    configuration,
+                  );
+              connectionLocked.value = false;
+            }
           },
         ),
     ];

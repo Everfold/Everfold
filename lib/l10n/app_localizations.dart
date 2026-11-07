@@ -596,6 +596,78 @@ abstract class AppLocalizations {
   /// **'集群'**
   String get cloudServices;
 
+  /// No description provided for @addCluster.
+  ///
+  /// In zh, this message translates to:
+  /// **'添加集群'**
+  String get addCluster;
+
+  /// No description provided for @clusterEmptyTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'尚未添加集群'**
+  String get clusterEmptyTitle;
+
+  /// No description provided for @clusterEmptyBody.
+  ///
+  /// In zh, this message translates to:
+  /// **'添加局域网, 自部署或测试云集群, 分别管理各自的连接'**
+  String get clusterEmptyBody;
+
+  /// No description provided for @clusterName.
+  ///
+  /// In zh, this message translates to:
+  /// **'集群名称'**
+  String get clusterName;
+
+  /// No description provided for @renameCluster.
+  ///
+  /// In zh, this message translates to:
+  /// **'重命名集群'**
+  String get renameCluster;
+
+  /// No description provided for @removeCluster.
+  ///
+  /// In zh, this message translates to:
+  /// **'移除集群'**
+  String get removeCluster;
+
+  /// No description provided for @removeClusterTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'移除此集群?'**
+  String get removeClusterTitle;
+
+  /// No description provided for @removeClusterBody.
+  ///
+  /// In zh, this message translates to:
+  /// **'只移除所选集群, 不影响其他集群或会话'**
+  String get removeClusterBody;
+
+  /// No description provided for @disconnectCluster.
+  ///
+  /// In zh, this message translates to:
+  /// **'断开'**
+  String get disconnectCluster;
+
+  /// No description provided for @clusterConnected.
+  ///
+  /// In zh, this message translates to:
+  /// **'已连接'**
+  String get clusterConnected;
+
+  /// No description provided for @clusterDisconnected.
+  ///
+  /// In zh, this message translates to:
+  /// **'未连接'**
+  String get clusterDisconnected;
+
+  /// No description provided for @configureCluster.
+  ///
+  /// In zh, this message translates to:
+  /// **'配置并连接'**
+  String get configureCluster;
+
   /// No description provided for @promptHint.
   ///
   /// In zh, this message translates to:

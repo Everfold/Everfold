@@ -32,7 +32,7 @@ void main() {
             padding: const EdgeInsets.all(24),
             child: ConnectionForm(
               saving: false,
-              onNext: onNext ?? () {},
+              onNext: (_) => onNext?.call(),
               onConnectionStarted: onStarted ?? () {},
             ),
           ),

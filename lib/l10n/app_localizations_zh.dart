@@ -259,6 +259,42 @@ class AppLocalizationsZh extends AppLocalizations {
   String get cloudServices => '集群';
 
   @override
+  String get addCluster => '添加集群';
+
+  @override
+  String get clusterEmptyTitle => '尚未添加集群';
+
+  @override
+  String get clusterEmptyBody => '添加局域网, 自部署或测试云集群, 分别管理各自的连接';
+
+  @override
+  String get clusterName => '集群名称';
+
+  @override
+  String get renameCluster => '重命名集群';
+
+  @override
+  String get removeCluster => '移除集群';
+
+  @override
+  String get removeClusterTitle => '移除此集群?';
+
+  @override
+  String get removeClusterBody => '只移除所选集群, 不影响其他集群或会话';
+
+  @override
+  String get disconnectCluster => '断开';
+
+  @override
+  String get clusterConnected => '已连接';
+
+  @override
+  String get clusterDisconnected => '未连接';
+
+  @override
+  String get configureCluster => '配置并连接';
+
+  @override
   String get promptHint => '你想处理什么任务?';
 
   @override

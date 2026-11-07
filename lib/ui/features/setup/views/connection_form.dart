@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../domain/clusters/cluster_connection.dart';
 import '../../../../l10n/app_localizations.dart';
 
 enum _ConnectionStatus { idle, connecting, succeeded }
@@ -15,11 +16,13 @@ class ConnectionForm extends StatefulWidget {
     required this.saving,
     required this.onConnectionStarted,
     required this.onNext,
+    this.initialConfiguration = const ClusterConfiguration(),
   });
 
   final bool saving;
   final VoidCallback onConnectionStarted;
-  final VoidCallback onNext;
+  final ValueChanged<ClusterConfiguration> onNext;
+  final ClusterConfiguration initialConfiguration;
 
   @override
   State<ConnectionForm> createState() => _ConnectionFormState();
@@ -31,14 +34,24 @@ class _ConnectionFormState extends State<ConnectionForm> {
   final _username = TextEditingController();
   final _password = TextEditingController();
   final _certificates = <String, _CertificateSource>{};
-  String _provider = 'lan';
-  String _verification = 'none';
+  late String _provider;
+  late String _verification;
   _ConnectionStatus _status = _ConnectionStatus.idle;
   Timer? _timer;
 
   bool get _locked => widget.saving || _status != _ConnectionStatus.idle;
   bool get _actionBusy =>
       widget.saving || _status == _ConnectionStatus.connecting;
+
+  @override
+  void initState() {
+    super.initState();
+    final config = widget.initialConfiguration;
+    _provider = config.service.name;
+    _verification = config.verification.name;
+    _ip.text = config.ip;
+    _port.text = config.port;
+  }
 
   @override
   void dispose() {
@@ -78,7 +91,17 @@ class _ConnectionFormState extends State<ConnectionForm> {
   void _connect() {
     if (_actionBusy) return;
     if (_status == _ConnectionStatus.succeeded) {
-      widget.onNext();
+      final selfHosted = _provider == 'selfHosted';
+      widget.onNext(
+        ClusterConfiguration(
+          service: ClusterService.values.byName(_provider),
+          ip: selfHosted ? _ip.text.trim() : '',
+          port: selfHosted ? _port.text.trim() : '',
+          verification: selfHosted
+              ? ClusterVerification.values.byName(_verification)
+              : ClusterVerification.none,
+        ),
+      );
       return;
     }
     FocusScope.of(context).unfocus();

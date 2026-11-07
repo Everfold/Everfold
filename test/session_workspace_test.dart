@@ -95,7 +95,7 @@ void main() {
     );
     expect(tester.takeException(), isNull);
   });
-  testWidgets('模型接入入口无后续效果, 云服务内容为空', (tester) async {
+  testWidgets('模型接入入口无后续效果, 集群管理是独立页面', (tester) async {
     await pumpApp(tester);
     final container = ProviderScope.containerOf(
       tester.element(find.byType(SessionPage)),
@@ -110,6 +110,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(SessionPage), findsNothing);
     expect(find.text('集群'), findsNWidgets(2));
+    expect(find.text('尚未添加集群'), findsOneWidget);
     container.read(appRouterProvider).pop();
     await tester.pumpAndSettle();
     expect(find.byType(SessionPage), findsOneWidget);

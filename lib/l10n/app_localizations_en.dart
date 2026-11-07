@@ -263,7 +263,45 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sessionsTitle => 'Sessions';
 
   @override
-  String get cloudServices => 'Cloud services';
+  String get cloudServices => 'Clusters';
+
+  @override
+  String get addCluster => 'Add cluster';
+
+  @override
+  String get clusterEmptyTitle => 'No clusters yet';
+
+  @override
+  String get clusterEmptyBody =>
+      'Add local network, self-hosted, or test cloud clusters and manage each connection independently';
+
+  @override
+  String get clusterName => 'Cluster name';
+
+  @override
+  String get renameCluster => 'Rename cluster';
+
+  @override
+  String get removeCluster => 'Remove cluster';
+
+  @override
+  String get removeClusterTitle => 'Remove this cluster?';
+
+  @override
+  String get removeClusterBody =>
+      'Only this cluster will be removed. Other clusters and sessions are unaffected';
+
+  @override
+  String get disconnectCluster => 'Disconnect';
+
+  @override
+  String get clusterConnected => 'Connected';
+
+  @override
+  String get clusterDisconnected => 'Disconnected';
+
+  @override
+  String get configureCluster => 'Configure and connect';
 
   @override
   String get promptHint => 'What would you like to work on?';

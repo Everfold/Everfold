@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:everfold/app/app_scope.dart';
+import 'package:everfold/application/clusters/clusters_controller.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:everfold/app/everfold_app.dart';
 import 'package:everfold/core/config/app_config.dart';
 import 'package:everfold/data/models/app_settings_dto.dart';
@@ -167,6 +169,10 @@ void main() {
       final settings = AppSettingsDto.fromJson(jsonDecode(saved)).settings;
       expect(settings.setupStage, AppSetupStage.complete);
       expect(settings.connectionMode, AppConnectionMode.cloud);
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(SessionPage)),
+      );
+      expect(container.read(clustersControllerProvider).single.name, provider);
     });
   }
   testWidgets('下一步保存失败仍可重试, 不重复等待连接', (tester) async {
