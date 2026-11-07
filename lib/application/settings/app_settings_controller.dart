@@ -69,9 +69,17 @@ final class AppSettingsController extends AsyncNotifier<AppSettings> {
     ),
   );
 
-  /// 尚未接入认证, 云模式不能标记初始化完成
+  // 仅推进设置阶段, 不创建登录状态或保存任何凭据
+  Future<Result<void>> continueConnectionSetup() => _update((s) {
+    if (s.connectionMode != AppConnectionMode.cloud ||
+        s.setupStage != AppSetupStage.login) {
+      throw const AppFailure(FailureKind.validation);
+    }
+    return s.copyWith(setupStage: AppSetupStage.preferences);
+  });
+
   Future<Result<void>> finishSetup() => _update((s) {
-    if (s.connectionMode != AppConnectionMode.local) {
+    if (s.setupStage != AppSetupStage.preferences) {
       throw const AppFailure(FailureKind.validation);
     }
     return s.copyWith(setupStage: AppSetupStage.complete);

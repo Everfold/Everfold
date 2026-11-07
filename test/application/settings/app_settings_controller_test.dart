@@ -27,7 +27,7 @@ void main() {
 
   tearDown(() => container.dispose());
 
-  test('云模式在队列中不能越过未接入的认证, 跳过切回本地', () async {
+  test('云模式在队列中不能跳过连接阶段, 跳过设置切回本地', () async {
     await container.read(appSettingsControllerProvider.future);
     final controller = container.read(appSettingsControllerProvider.notifier);
     await controller.startSetup();
@@ -43,6 +43,42 @@ void main() {
     final settings = container.read(appSettingsControllerProvider).requireValue;
     expect(settings.setupStage, AppSetupStage.complete);
     expect(settings.connectionMode, AppConnectionMode.local);
+  });
+
+  test('连接阶段推进和完成按顺序保存, 只记录初始化进度', () async {
+    await container.read(appSettingsControllerProvider.future);
+    final controller = container.read(appSettingsControllerProvider.notifier);
+    expect(await controller.continueConnectionSetup(), isA<Failure<void>>());
+    expect(await controller.finishSetup(), isA<Failure<void>>());
+    expect(store.writes, 0);
+    await controller.chooseConnectionMode(AppConnectionMode.cloud);
+    final next = controller.continueConnectionSetup();
+    final finish = controller.finishSetup();
+    expect(await next, isA<Success<void>>());
+    expect(await finish, isA<Success<void>>());
+    final saved = (await LocalAppSettingsRepository(store).load()).getOrThrow();
+    expect(saved.connectionMode, AppConnectionMode.cloud);
+    expect(saved.setupStage, AppSetupStage.complete);
+    expect(await controller.continueConnectionSetup(), isA<Failure<void>>());
+    expect(store.writes, 3);
+  });
+
+  test('连接后保存失败保持登录阶段, 可显式重试', () async {
+    await container.read(appSettingsControllerProvider.future);
+    final controller = container.read(appSettingsControllerProvider.notifier);
+    await controller.chooseConnectionMode(AppConnectionMode.cloud);
+    store.failWrite = true;
+    expect(await controller.continueConnectionSetup(), isA<Failure<void>>());
+    expect(
+      container.read(appSettingsControllerProvider).requireValue.setupStage,
+      AppSetupStage.login,
+    );
+    store.failWrite = false;
+    expect(await controller.continueConnectionSetup(), isA<Success<void>>());
+    expect(
+      container.read(appSettingsControllerProvider).requireValue.setupStage,
+      AppSetupStage.preferences,
+    );
   });
 
   test('配色与其他偏好并发修改不互相覆盖, 可恢复', () async {
