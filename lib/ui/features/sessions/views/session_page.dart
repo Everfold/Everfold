@@ -10,12 +10,17 @@ import '../../../../l10n/app_localizations.dart';
 import 'session_transcript.dart';
 import 'workspace_context_dialog.dart';
 
+/// 协调当前会话的草稿, 焦点和工作目录交互
+///
+/// 页面保留控制器与 Hooks, 下方私有区块仅组织欢迎区, 消息区和输入区
 class SessionPage extends HookConsumerWidget {
   const SessionPage({super.key, this.sessionId});
+
   final String? sessionId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // 页面状态与输入控制器在布局切换时保持存活
     final strings = AppLocalizations.of(context)!;
     final session = ref.watch(sessionsControllerProvider).find(sessionId);
     final controller = ref.read(sessionsControllerProvider.notifier);
@@ -23,6 +28,7 @@ class SessionPage extends HookConsumerWidget {
     final scroll = useScrollController();
     final focus = useFocusNode();
     final pickingWorkspace = useState(false);
+    // 切换会话时同步对应草稿, 不把上一个会话的输入带到新会话
     useEffect(() {
       final draft = session?.draft ?? '';
       if (input.text != draft) {
@@ -78,7 +84,131 @@ class SessionPage extends HookConsumerWidget {
       }
     }
 
-    final composer = Padding(
+    // 布局区块只接收当前值与回调, 输入控制器仍由页面持有
+    final composer = _SessionComposer(
+      session: session,
+      input: input,
+      focus: focus,
+      pickingWorkspace: pickingWorkspace.value,
+      onDraftChanged: (text) => controller.setDraft(sessionId, text),
+      onPresetChanged: (preset) => controller.setPreset(sessionId, preset),
+      onPickWorkspace: pickWorkspace,
+      onOpenWorkspace: openWorkspaceContext,
+      onClearWorkspace: () => controller.setWorkspace(sessionId, null),
+      onSubmit: submit,
+    );
+
+    // 两种布局复用相同输入区, 只改变输入区与消息记录的排列关系
+    return SafeArea(
+      child: hasMessages
+          ? _ConversationBody(
+              session: session,
+              sessionId: sessionId,
+              composer: composer,
+            )
+          : _EmptySessionBody(scroll: scroll, composer: composer),
+    );
+  }
+}
+
+// 有消息时让记录占据剩余高度, 输入区位于下方
+class _ConversationBody extends StatelessWidget {
+  const _ConversationBody({
+    required this.session,
+    required this.sessionId,
+    required this.composer,
+  });
+
+  final AgentSession session;
+  final String? sessionId;
+  final Widget composer;
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) => Column(
+      children: [
+        Expanded(
+          child: SessionTranscript(
+            key: ValueKey(sessionId),
+            messages: session.messages,
+            storageId: session.id,
+          ),
+        ),
+        // 输入区最多占当前可用高度的 65%, 键盘或大字号下可独立滚动
+        ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: constraints.maxHeight * 0.65),
+          child: SingleChildScrollView(primary: false, child: composer),
+        ),
+      ],
+    ),
+  );
+}
+
+// 空会话的欢迎内容和输入区一起滚动, 避免小窗口下被裁切
+class _EmptySessionBody extends StatelessWidget {
+  const _EmptySessionBody({required this.scroll, required this.composer});
+
+  final ScrollController scroll;
+  final Widget composer;
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = AppLocalizations.of(context)!;
+    return SingleChildScrollView(
+      controller: scroll,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 48),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Everfold', style: Theme.of(context).textTheme.headlineMedium),
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                strings.newPromptTitle,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ),
+            const SizedBox(height: 24),
+            composer,
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// 输入区分为文本输入和可换行的操作栏, 不自行读写应用状态
+class _SessionComposer extends StatelessWidget {
+  const _SessionComposer({
+    required this.session,
+    required this.input,
+    required this.focus,
+    required this.pickingWorkspace,
+    required this.onDraftChanged,
+    required this.onPresetChanged,
+    required this.onPickWorkspace,
+    required this.onOpenWorkspace,
+    required this.onClearWorkspace,
+    required this.onSubmit,
+  });
+
+  final AgentSession session;
+  final TextEditingController input;
+  final FocusNode focus;
+  final bool pickingWorkspace;
+  final ValueChanged<String> onDraftChanged;
+  final ValueChanged<SessionPreset> onPresetChanged;
+  final VoidCallback onPickWorkspace;
+  final VoidCallback onOpenWorkspace;
+  final VoidCallback onClearWorkspace;
+  final VoidCallback onSubmit;
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = AppLocalizations.of(context)!;
+    return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -94,7 +224,7 @@ class SessionPage extends HookConsumerWidget {
               hintText: strings.promptHint,
               border: const OutlineInputBorder(),
             ),
-            onChanged: (text) => controller.setDraft(sessionId, text),
+            onChanged: (text) => onDraftChanged(text),
           ),
           const SizedBox(height: 8),
           Wrap(
@@ -126,7 +256,7 @@ class SessionPage extends HookConsumerWidget {
                       groupValue: session.preset,
                       onChanged: (value) {
                         if (value != null) {
-                          controller.setPreset(sessionId, value);
+                          onPresetChanged(value);
                         }
                       },
                       child: Text(
@@ -150,7 +280,7 @@ class SessionPage extends HookConsumerWidget {
               if (session.workspace == null)
                 TextButton.icon(
                   key: const ValueKey('workspace-selector'),
-                  onPressed: pickingWorkspace.value ? null : pickWorkspace,
+                  onPressed: pickingWorkspace ? null : onPickWorkspace,
                   icon: const Icon(Icons.folder_open),
                   label: Text(strings.noWorkspace),
                 )
@@ -164,12 +294,8 @@ class SessionPage extends HookConsumerWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   tooltip: session.workspace,
-                  onPressed: pickingWorkspace.value
-                      ? null
-                      : openWorkspaceContext,
-                  onDeleted: pickingWorkspace.value
-                      ? null
-                      : () => controller.setWorkspace(sessionId, null),
+                  onPressed: pickingWorkspace ? null : onOpenWorkspace,
+                  onDeleted: pickingWorkspace ? null : () => onClearWorkspace(),
                   deleteButtonTooltipMessage: strings.clearWorkspace,
                 ),
               IconButton(
@@ -182,64 +308,13 @@ class SessionPage extends HookConsumerWidget {
               IconButton.filled(
                 key: const ValueKey('send-prompt'),
                 tooltip: strings.sendPrompt,
-                onPressed: session.draft.trim().isEmpty ? null : submit,
+                onPressed: session.draft.trim().isEmpty ? null : onSubmit,
                 icon: const Icon(Icons.arrow_upward),
               ),
             ],
           ),
         ],
       ),
-    );
-    return SafeArea(
-      child: hasMessages
-          ? LayoutBuilder(
-              builder: (context, constraints) => Column(
-                children: [
-                  Expanded(
-                    child: SessionTranscript(
-                      key: ValueKey(sessionId),
-                      messages: session.messages,
-                      storageId: session.id,
-                    ),
-                  ),
-                  // 小窗口或软键盘压缩空间时, 输入区自身可滚动
-                  ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxHeight: constraints.maxHeight * 0.65,
-                    ),
-                    child: SingleChildScrollView(
-                      primary: false,
-                      child: composer,
-                    ),
-                  ),
-                ],
-              ),
-            )
-          : SingleChildScrollView(
-              controller: scroll,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 48),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Everfold',
-                      style: Theme.of(context).textTheme.headlineMedium,
-                    ),
-                    const SizedBox(height: 8),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Text(
-                        strings.newPromptTitle,
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    composer,
-                  ],
-                ),
-              ),
-            ),
     );
   }
 }

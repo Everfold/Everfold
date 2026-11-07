@@ -7,7 +7,9 @@ import '../../../../application/sessions/sessions_controller.dart';
 import '../../../../domain/sessions/agent_session.dart';
 import '../../../../l10n/app_localizations.dart';
 
-/// 宽窗口固定侧栏, 窄窗口使用 Material Drawer, 页面内容保持同一套路由
+/// 组合导航与路由正文, 宽窗口使用侧栏, 窄窗口使用抽屉
+///
+/// 会话操作留在页面入口, 具名布局区块只负责排列标准 Material 控件
 class WorkspaceShell extends ConsumerWidget {
   const WorkspaceShell({
     super.key,
@@ -19,6 +21,7 @@ class WorkspaceShell extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // 页面状态: 根据当前路由和会话数据确定标题与选中项
     final strings = AppLocalizations.of(context)!;
     final sessions = ref.watch(sessionsControllerProvider).sessions;
     final controller = ref.read(sessionsControllerProvider.notifier);
@@ -34,6 +37,7 @@ class WorkspaceShell extends ConsumerWidget {
         : currentSession.title;
     return LayoutBuilder(
       builder: (context, constraints) {
+        // 根据实际可用宽度切换布局, 不根据操作系统选择另一套界面
         final wide = constraints.maxWidth >= 840;
         void navigate(String path, {bool push = false}) {
           if (!wide) Navigator.of(context).pop();
@@ -79,75 +83,18 @@ class WorkspaceShell extends ConsumerWidget {
           }
         }
 
-        final sidebar = NavigationDrawer(
-          key: const ValueKey('workspace-navigation'),
-          selectedIndex: switch (location) {
-            '/cloud' => 0,
-            '/settings' => 1,
-            _ => null,
-          },
-          onDestinationSelected: (index) =>
+        // 同一导航内容用于桌面侧栏和窄屏抽屉, 避免两套入口顺序不一致
+        final sidebar = _WorkspaceNavigation(
+          location: location,
+          sessions: sessions,
+          onNewSession: () => navigate('/'),
+          onSelectDestination: (index) =>
               navigate(index == 0 ? '/cloud' : '/settings', push: true),
-          children: [
-            NavigationDrawerDestination(
-              key: const ValueKey('cloud-navigation'),
-              icon: const Icon(Icons.cloud_outlined),
-              label: Text(strings.cloudServices),
-            ),
-            NavigationDrawerDestination(
-              key: const ValueKey('settings-navigation'),
-              icon: const Icon(Icons.settings_outlined),
-              label: Text(strings.settingsDestination),
-            ),
-            const Divider(),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: FilledButton.tonalIcon(
-                key: const ValueKey('new-session'),
-                onPressed: () => navigate('/'),
-                icon: const Icon(Icons.add),
-                label: Text(strings.newSession),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Text(
-                strings.sessionsTitle,
-                style: Theme.of(context).textTheme.labelLarge,
-              ),
-            ),
-            for (final session in sessions)
-              ListTile(
-                key: ValueKey('session-${session.id}'),
-                selected: location == '/sessions/${session.id}',
-                leading: const Icon(Icons.chat_bubble_outline),
-                title: Text(
-                  session.title.isEmpty ? strings.newSession : session.title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                onTap: () => navigate('/sessions/${session.id}'),
-                trailing: MenuAnchor(
-                  menuChildren: [
-                    MenuItemButton(
-                      onPressed: () => edit(session, 'rename'),
-                      child: Text(strings.renameSession),
-                    ),
-                    MenuItemButton(
-                      onPressed: () => edit(session, 'delete'),
-                      child: Text(strings.deleteSession),
-                    ),
-                  ],
-                  builder: (context, menu, _) => IconButton(
-                    key: ValueKey('session-menu-${session.id}'),
-                    tooltip: strings.more,
-                    onPressed: () => menu.isOpen ? menu.close() : menu.open(),
-                    icon: const Icon(Icons.more_vert),
-                  ),
-                ),
-              ),
-          ],
+          onOpenSession: (session) => navigate('/sessions/${session.id}'),
+          onEditSession: edit,
         );
+
+        // 页面骨架只决定导航位置, 路由页面本身通过 child 放入正文区
         return Scaffold(
           appBar: wide
               ? null
@@ -165,25 +112,10 @@ class WorkspaceShell extends ConsumerWidget {
               children: [
                 if (wide) ...[sidebar, const VerticalDivider(width: 1)],
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      if (wide && location != '/')
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
-                          child: Semantics(
-                            header: true,
-                            child: Text(
-                              title,
-                              key: const ValueKey('workspace-page-title'),
-                              style: Theme.of(context).textTheme.headlineMedium,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ),
-                      Expanded(child: child),
-                    ],
+                  child: _WorkspaceBody(
+                    title: title,
+                    showTitle: wide && location != '/',
+                    child: child,
                   ),
                 ),
               ],
@@ -193,6 +125,135 @@ class WorkspaceShell extends ConsumerWidget {
       },
     );
   }
+}
+
+// 导航区只接收显示数据和操作回调, 不负责修改会话状态
+class _WorkspaceNavigation extends StatelessWidget {
+  const _WorkspaceNavigation({
+    required this.location,
+    required this.sessions,
+    required this.onNewSession,
+    required this.onSelectDestination,
+    required this.onOpenSession,
+    required this.onEditSession,
+  });
+
+  final String location;
+  final List<AgentSession> sessions;
+  final VoidCallback onNewSession;
+  final ValueChanged<int> onSelectDestination;
+  final ValueChanged<AgentSession> onOpenSession;
+  final void Function(AgentSession session, String action) onEditSession;
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = AppLocalizations.of(context)!;
+    // 目的地索引与显示顺序一致: 0 为集群, 1 为设置
+    return NavigationDrawer(
+      key: const ValueKey('workspace-navigation'),
+      selectedIndex: switch (location) {
+        '/cloud' => 0,
+        '/settings' => 1,
+        _ => null,
+      },
+      onDestinationSelected: onSelectDestination,
+      children: [
+        NavigationDrawerDestination(
+          key: const ValueKey('cloud-navigation'),
+          icon: const Icon(Icons.cloud_outlined),
+          label: Text(strings.cloudServices),
+        ),
+        NavigationDrawerDestination(
+          key: const ValueKey('settings-navigation'),
+          icon: const Icon(Icons.settings_outlined),
+          label: Text(strings.settingsDestination),
+        ),
+        const Divider(),
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: FilledButton.tonalIcon(
+            key: const ValueKey('new-session'),
+            onPressed: onNewSession,
+            icon: const Icon(Icons.add),
+            label: Text(strings.newSession),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Text(
+            strings.sessionsTitle,
+            style: Theme.of(context).textTheme.labelLarge,
+          ),
+        ),
+        for (final session in sessions)
+          ListTile(
+            key: ValueKey('session-${session.id}'),
+            selected: location == '/sessions/${session.id}',
+            leading: const Icon(Icons.chat_bubble_outline),
+            title: Text(
+              session.title.isEmpty ? strings.newSession : session.title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            onTap: () => onOpenSession(session),
+            trailing: MenuAnchor(
+              menuChildren: [
+                MenuItemButton(
+                  onPressed: () => onEditSession(session, 'rename'),
+                  child: Text(strings.renameSession),
+                ),
+                MenuItemButton(
+                  onPressed: () => onEditSession(session, 'delete'),
+                  child: Text(strings.deleteSession),
+                ),
+              ],
+              builder: (context, menu, _) => IconButton(
+                key: ValueKey('session-menu-${session.id}'),
+                tooltip: strings.more,
+                onPressed: () => menu.isOpen ? menu.close() : menu.open(),
+                icon: const Icon(Icons.more_vert),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+// 正文区在桌面显示标题, 窄屏标题已由 AppBar 提供, 不再重复
+class _WorkspaceBody extends StatelessWidget {
+  const _WorkspaceBody({
+    required this.title,
+    required this.showTitle,
+    required this.child,
+  });
+
+  final String title;
+  final bool showTitle;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      if (showTitle)
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
+          child: Semantics(
+            header: true,
+            child: Text(
+              title,
+              key: const ValueKey('workspace-page-title'),
+              style: Theme.of(context).textTheme.headlineMedium,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ),
+      // 正文占据标题下的剩余空间, 内部页面自行管理滚动
+      Expanded(child: child),
+    ],
+  );
 }
 
 class _RenameSessionDialog extends HookWidget {
