@@ -88,16 +88,27 @@ class WorkspaceShell extends ConsumerWidget {
           },
           onDestinationSelected: (index) =>
               navigate(index == 0 ? '/cloud' : '/settings', push: true),
-          header: Padding(
-            padding: const EdgeInsets.all(16),
-            child: FilledButton.tonalIcon(
-              key: const ValueKey('new-session'),
-              onPressed: () => navigate('/'),
-              icon: const Icon(Icons.add),
-              label: Text(strings.newSession),
-            ),
-          ),
           children: [
+            NavigationDrawerDestination(
+              key: const ValueKey('cloud-navigation'),
+              icon: const Icon(Icons.cloud_outlined),
+              label: Text(strings.cloudServices),
+            ),
+            NavigationDrawerDestination(
+              key: const ValueKey('settings-navigation'),
+              icon: const Icon(Icons.settings_outlined),
+              label: Text(strings.settingsDestination),
+            ),
+            const Divider(),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: FilledButton.tonalIcon(
+                key: const ValueKey('new-session'),
+                onPressed: () => navigate('/'),
+                icon: const Icon(Icons.add),
+                label: Text(strings.newSession),
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Text(
@@ -135,17 +146,6 @@ class WorkspaceShell extends ConsumerWidget {
                   ),
                 ),
               ),
-            const Divider(),
-            NavigationDrawerDestination(
-              key: const ValueKey('cloud-navigation'),
-              icon: const Icon(Icons.cloud_outlined),
-              label: Text(strings.cloudServices),
-            ),
-            NavigationDrawerDestination(
-              key: const ValueKey('settings-navigation'),
-              icon: const Icon(Icons.settings_outlined),
-              label: Text(strings.settingsDestination),
-            ),
           ],
         );
         return Scaffold(

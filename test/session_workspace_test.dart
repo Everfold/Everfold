@@ -72,9 +72,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  for (final width in [390.0, 1280.0]) {
-    testWidgets('宽度 $width 的长会话列表可滚动到导航目的地', (tester) async {
-      await pumpApp(tester, size: Size(width, 900));
+  for (final width in [320.0, 390.0, 840.0, 1280.0]) {
+    testWidgets('宽度 $width 双倍字号下集群与设置在最上方, 会话列表仍可滚动选择', (tester) async {
+      await pumpApp(tester, size: Size(width, 900), scale: 2);
       final container = ProviderScope.containerOf(
         tester.element(find.byType(SessionPage)),
       );
@@ -89,13 +89,27 @@ void main() {
         await tester.pumpAndSettle();
       }
       final navigation = find.byKey(const ValueKey('workspace-navigation'));
+      final cloud = find.byKey(const ValueKey('cloud-navigation'));
       final settings = find.byKey(const ValueKey('settings-navigation'));
-      await tester.scrollUntilVisible(
-        settings,
-        300,
-        scrollable: find
-            .descendant(of: navigation, matching: find.byType(Scrollable))
-            .first,
+      final newSession = find.byKey(const ValueKey('new-session'));
+      final savedSessions = container.read(sessionsControllerProvider).sessions;
+      final firstSession = find.byKey(
+        ValueKey('session-${savedSessions.first.id}'),
+      );
+      for (final target in [cloud, settings, newSession, firstSession]) {
+        expect(target.hitTestable(), findsOneWidget);
+      }
+      expect(
+        tester.getTopLeft(cloud).dy,
+        lessThan(tester.getTopLeft(settings).dy),
+      );
+      expect(
+        tester.getTopLeft(settings).dy,
+        lessThan(tester.getTopLeft(newSession).dy),
+      );
+      expect(
+        tester.getTopLeft(newSession).dy,
+        lessThan(tester.getTopLeft(firstSession).dy),
       );
       await tester.tap(settings);
       await tester.pumpAndSettle();
@@ -104,6 +118,28 @@ void main() {
             .widget<Text>(find.byKey(const ValueKey('workspace-page-title')))
             .data,
         '设置',
+      );
+      if (width < 840) {
+        await tester.tap(find.byIcon(Icons.menu));
+        await tester.pumpAndSettle();
+      }
+      expect(tester.widget<NavigationDrawer>(navigation).selectedIndex, 1);
+      final lastSession = savedSessions.last;
+      final lastItem = find.byKey(ValueKey('session-${lastSession.id}'));
+      await tester.scrollUntilVisible(
+        lastItem,
+        300,
+        scrollable: find
+            .descendant(of: navigation, matching: find.byType(Scrollable))
+            .first,
+      );
+      await tester.tap(lastItem);
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<Text>(find.byKey(const ValueKey('workspace-page-title')))
+            .data,
+        lastSession.title,
       );
       expect(
         container.read(sessionsControllerProvider).sessions,
