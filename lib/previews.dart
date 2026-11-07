@@ -17,12 +17,23 @@ Widget setupPreview() => _preview(initialized: false);
 @Preview(name: 'Workspace · Desktop', size: Size(1280, 900))
 Widget workspacePreview() => _preview(initialized: true);
 
-Widget _preview({required bool initialized}) => AppScope(
+@Preview(name: 'Connection · Mobile', size: Size(390, 844))
+@Preview(name: 'Connection · Desktop', size: Size(1280, 900))
+Widget connectionPreview() => _preview(initialized: false, login: true);
+
+Widget _preview({required bool initialized, bool login = false}) => AppScope(
   config: AppConfig(),
   talker: Talker(settings: TalkerSettings(enabled: false)),
   preferencesStore: MemoryPreferencesStore(
-    initialValues: initialized
-        ? {'everfold.app_settings.v1': '{"setupStage":"complete"}'}
+    initialValues: login
+        ? {
+            'everfold.app_settings.v1': '{"language":"zh","setupStage":"login","connectionMode":"cloud"}',
+          }
+        : initialized
+        ? {
+            'everfold.app_settings.v1':
+                '{"language":"system","setupStage":"complete"}',
+          }
         : {},
   ),
   child: const EverfoldApp(),
