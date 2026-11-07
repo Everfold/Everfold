@@ -52,10 +52,8 @@ Controller 不导入 Data, App 或设计系统. 页面不直接创建 Dio, 访�
 
 Material 页面使用 `package:material_ui/material_ui.dart` 与默认主题, 不混用旧 Material 导入, 不新增主题类
 
-Material 与 Cupertino 已接入独立首页. 新业务分别组合两套标准布局, 共享 Controller, 领域模型和仓储契约, 不用一个巨大条件组件混合两套设计系统
+首页设置入口提供 appearance 和 language, 默认均跟随系统, 分别持久化在 AppSettings 的对应字段. 通过 Controller 的 setAppearance 与 setLanguage 修改, 使用 copyWith 保留其他字段
 
-首页设置入口提供 designSystem, appearance, language 三项. 界面风格默认跟随平台, 明暗与语言默认跟随系统, 分别持久化在 AppSettings 的对应字段. 通过 Controller 的 setDesignSystem, setAppearance, setLanguage 修改, 使用 copyWith 保留其他字段
+Locale 与主题明暗映射位于 app/everfold_app.dart, 不把 Flutter 类型放进纯 Dart 领域模型. Material 使用默认 ThemeData.dark 和 ThemeMode, 不新增主题类或自定义调色板
 
-平台解析位于 app/providers/design_system_provider.dart, Locale 与主题明暗映射位于 app/everfold_app.dart, 不把 Flutter 类型放进纯 Dart 领域模型. Material 使用默认 ThemeData.dark 和 ThemeMode, Cupertino 使用 CupertinoThemeData.brightness, 不新增主题类或自定义调色板
-
-切换保留同一个 GoRouter 和业务 ProviderScope, 页面内容订阅实际风格. 当前导航栈会保留, 已创建路由的转场可能沿用创建时的样式, 新建页面使用当前风格. 展示页内输入, 滚动与演示开关可能在切换后重置, 不承诺自动保存表单草稿
+路由实例独立于设置, 修改明暗与语言不重建导航栈. 窄屏和宽屏布局按可用窗口空间适配, 不通过切换设计系统实现

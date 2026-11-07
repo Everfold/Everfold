@@ -26,7 +26,7 @@ lib/
 │       ├── network/
 │       └── storage/
 ├── core/                         # 非业务配置与安全错误报告
-├── ui/                           # Material 与 Cupertino 展示层
+├── ui/                           # Material 展示层
 │   ├── core/
 │   └── features/home/
 ├── l10n/
@@ -66,12 +66,14 @@ EverfoldApp
 
 | 层 | 当前职责 |
 | --- | --- |
-| Domain | 不可变 AppSettings, AppLanguage, AppDesignSystem, AppAppearance, 仓储契约与 Result |
+| Domain | 不可变 AppSettings, AppLanguage, AppAppearance, 仓储契约与 Result |
 | Data | JSON 转换, 版本化存储键, 预期存储异常转换 |
 | Application | 异步加载, 顺序保存, 成功后发布状态 |
-| UI | 设置页三项选择, 启动与保存状态, 应用外壳中的语言与明暗转换 |
+| UI | 设置页明暗与语言选择, 启动与保存状态, 应用外壳中的语言与明暗转换 |
 
-设置默认跟随系统语言, 也支持中文和英文. 界面风格默认跟随平台, iOS / macOS 使用 Cupertino, 其他平台使用 Material. 首页设置入口提供跟随平台, Material, Cupertino 三种选择, 保存成功后立即生效并在下次启动恢复. 旧版只有语言字段的数据读取为跟随平台, 不需要清空存储. 设置页同时支持明暗模式(跟随系统 / 浅色 / 深色)和语言(跟随系统 / 中文 / English). 明暗模式独立于界面风格, 两套外壳均使用库提供的标准主题, 不覆盖配色和字体. 旧数据缺少 appearance 字段时默认跟随系统, 显式非法值仍拒绝读取. 三项设置独立更新, 保存失败时保留原状态, 不使用乐观更新. 写入按调用顺序执行, 避免并发保存覆盖后一次用户选择
+应用统一使用 Material 界面. 首页设置入口提供明暗模式(跟随系统 / 浅色 / 深色)和语言(跟随系统 / 中文 / English), 保存成功后立即生效并在下次启动恢复. 使用库提供的标准主题, 不覆盖配色和字体. 旧数据缺少 appearance 字段时默认跟随系统, 显式非法值仍拒绝读取. 未使用的旧字段读取时忽略, 下次保存仅写入明暗与语言, 不需要清空存储
+
+明暗与语言独立更新, 保存失败时保留原状态, 不使用乐观更新. 写入按调用顺序执行, 避免并发保存覆盖后一次用户选择
 
 加载失败不会自动重试或覆盖原数据, 启动界面提供显式重试. 重试不能修复持久化格式损坏, 遇到此情况应在确认数据策略后增加定向迁移或恢复操作, 不能清空全部用户存储
 
@@ -142,7 +144,6 @@ APP_ENV 支持 development, staging, production. 未配置 API_BASE_URL 时首�
 | 令牌与凭据 | secureStorageProvider 按需提供 FlutterSecureStorage, 由 Data 实现使用 |
 | 结构化业务数据 | 明确领域模型后再接入 Drift 表, 迁移和仓储实现 |
 | 原生接口 | 保留现有桥接目录, 在 Data 实现中封装调用 |
-| Cupertino | 已接入 CupertinoApp, 首页与设置页面, 共享 Application 与 Domain |
 
 未创建空数据库, 虚构业务模块, 通用 CRUD 基类或空 UseCase. 简单操作直接由 Controller 协调仓储, 出现跨仓储规则时再提取独立用例
 
