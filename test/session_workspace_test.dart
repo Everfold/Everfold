@@ -207,12 +207,60 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  for (final width in [320.0, 1280.0]) {
+    testWidgets('宽度 $width 双倍字号下创建页无品牌和停止, 创建后仍不假装运行', (tester) async {
+      await pumpApp(tester, size: Size(width, 900), scale: 2);
+      expect(find.text('Everfold'), findsNothing);
+      expect(find.byKey(const ValueKey('stop-run')), findsNothing);
+      final title = find.text('这次处理什么任务?');
+      expect(title, findsOneWidget);
+      expect(
+        tester.widget<Text>(title).style,
+        Theme.of(tester.element(title)).textTheme.headlineMedium,
+      );
+      for (final key in [
+        'model-selector',
+        'preset-selector',
+        'workspace-selector',
+        'send-prompt',
+      ]) {
+        expect(find.byKey(ValueKey(key)), findsOneWidget);
+      }
+      final input = find.byKey(const ValueKey('prompt-input'));
+      await tester.ensureVisible(input);
+      await tester.enterText(input, '创建一个会话');
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('stop-run')), findsNothing);
+      final save = find.byKey(const ValueKey('send-prompt'));
+      await tester.ensureVisible(save);
+      await tester.tap(save);
+      await tester.pumpAndSettle();
+      expect(find.text('未发送: 尚未接入模型'), findsOneWidget);
+      expect(
+        tester
+            .widget<IconButton>(find.byKey(const ValueKey('stop-run')))
+            .onPressed,
+        isNull,
+      );
+      if (width < 840) {
+        await tester.tap(find.byIcon(Icons.menu));
+        await tester.pumpAndSettle();
+      }
+      await tester.tap(find.byKey(const ValueKey('new-session')));
+      await tester.pumpAndSettle();
+      expect(find.text('Everfold'), findsNothing);
+      expect(find.byKey(const ValueKey('stop-run')), findsNothing);
+      expect(title, findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
   testWidgets('桌面没有全局顶栏, 正文标题与内容左边缘对齐且设置入口唯一', (tester) async {
     await pumpApp(tester);
     final heading = find.byKey(const ValueKey('workspace-page-title'));
     expect(find.byType(AppBar), findsNothing);
     expect(find.byIcon(Icons.settings_outlined), findsOneWidget);
-    expect(find.text('Everfold'), findsOneWidget);
+    expect(find.text('Everfold'), findsNothing);
     expect(heading, findsNothing);
 
     await tester.tap(find.byKey(const ValueKey('settings-navigation')));
@@ -304,10 +352,11 @@ void main() {
     });
   }
 
-  testWidgets('提交成为未发送会话, 草稿和会话切换保留, 停止不可用', (tester) async {
+  testWidgets('提交成为未发送会话, 草稿和会话切换保留, 已有会话停止不可用', (tester) async {
     await pumpApp(tester);
     expect(find.byType(NavigationBar), findsNothing);
     expect(find.byKey(const ValueKey('new-session')), findsOneWidget);
+    expect(find.byKey(const ValueKey('stop-run')), findsNothing);
     expect(
       tester
           .widget<IconButton>(find.byKey(const ValueKey('send-prompt')))
@@ -331,6 +380,8 @@ void main() {
     await tester.enterText(find.byKey(const ValueKey('prompt-input')), '继续完善');
     await tester.tap(find.byKey(const ValueKey('new-session')));
     await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('stop-run')), findsNothing);
+    expect(find.text('Everfold'), findsNothing);
     expect(
       tester
           .widget<TextField>(find.byKey(const ValueKey('prompt-input')))

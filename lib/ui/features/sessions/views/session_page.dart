@@ -90,6 +90,8 @@ class SessionPage extends HookConsumerWidget {
       input: input,
       focus: focus,
       pickingWorkspace: pickingWorkspace.value,
+      // 创建页没有运行可停止, 不展示执行操作
+      showStop: sessionId != null,
       onDraftChanged: (text) => controller.setDraft(sessionId, text),
       onPresetChanged: (preset) => controller.setPreset(sessionId, preset),
       onPickWorkspace: pickWorkspace,
@@ -161,13 +163,11 @@ class _EmptySessionBody extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Everfold', style: Theme.of(context).textTheme.headlineMedium),
-            const SizedBox(height: 8),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
                 strings.newPromptTitle,
-                style: Theme.of(context).textTheme.titleMedium,
+                style: Theme.of(context).textTheme.headlineMedium,
               ),
             ),
             const SizedBox(height: 24),
@@ -186,6 +186,7 @@ class _SessionComposer extends StatelessWidget {
     required this.input,
     required this.focus,
     required this.pickingWorkspace,
+    required this.showStop,
     required this.onDraftChanged,
     required this.onPresetChanged,
     required this.onPickWorkspace,
@@ -198,6 +199,7 @@ class _SessionComposer extends StatelessWidget {
   final TextEditingController input;
   final FocusNode focus;
   final bool pickingWorkspace;
+  final bool showStop;
   final ValueChanged<String> onDraftChanged;
   final ValueChanged<SessionPreset> onPresetChanged;
   final VoidCallback onPickWorkspace;
@@ -298,13 +300,14 @@ class _SessionComposer extends StatelessWidget {
                   onDeleted: pickingWorkspace ? null : () => onClearWorkspace(),
                   deleteButtonTooltipMessage: strings.clearWorkspace,
                 ),
-              IconButton(
-                key: const ValueKey('stop-run'),
-                tooltip: strings.stopRun,
-                // 未接入执行引擎, 没有可停止的运行
-                onPressed: null,
-                icon: const Icon(Icons.stop_circle_outlined),
-              ),
+              if (showStop)
+                IconButton(
+                  key: const ValueKey('stop-run'),
+                  tooltip: strings.stopRun,
+                  // 已有会话仍未接入执行引擎, 不提供虚假的停止行为
+                  onPressed: null,
+                  icon: const Icon(Icons.stop_circle_outlined),
+                ),
               IconButton.filled(
                 key: const ValueKey('send-prompt'),
                 tooltip: strings.sendPrompt,
