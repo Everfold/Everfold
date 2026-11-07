@@ -178,43 +178,51 @@ class _WorkspaceNavigation extends StatelessWidget {
             label: Text(strings.newSession),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Text(
+        const Divider(key: ValueKey('session-list-divider')),
+        // 只折叠列表的显示, 会话与草稿仍由页面外的 Application 状态持有
+        ExpansionTile(
+          key: const PageStorageKey('workspace-session-list'),
+          initiallyExpanded: true,
+          // 分隔线由外部提供, 展开时不再重复绘制边线
+          shape: const Border(),
+          collapsedShape: const Border(),
+          title: Text(
             strings.sessionsTitle,
             style: Theme.of(context).textTheme.labelLarge,
           ),
-        ),
-        for (final session in sessions)
-          ListTile(
-            key: ValueKey('session-${session.id}'),
-            selected: location == '/sessions/${session.id}',
-            leading: const Icon(Icons.chat_bubble_outline),
-            title: Text(
-              session.title.isEmpty ? strings.newSession : session.title,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            onTap: () => onOpenSession(session),
-            trailing: MenuAnchor(
-              menuChildren: [
-                MenuItemButton(
-                  onPressed: () => onEditSession(session, 'rename'),
-                  child: Text(strings.renameSession),
+          children: [
+            for (final session in sessions)
+              ListTile(
+                key: ValueKey('session-${session.id}'),
+                selected: location == '/sessions/${session.id}',
+                leading: const Icon(Icons.chat_bubble_outline),
+                title: Text(
+                  session.title.isEmpty ? strings.newSession : session.title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                MenuItemButton(
-                  onPressed: () => onEditSession(session, 'delete'),
-                  child: Text(strings.deleteSession),
+                onTap: () => onOpenSession(session),
+                trailing: MenuAnchor(
+                  menuChildren: [
+                    MenuItemButton(
+                      onPressed: () => onEditSession(session, 'rename'),
+                      child: Text(strings.renameSession),
+                    ),
+                    MenuItemButton(
+                      onPressed: () => onEditSession(session, 'delete'),
+                      child: Text(strings.deleteSession),
+                    ),
+                  ],
+                  builder: (context, menu, _) => IconButton(
+                    key: ValueKey('session-menu-${session.id}'),
+                    tooltip: strings.more,
+                    onPressed: () => menu.isOpen ? menu.close() : menu.open(),
+                    icon: const Icon(Icons.more_vert),
+                  ),
                 ),
-              ],
-              builder: (context, menu, _) => IconButton(
-                key: ValueKey('session-menu-${session.id}'),
-                tooltip: strings.more,
-                onPressed: () => menu.isOpen ? menu.close() : menu.open(),
-                icon: const Icon(Icons.more_vert),
               ),
-            ),
-          ),
+          ],
+        ),
       ],
     );
   }

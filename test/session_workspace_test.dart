@@ -51,6 +51,161 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  for (final width in [320.0, 390.0, 840.0, 1280.0]) {
+    testWidgets('宽度 $width 双倍字号下提示居中, 输入区贴底且键盘不丢失草稿', (tester) async {
+      await pumpApp(tester, size: Size(width, 900), scale: 2);
+      final page = find.byType(SessionPage);
+      final welcome = find.byKey(const ValueKey('session-welcome-area'));
+      final title = find.byKey(const ValueKey('session-task-title'));
+      final composer = find.byKey(const ValueKey('session-composer'));
+      final input = find.byKey(const ValueKey('prompt-input'));
+      final inputController = tester.widget<TextField>(input).controller!;
+      expect(
+        tester.getCenter(title).dx,
+        closeTo(tester.getCenter(welcome).dx, 0.1),
+      );
+      expect(
+        tester.getCenter(title).dy,
+        closeTo(tester.getCenter(welcome).dy, 0.1),
+      );
+      expect(tester.widget<Text>(title).textAlign, TextAlign.center);
+      expect(
+        tester.getBottomRight(composer).dy,
+        closeTo(tester.getBottomRight(page).dy, 0.1),
+      );
+      expect(
+        tester.getBottomRight(welcome).dy,
+        closeTo(tester.getTopLeft(composer).dy, 0.1),
+      );
+
+      final draft = List.filled(8, '保留多行草稿').join('\n');
+      await tester.enterText(input, draft);
+      await tester.pumpAndSettle();
+      addTearDown(tester.view.resetViewInsets);
+      tester.view.viewInsets = const FakeViewPadding(bottom: 360);
+      await tester.pumpAndSettle();
+      expect(tester.getBottomRight(page).dy, closeTo(540, 0.1));
+      expect(
+        tester.getBottomRight(composer).dy,
+        closeTo(tester.getBottomRight(page).dy, 0.1),
+      );
+      final bottom = tester.getBottomRight(composer);
+      await tester.drag(welcome, const Offset(0, -80));
+      await tester.pumpAndSettle();
+      expect(tester.getBottomRight(composer), bottom);
+      expect(tester.widget<TextField>(input).controller, same(inputController));
+      expect(inputController.text, draft);
+      expect(find.byKey(const ValueKey('stop-run')), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  for (final width in [320.0, 1280.0]) {
+    testWidgets('宽度 $width 短窗口与键盘下输入区可滚动保存, 欢迎区不溢出', (tester) async {
+      await pumpApp(tester, size: Size(width, 480), scale: 2);
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(SessionPage)),
+      );
+      final controller = container.read(sessionsControllerProvider.notifier);
+      final draft = List.filled(8, '短窗口草稿').join('\n');
+      controller.setDraft(null, draft);
+      controller.setWorkspace(
+        null,
+        '/projects/${List.filled(80, '长目录').join()}',
+      );
+      addTearDown(tester.view.resetViewInsets);
+      tester.view.viewInsets = const FakeViewPadding(bottom: 240);
+      await tester.pumpAndSettle();
+      final composer = find.byKey(const ValueKey('session-composer'));
+      expect(tester.getBottomRight(composer).dy, closeTo(240, 0.1));
+      final save = find.byKey(const ValueKey('send-prompt'));
+      await tester.ensureVisible(save);
+      await tester.pumpAndSettle();
+      expect(save.hitTestable(), findsOneWidget);
+      await tester.tap(save);
+      await tester.pumpAndSettle();
+      expect(controller.state.sessions.single.messages.single.content, draft);
+      expect(find.byType(SessionTranscript), findsOneWidget);
+      expect(find.byKey(const ValueKey('session-task-title')), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('宽度 $width 会话分组可折叠, 导航切换保留折叠和独立草稿', (tester) async {
+      await pumpApp(tester, size: Size(width, 900), scale: 2);
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(SessionPage)),
+      );
+      final controller = container.read(sessionsControllerProvider.notifier);
+      controller.setDraft(null, '已建会话');
+      final id = controller.submit(null)!;
+      controller.setDraft(id, '已有会话的独立草稿');
+      controller.setDraft(null, '新建页的独立草稿');
+      await tester.pumpAndSettle();
+      if (width < 840) {
+        await tester.tap(find.byIcon(Icons.menu));
+        await tester.pumpAndSettle();
+      }
+      final divider = find.byKey(const ValueKey('session-list-divider'));
+      final group = find.byKey(const PageStorageKey('workspace-session-list'));
+      final item = find.byKey(ValueKey('session-$id'));
+      expect(
+        tester.getTopLeft(divider).dy,
+        greaterThanOrEqualTo(
+          tester.getBottomRight(find.byKey(const ValueKey('new-session'))).dy,
+        ),
+      );
+      expect(
+        tester.getBottomRight(divider).dy,
+        lessThanOrEqualTo(tester.getTopLeft(group).dy),
+      );
+      expect(item.hitTestable(), findsOneWidget);
+      await tester.tap(find.text('会话'));
+      await tester.pumpAndSettle();
+      expect(item, findsNothing);
+      expect(controller.state.sessions, hasLength(1));
+      expect(controller.state.newSession.draft, '新建页的独立草稿');
+      await tester.tap(find.byKey(const ValueKey('settings-navigation')));
+      await tester.pumpAndSettle();
+      if (width < 840) {
+        await tester.tap(find.byIcon(Icons.menu));
+        await tester.pumpAndSettle();
+      }
+      expect(item, findsNothing);
+      // 同一 PageStorageKey 让侧栏与抽屉之间切换时也保留折叠状态
+      tester.view.physicalSize = Size(width < 840 ? 1280 : 390, 900);
+      await tester.pumpAndSettle();
+      if (width >= 840) {
+        await tester.tap(find.byIcon(Icons.menu));
+        await tester.pumpAndSettle();
+      }
+      expect(item, findsNothing);
+      tester.view.physicalSize = Size(width, 900);
+      await tester.pumpAndSettle();
+      if (width < 840 &&
+          !tester
+              .state<ScaffoldState>(find.byType(Scaffold).first)
+              .isDrawerOpen) {
+        await tester.tap(find.byIcon(Icons.menu));
+        await tester.pumpAndSettle();
+      }
+      expect(item, findsNothing);
+      await tester.tap(find.text('会话'));
+      await tester.pumpAndSettle();
+      expect(item.hitTestable(), findsOneWidget);
+      await tester.tap(item);
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<TextField>(find.byKey(const ValueKey('prompt-input')))
+            .controller!
+            .text,
+        '已有会话的独立草稿',
+      );
+      expect(controller.state.newSession.draft, '新建页的独立草稿');
+      expect(tester.takeException(), isNull);
+    });
+  }
+
   testWidgets('导航采用 M3 默认抽屉与目的地, 宽屏正文不再限定为 920', (tester) async {
     await pumpApp(tester, size: const Size(1920, 900));
     final navigation = find.byKey(const ValueKey('workspace-navigation'));
@@ -127,12 +282,14 @@ void main() {
       final lastSession = savedSessions.last;
       final lastItem = find.byKey(ValueKey('session-${lastSession.id}'));
       await tester.scrollUntilVisible(
-        lastItem,
+        lastItem.hitTestable(),
         300,
         scrollable: find
             .descendant(of: navigation, matching: find.byType(Scrollable))
             .first,
       );
+      await tester.pumpAndSettle();
+      expect(lastItem.hitTestable(), findsOneWidget);
       await tester.tap(lastItem);
       await tester.pumpAndSettle();
       expect(
@@ -459,6 +616,9 @@ void main() {
       container.read(sessionsControllerProvider).newSession.workspace,
       '/chosen/project',
     );
+    // 操作栏现在位于底部, 先等待标准错误提示消失, 避免点击其遮挡区域
+    await tester.pump(const Duration(seconds: 4));
+    await tester.pumpAndSettle();
     await tester.tap(find.byTooltip('清除工作区'));
     await tester.pumpAndSettle();
     expect(
@@ -517,6 +677,8 @@ void main() {
     await tester.pumpAndSettle();
     expect(copied, path);
     await tester.tap(find.text('关闭'));
+    // 复制反馈仍由 Scaffold 显示, 等待它消失后再点击底部工作区入口
+    await tester.pump(const Duration(seconds: 4));
     await tester.pumpAndSettle();
     expect(
       tester

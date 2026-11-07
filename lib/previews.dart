@@ -34,6 +34,12 @@ Widget setupPreferencesPreview() => _preview(stage: AppSetupStage.preferences);
 @Preview(name: 'Workspace · Mobile', size: Size(390, 844))
 @Preview(name: 'Workspace · Desktop', size: Size(1280, 900))
 @Preview(name: 'Workspace · Wide', size: Size(1920, 1080))
+@Preview(name: 'Workspace · Short window', size: Size(1280, 480))
+@Preview(
+  name: 'Workspace · Short window large text',
+  size: Size(320, 480),
+  textScaleFactor: 2,
+)
 @Preview(
   name: 'Workspace · Compact large text',
   size: Size(320, 900),

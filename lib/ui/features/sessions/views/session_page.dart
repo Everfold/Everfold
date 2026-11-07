@@ -100,44 +100,37 @@ class SessionPage extends HookConsumerWidget {
       onSubmit: submit,
     );
 
-    // 两种布局复用相同输入区, 只改变输入区与消息记录的排列关系
+    // 两种状态共享上下分区, 只替换上方内容, 输入区始终位于底部
     return SafeArea(
-      child: hasMessages
-          ? _ConversationBody(
-              session: session,
-              sessionId: sessionId,
-              composer: composer,
-            )
-          : _EmptySessionBody(scroll: scroll, composer: composer),
+      child: _SessionBody(
+        content: hasMessages
+            ? SessionTranscript(
+                key: ValueKey(sessionId),
+                messages: session.messages,
+                storageId: session.id,
+              )
+            : _EmptySessionBody(scroll: scroll),
+        composer: composer,
+      ),
     );
   }
 }
 
-// 有消息时让记录占据剩余高度, 输入区位于下方
-class _ConversationBody extends StatelessWidget {
-  const _ConversationBody({
-    required this.session,
-    required this.sessionId,
-    required this.composer,
-  });
+// 正文占据剩余高度, 输入区保持底部对齐, 不参与上方内容的滚动
+class _SessionBody extends StatelessWidget {
+  const _SessionBody({required this.content, required this.composer});
 
-  final AgentSession session;
-  final String? sessionId;
+  final Widget content;
   final Widget composer;
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) => Column(
       children: [
-        Expanded(
-          child: SessionTranscript(
-            key: ValueKey(sessionId),
-            messages: session.messages,
-            storageId: session.id,
-          ),
-        ),
+        Expanded(child: content),
         // 输入区最多占当前可用高度的 65%, 键盘或大字号下可独立滚动
         ConstrainedBox(
+          key: const ValueKey('session-composer'),
           constraints: BoxConstraints(maxHeight: constraints.maxHeight * 0.65),
           child: SingleChildScrollView(primary: false, child: composer),
         ),
@@ -146,33 +139,32 @@ class _ConversationBody extends StatelessWidget {
   );
 }
 
-// 空会话的欢迎内容和输入区一起滚动, 避免小窗口下被裁切
+// 欢迎提示居中于正文剩余空间, 短窗口或大字号下可独立滚动
 class _EmptySessionBody extends StatelessWidget {
-  const _EmptySessionBody({required this.scroll, required this.composer});
+  const _EmptySessionBody({required this.scroll});
 
   final ScrollController scroll;
-  final Widget composer;
 
   @override
   Widget build(BuildContext context) {
     final strings = AppLocalizations.of(context)!;
-    return SingleChildScrollView(
-      controller: scroll,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 48),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+    return LayoutBuilder(
+      key: const ValueKey('session-welcome-area'),
+      builder: (context, constraints) => SingleChildScrollView(
+        controller: scroll,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: constraints.maxHeight),
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
               child: Text(
                 strings.newPromptTitle,
+                key: const ValueKey('session-task-title'),
+                textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
             ),
-            const SizedBox(height: 24),
-            composer,
-          ],
+          ),
         ),
       ),
     );

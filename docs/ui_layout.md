@@ -15,7 +15,7 @@
 | 想看什么 | 从哪里开始 | 继续看哪些区块 |
 | --- | --- | --- |
 | 侧栏, 抽屉和页面标题 | [WorkspaceShell](../lib/ui/features/sessions/views/workspace_shell.dart) | `_WorkspaceNavigation`, `_WorkspaceBody` |
-| 欢迎区, 消息区和输入区 | [SessionPage](../lib/ui/features/sessions/views/session_page.dart) | `_EmptySessionBody`, `_ConversationBody`, `_SessionComposer` |
+| 欢迎区, 消息区和输入区 | [SessionPage](../lib/ui/features/sessions/views/session_page.dart) | `_SessionBody`, `_EmptySessionBody`, `_SessionComposer` |
 | 首次启动的阶段布局 | [SetupPage](../lib/ui/features/setup/views/setup_page.dart) | `_SetupIntroduction`, `_SetupModeChoices`, `_SetupActions` |
 | 语言, 明暗和颜色设置 | [SettingsContent](../lib/ui/features/settings/views/settings_page.dart) | `_ColorPreferences`, `_ChoiceSection` |
 | 集群列表与连接弹窗 | [ClustersPage](../lib/ui/features/clusters/views/clusters_page.dart) | `_ClusterEntry`, `_ClusterConnectionDialog` |
@@ -36,7 +36,7 @@ WorkspaceShell
             └── Expanded → child    当前路由提供的设置, 集群或会话页面
 ```
 
-导航顺序写在 `_WorkspaceNavigation` 的 `children` 中: 集群 → 设置 → 新建会话 → 会话列表. 集群和设置的选中索引也在这个区块中, 调整目的地顺序时需要同时核对索引
+导航顺序写在 `_WorkspaceNavigation` 的 `children` 中: 集群 → 设置 → 新建会话 → 会话列表. 集群和设置的选中索引也在这个区块中, 调整目的地顺序时需要同时核对索引. 新建会话下方的分隔线区分创建操作与会话历史, `ExpansionTile` 默认展开并允许折叠整个列表. `PageStorageKey('workspace-session-list')` 只恢复当前页面作用域内的展开状态, 不把它写入设置
 
 `child` 是路由传入的页面, 不是另一份导航. 路由配置位于 [app_router.dart](../lib/app/router/app_router.dart), 全局颜色和明暗主题位于 [everfold_app.dart](../lib/app/everfold_app.dart)
 
@@ -47,6 +47,8 @@ WorkspaceShell
 - `Expanded` 分配父布局的剩余空间, 因此页面用它给正文或消息列表提供有限高度
 - `ListView` 和 `SingleChildScrollView` 管理滚动; 固定操作区放在它们外部, 才不会跟着正文滚走
 - `LayoutBuilder` 根据可用空间选择布局, `Wrap` 让操作按钮在窄窗口或大字号下换行
+
+`_SessionBody` 用 `Expanded` 给上方内容分配剩余高度, 输入区始终位于底部. 空会话的 `_EmptySessionBody` 在上方空间内居中显示任务提示, 有消息后替换为 `SessionTranscript`. 欢迎提示和输入区分别滚动, 避免短窗口或键盘弹出后互相遮挡
 
 当前的 840dp 是工作区宽窄切换断点, 输入区最多占可用高度的 65% 是现有布局策略, 都不是所有 Material 页面必须使用的数值. 普通弹窗的 560dp 上限来自 M3 建议, 约束的是整个弹窗, 不是其中的文本区域
 
