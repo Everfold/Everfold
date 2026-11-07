@@ -365,6 +365,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get toolCalls => 'Tool activity';
 
   @override
+  String get copyCode => 'Copy code';
+
+  @override
+  String get copied => 'Copied';
+
+  @override
+  String get codeLabel => 'Code';
+
+  @override
+  String get longContent => 'Full content';
+
+  @override
+  String get toolOutput => 'Tool output';
+
+  @override
   String get toolRunning => 'Running';
 
   @override

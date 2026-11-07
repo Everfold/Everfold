@@ -8,6 +8,8 @@ import 'core/config/app_config.dart';
 import 'data/services/storage/preferences_store.dart';
 import 'l10n/app_localizations.dart';
 import 'ui/features/clusters/views/clusters_page.dart';
+import 'domain/sessions/agent_session.dart';
+import 'ui/features/sessions/views/session_transcript.dart';
 
 /// 首次启动预览, 不访问生产偏好或原生服务
 @Preview(name: 'Setup · Mobile', size: Size(390, 844))
@@ -36,6 +38,35 @@ Widget clustersPreview() => AppScope(
     ],
     supportedLocales: AppLocalizations.supportedLocales,
     home: const Scaffold(body: ClustersPage()),
+  ),
+);
+
+@Preview(name: 'Transcript · Mobile', size: Size(390, 844))
+@Preview(name: 'Transcript · Desktop', size: Size(1280, 900))
+Widget transcriptPreview() => MaterialApp(
+  localizationsDelegates: const [
+    AppLocalizations.delegate,
+    ...GlobalMaterialLocalizations.delegates,
+  ],
+  supportedLocales: AppLocalizations.supportedLocales,
+  home: Scaffold(
+    body: SessionTranscript(
+      messages: [
+        SessionMessage(role: MessageRole.user, content: '预览一条包含代码的回复'),
+        SessionMessage(
+          role: MessageRole.assistant,
+          content: '# 会话内容预览\n\n支持 **Markdown** 和代码复制\n\n```dart\nvoid main() {\n  print("Everfold");\n}\n```',
+          reasoningSummary: '仅用于独立组件预览的公开摘要',
+          tools: [
+            const ToolCall(
+              name: 'read_file',
+              status: ToolCallStatus.completed,
+              output: '仅用于预览的工具输出',
+            ),
+          ],
+        ),
+      ],
+    ),
   ),
 );
 

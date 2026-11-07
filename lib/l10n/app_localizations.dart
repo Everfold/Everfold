@@ -788,6 +788,36 @@ abstract class AppLocalizations {
   /// **'工具调用'**
   String get toolCalls;
 
+  /// No description provided for @copyCode.
+  ///
+  /// In zh, this message translates to:
+  /// **'复制代码'**
+  String get copyCode;
+
+  /// No description provided for @copied.
+  ///
+  /// In zh, this message translates to:
+  /// **'已复制'**
+  String get copied;
+
+  /// No description provided for @codeLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'代码'**
+  String get codeLabel;
+
+  /// No description provided for @longContent.
+  ///
+  /// In zh, this message translates to:
+  /// **'完整内容'**
+  String get longContent;
+
+  /// No description provided for @toolOutput.
+  ///
+  /// In zh, this message translates to:
+  /// **'工具输出'**
+  String get toolOutput;
+
   /// No description provided for @toolRunning.
   ///
   /// In zh, this message translates to:

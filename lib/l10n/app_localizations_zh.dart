@@ -355,6 +355,21 @@ class AppLocalizationsZh extends AppLocalizations {
   String get toolCalls => '工具调用';
 
   @override
+  String get copyCode => '复制代码';
+
+  @override
+  String get copied => '已复制';
+
+  @override
+  String get codeLabel => '代码';
+
+  @override
+  String get longContent => '完整内容';
+
+  @override
+  String get toolOutput => '工具输出';
+
+  @override
   String get toolRunning => '运行中';
 
   @override

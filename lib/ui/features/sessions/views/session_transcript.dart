@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../../domain/sessions/agent_session.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../widgets/message_content.dart';
 
 /// 仅渲染实际传入的回复, 摘要与工具事件, 不构造模型输出
 class SessionTranscript extends StatelessWidget {
@@ -34,9 +35,10 @@ class SessionTranscript extends StatelessWidget {
                 style: Theme.of(context).textTheme.labelLarge,
               ),
               const SizedBox(height: 8),
-              SelectableText(
-                message.content,
-                key: PageStorageKey('message-$index'),
+              MessageContent(
+                data: message.content,
+                storageId: '$storageId-message-$index',
+                markdown: message.role == MessageRole.assistant,
               ),
               if (message.pending)
                 Padding(
@@ -55,9 +57,9 @@ class SessionTranscript extends StatelessWidget {
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(16),
-                      child: SelectableText(
-                        summary,
-                        key: PageStorageKey('summary-$index'),
+                      child: MessageContent(
+                        data: summary,
+                        storageId: '$storageId-summary-$index',
                       ),
                     ),
                   ],
@@ -67,25 +69,17 @@ class SessionTranscript extends StatelessWidget {
                   key: PageStorageKey('tools-$index'),
                   title: Text(strings.toolCalls),
                   children: [
-                    for (final tool in message.tools)
-                      ListTile(
-                        leading: Icon(switch (tool.status) {
-                          ToolCallStatus.running => Icons.pending_outlined,
-                          ToolCallStatus.completed =>
-                            Icons.check_circle_outline,
-                          ToolCallStatus.failed => Icons.error_outline,
-                        }),
-                        title: Text(tool.name),
-                        subtitle: Text(
-                          [
-                            switch (tool.status) {
-                              ToolCallStatus.running => strings.toolRunning,
-                              ToolCallStatus.completed => strings.toolCompleted,
-                              ToolCallStatus.failed => strings.toolFailed,
-                            },
-                            if (tool.output.isNotEmpty) tool.output,
-                          ].join('\n'),
+                    for (
+                      var toolIndex = 0;
+                      toolIndex < message.tools.length;
+                      toolIndex++
+                    )
+                      _ToolEntry(
+                        key: PageStorageKey(
+                          '$storageId-tool-$index-$toolIndex',
                         ),
+                        tool: message.tools[toolIndex],
+                        storageId: '$storageId-tool-$index-$toolIndex',
                       ),
                   ],
                 ),
@@ -93,6 +87,43 @@ class SessionTranscript extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _ToolEntry extends StatelessWidget {
+  const _ToolEntry({super.key, required this.tool, required this.storageId});
+  final ToolCall tool;
+  final String storageId;
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = AppLocalizations.of(context)!;
+    return ExpansionTile(
+      leading: Icon(switch (tool.status) {
+        ToolCallStatus.running => Icons.pending_outlined,
+        ToolCallStatus.completed => Icons.check_circle_outline,
+        ToolCallStatus.failed => Icons.error_outline,
+      }),
+      title: Text(tool.name),
+      subtitle: Text(switch (tool.status) {
+        ToolCallStatus.running => strings.toolRunning,
+        ToolCallStatus.completed => strings.toolCompleted,
+        ToolCallStatus.failed => strings.toolFailed,
+      }),
+      children: [
+        if (tool.output.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Semantics(
+              label: strings.toolOutput,
+              child: MessageContent(
+                data: tool.output,
+                storageId: '$storageId-output',
+              ),
+            ),
+          ),
+      ],
     );
   }
 }
