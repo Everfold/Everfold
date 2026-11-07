@@ -1,0 +1,87 @@
+# UI 布局阅读指南
+
+先打开 `lib/ui/features/sessions/views/workspace_shell.dart`, 找到 `WorkspaceShell.build` 最后的 `return Scaffold`. 这里决定侧栏, 顶栏和正文的位置, 不需要先读完重命名或删除的回调
+
+## 按三个层次阅读
+
+1. **页面协调**: 公开页面组件读取 Riverpod 状态, 持有输入控制器或 Hooks, 将用户操作交给 Application
+2. **布局区块**: 同一文件中以 `_` 开头的私有组件组织导航, 输入区或按钮区, 通过参数接收值和回调
+3. **标准控件**: 区块内部使用 `NavigationDrawer`, `TextField`, `ExpansionTile` 等 Material 控件, 样式继续交给组件默认实现
+
+这里的分层是 UI 内部的阅读结构, 不增加新的架构层或设计系统. 私有区块留在所属页面文件中, 不把每个 `Padding` 或 `Row` 都拆成文件
+
+## 五个主要入口
+
+| 想看什么 | 从哪里开始 | 继续看哪些区块 |
+| --- | --- | --- |
+| 侧栏, 抽屉和页面标题 | [WorkspaceShell](../lib/ui/features/sessions/views/workspace_shell.dart) | `_WorkspaceNavigation`, `_WorkspaceBody` |
+| 欢迎区, 消息区和输入区 | [SessionPage](../lib/ui/features/sessions/views/session_page.dart) | `_EmptySessionBody`, `_ConversationBody`, `_SessionComposer` |
+| 首次启动的阶段布局 | [SetupPage](../lib/ui/features/setup/views/setup_page.dart) | `_SetupIntroduction`, `_SetupModeChoices`, `_SetupActions` |
+| 语言, 明暗和颜色设置 | [SettingsContent](../lib/ui/features/settings/views/settings_page.dart) | `_ColorPreferences`, `_ChoiceSection` |
+| 集群列表与连接弹窗 | [ClustersPage](../lib/ui/features/clusters/views/clusters_page.dart) | `_ClusterEntry`, `_ClusterConnectionDialog` |
+
+阅读单个文件时, 先看公开页面的 `build` 返回值, 再跳到不熟悉的区块定义. 先弄清位置关系, 再追踪具体按钮的回调
+
+## 工作区的布局关系
+
+```text
+WorkspaceShell
+└── Scaffold
+    ├── AppBar                      仅窄窗口显示标题和抽屉入口
+    ├── drawer                      窄窗口使用 _WorkspaceNavigation
+    └── body: SafeArea → Row
+        ├── _WorkspaceNavigation    宽窗口直接显示同一套导航
+        └── Expanded → _WorkspaceBody
+            ├── 页面标题             宽窗口且不是空会话首页时显示
+            └── Expanded → child    当前路由提供的设置, 集群或会话页面
+```
+
+导航顺序写在 `_WorkspaceNavigation` 的 `children` 中: 集群 → 设置 → 新建会话 → 会话列表. 集群和设置的选中索引也在这个区块中, 调整目的地顺序时需要同时核对索引
+
+`child` 是路由传入的页面, 不是另一份导航. 路由配置位于 [app_router.dart](../lib/app/router/app_router.dart), 全局颜色和明暗主题位于 [everfold_app.dart](../lib/app/everfold_app.dart)
+
+## 理解空间与滚动
+
+- `SafeArea` 避开系统占用区域, 不等于正文内边距
+- `Row` 横向排列, `Column` 纵向排列; 它们本身不会滚动
+- `Expanded` 分配父布局的剩余空间, 因此页面用它给正文或消息列表提供有限高度
+- `ListView` 和 `SingleChildScrollView` 管理滚动; 固定操作区放在它们外部, 才不会跟着正文滚走
+- `LayoutBuilder` 根据可用空间选择布局, `Wrap` 让操作按钮在窄窗口或大字号下换行
+
+当前的 840dp 是工作区宽窄切换断点, 输入区最多占可用高度的 65% 是现有布局策略, 都不是所有 Material 页面必须使用的数值. 普通弹窗的 560dp 上限来自 M3 建议, 约束的是整个弹窗, 不是其中的文本区域
+
+## 状态和回调为什么留在页面
+
+以会话页为例, `SessionPage` 持有文本控制器, 焦点和草稿同步逻辑. `_SessionComposer` 只接收这些对象及回调. 这样从欢迎布局切换到消息布局时, 不会因为拆分组件而另外创建一份输入状态
+
+```text
+点击输入区按钮
+  → _SessionComposer 调用 onSubmit
+  → SessionPage 的 submit 回调
+  → SessionsController.submit
+  → 新状态触发页面重建
+```
+
+设置页的 `save` 和引导页的 `run` 统一处理等待与失败反馈. 界面不直接写入存储, 设置只在 Application 保存成功后更新. 连接表单的字段锁与按钮锁分开, 因为引导连接成功后字段仍冻结, 但下一步必须可点击
+
+## 表单与消息的进一步阅读
+
+1. [ConnectionForm](../lib/ui/features/setup/views/connection_form.dart): 先看 State 的 `build`, 再看 `_buildFields` 和 `_buildAction`. `_input` 和 `_certificate` 负责重复字段的排列, 控制器和 1 秒计时器仍由原来的 State 持有. `layoutBuilder` 允许集群弹窗把主按钮放入底部操作区, 不改变表单状态规则
+2. [SessionTranscript](../lib/ui/features/sessions/views/session_transcript.dart): 列表按需创建 `_MessageEntry`, 每条消息包含正文, 可选摘要和工具组. `_ToolEntry` 单独折叠工具输出, `MessageContent` 决定是否折叠长内容, `MessageMarkdown` 处理助手正文的 Markdown
+
+`ValueKey` 用于稳定识别控件, `PageStorageKey` 用于恢复列表滚动或展开状态. 阅读时可以先略过键值, 修改区块时不要随意删除或重名, 否则可能把另一个会话的滚动或展开状态带过来
+
+## 修改布局时的边界
+
+1. 只改排列时, 优先修改对应私有区块, 不移动页面持有的 Hooks 或控制器
+2. 修改交互时, 从区块的回调参数追到页面处理函数, 再追到 Application, 不在布局组件里新增存储或网络访问
+3. 维持标准 Material 控件, 不为排版重写按钮, 菜单或选择状态
+4. 用现有预览检查窄窗口和大字号, 再运行格式化, 分析与测试
+
+```sh
+dart format lib/ui
+dart analyze --fatal-infos lib test
+flutter test --no-pub
+```
+
+[lib/previews.dart](../lib/previews.dart) 提供独立内存状态的页面预览, 不修改生产偏好. 各层职责和持久化规则见 [架构说明](architecture.md)
