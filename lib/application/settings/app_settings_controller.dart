@@ -31,18 +31,30 @@ final class AppSettingsController extends AsyncNotifier<AppSettings> {
   }
 
   /// 保存语言选择, 失败时保留最后一次成功加载的设置
-  Future<Result<void>> setLanguage(AppLanguage language) {
+  Future<Result<void>> setLanguage(AppLanguage language) =>
+      _update((current) => current.copyWith(language: language));
+
+  /// 保存界面风格, 不重置语言选择
+  Future<Result<void>> setDesignSystem(AppDesignSystem designSystem) =>
+      _update((current) => current.copyWith(designSystem: designSystem));
+
+  /// 保存明暗模式, 保留界面风格与语言
+  Future<Result<void>> setAppearance(AppAppearance appearance) =>
+      _update((current) => current.copyWith(appearance: appearance));
+
+  Future<Result<void>> _update(AppSettings Function(AppSettings) update) {
     final repository = ref.read(appSettingsRepositoryProvider);
     final operation = _pendingWrite.then((_) async {
+      final AppSettings current;
       try {
-        await future;
+        current = await future;
       } on AppFailure catch (error) {
         return Failure<void>(error);
       }
       if (!ref.mounted) {
         return const Failure<void>(AppFailure(FailureKind.cancelled));
       }
-      final next = AppSettings(language: language);
+      final next = update(current);
       final result = await repository.save(next);
       if (ref.mounted && result is Success<void>) {
         state = AsyncData(next);

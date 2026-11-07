@@ -101,10 +101,63 @@ void main() {
       controller.setLanguage(AppLanguage.system),
     ]);
     expect(store.writes, 3);
-    expect(store.value, '{"language":"system"}');
+    expect(store.value, contains('"language":"system"'));
+    expect(store.value, contains('"designSystem":"system"'));
     expect(
       container.read(appSettingsControllerProvider).requireValue,
       const AppSettings(),
+    );
+  });
+
+  test('并发修改三维设置后均被保存, 可从存储重新加载', () async {
+    await container.read(appSettingsControllerProvider.future);
+    final controller = container.read(appSettingsControllerProvider.notifier);
+    await Future.wait([
+      controller.setDesignSystem(AppDesignSystem.cupertino),
+      controller.setAppearance(AppAppearance.dark),
+      controller.setLanguage(AppLanguage.chinese),
+    ]);
+    const expected = AppSettings(
+      language: AppLanguage.chinese,
+      designSystem: AppDesignSystem.cupertino,
+      appearance: AppAppearance.dark,
+    );
+    expect(
+      container.read(appSettingsControllerProvider).requireValue,
+      expected,
+    );
+    expect(
+      (await LocalAppSettingsRepository(store).load()).getOrThrow(),
+      expected,
+    );
+    expect(store.writes, 3);
+  });
+
+  test('明暗保存失败不发布新设置, 重试保留语言和风格', () async {
+    store.value = '{"language":"zh","designSystem":"cupertino"}';
+    await container.read(appSettingsControllerProvider.future);
+    final controller = container.read(appSettingsControllerProvider.notifier);
+    store.failWrite = true;
+    expect(
+      await controller.setAppearance(AppAppearance.dark),
+      isA<Failure<void>>(),
+    );
+    expect(
+      container.read(appSettingsControllerProvider).requireValue.appearance,
+      AppAppearance.system,
+    );
+    store.failWrite = false;
+    expect(
+      await controller.setAppearance(AppAppearance.dark),
+      isA<Success<void>>(),
+    );
+    expect(
+      container.read(appSettingsControllerProvider).requireValue,
+      const AppSettings(
+        language: AppLanguage.chinese,
+        designSystem: AppDesignSystem.cupertino,
+        appearance: AppAppearance.dark,
+      ),
     );
   });
 
