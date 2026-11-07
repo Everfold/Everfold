@@ -142,80 +142,75 @@ class SetupPage extends HookConsumerWidget {
                 ),
               ),
         body: SafeArea(
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 680),
-              child: Column(
-                children: [
-                  Expanded(
-                    child: stage == AppSetupStage.preferences
-                        ? const SettingsContent(showModelEntry: false)
-                        : ListView(
-                            padding: const EdgeInsets.all(24),
-                            children: content,
-                          ),
-                  ),
-                  if (busy.value) const LinearProgressIndicator(),
-                  if (failed.value)
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Semantics(
-                        liveRegion: true,
-                        child: Text(strings.saveFailure),
+          child: Column(
+            children: [
+              Expanded(
+                child: stage == AppSetupStage.preferences
+                    ? const SettingsContent(showModelEntry: false)
+                    : ListView(
+                        padding: const EdgeInsets.all(24),
+                        children: content,
                       ),
-                    ),
-                  Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Wrap(
-                      spacing: 12,
-                      runSpacing: 12,
-                      alignment: WrapAlignment.end,
-                      children: [
-                        if (intro)
-                          TextButton(
-                            onPressed: busy.value
-                                ? null
-                                : () => run(controller.skipSetup),
-                            child: Text(strings.skipSetup),
-                          ),
-                        if (stage == AppSetupStage.login)
-                          TextButton(
-                            onPressed: pageBusy
-                                ? null
-                                : () => run(
-                                    () => controller.chooseConnectionMode(
-                                      AppConnectionMode.local,
-                                    ),
-                                  ),
-                            child: Text(strings.continueLocal),
-                          )
-                        else
-                          FilledButton(
-                            onPressed: busy.value
-                                ? null
-                                : () => run(switch (stage) {
-                                    AppSetupStage.introduction =>
-                                      controller.startSetup,
-                                    AppSetupStage.mode =>
-                                      () => controller.chooseConnectionMode(
-                                        selectedMode.value,
-                                      ),
-                                    _ => controller.finishSetup,
-                                  }),
-                            child: Text(
-                              intro
-                                  ? strings.startSetup
-                                  : stage == AppSetupStage.preferences
-                                  ? strings.finishSetup
-                                  : strings.continueAction,
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ],
               ),
-            ),
+              if (busy.value) const LinearProgressIndicator(),
+              if (failed.value)
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Semantics(
+                    liveRegion: true,
+                    child: Text(strings.saveFailure),
+                  ),
+                ),
+              Padding(
+                padding: const EdgeInsets.all(24),
+                child: Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  alignment: WrapAlignment.end,
+                  children: [
+                    if (intro)
+                      TextButton(
+                        onPressed: busy.value
+                            ? null
+                            : () => run(controller.skipSetup),
+                        child: Text(strings.skipSetup),
+                      ),
+                    if (stage == AppSetupStage.login)
+                      TextButton(
+                        onPressed: pageBusy
+                            ? null
+                            : () => run(
+                                () => controller.chooseConnectionMode(
+                                  AppConnectionMode.local,
+                                ),
+                              ),
+                        child: Text(strings.continueLocal),
+                      )
+                    else
+                      FilledButton(
+                        onPressed: busy.value
+                            ? null
+                            : () => run(switch (stage) {
+                                AppSetupStage.introduction =>
+                                  controller.startSetup,
+                                AppSetupStage.mode =>
+                                  () => controller.chooseConnectionMode(
+                                    selectedMode.value,
+                                  ),
+                                _ => controller.finishSetup,
+                              }),
+                        child: Text(
+                          intro
+                              ? strings.startSetup
+                              : stage == AppSetupStage.preferences
+                              ? strings.finishSetup
+                              : strings.continueAction,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),

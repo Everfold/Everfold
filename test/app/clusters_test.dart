@@ -96,6 +96,16 @@ void main() {
     );
     await tap(tester, find.byKey(const ValueKey('add-cluster')));
     final dialog = tester.widget<AlertDialog>(find.byType(AlertDialog));
+    expect(dialog.constraints?.maxWidth, 560);
+    final surface = find
+        .descendant(
+          of: find.byType(AlertDialog),
+          matching: find.byWidgetPredicate(
+            (widget) => widget is Material && widget.type == MaterialType.card,
+          ),
+        )
+        .first;
+    expect(tester.getSize(surface).width, lessThanOrEqualTo(560));
     expect(dialog.actions, hasLength(2));
     expect(dialog.actions!.first, isA<TextButton>());
     expect(dialog.actions!.last.key, const ValueKey('connection-connect'));
@@ -205,6 +215,26 @@ void main() {
     expect(container.read(clustersControllerProvider).last.name, 'LAN B');
     expect(tester.takeException(), isNull);
   });
+  for (final width in [320.0, 1280.0]) {
+    testWidgets('宽度 $width 双倍字号下 mTLS 表单可滚动且操作区可用', (tester) async {
+      await pumpApp(tester, width: width, scale: 2);
+      await tap(tester, find.byKey(const ValueKey('add-cluster')));
+      await tap(tester, find.byKey(const ValueKey('login-provider')));
+      await tap(tester, find.text('自部署').last);
+      await tap(tester, find.byKey(const ValueKey('login-verification')));
+      await tap(tester, find.text('mTLS').last);
+      for (final slot in ['ca', 'publicKey', 'privateKey']) {
+        await tap(tester, find.byKey(ValueKey('certificate-$slot-file')));
+      }
+      tester.view.viewInsets = const FakeViewPadding(bottom: 360);
+      addTearDown(tester.view.resetViewInsets);
+      await tester.pumpAndSettle();
+      await finishConnection(tester);
+      expect(find.byType(AlertDialog), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
   testWidgets('320 宽双倍字号下可添加和管理集群', (tester) async {
     await pumpApp(tester, width: 320, scale: 2);
     await add(tester, '测试窄屏集群');

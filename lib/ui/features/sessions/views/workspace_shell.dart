@@ -57,6 +57,7 @@ class WorkspaceShell extends ConsumerWidget {
             final confirmed = await showDialog<bool>(
               context: context,
               builder: (context) => AlertDialog(
+                constraints: const BoxConstraints(maxWidth: 560),
                 title: Text(strings.deleteSessionTitle),
                 content: Text(strings.deleteSessionBody),
                 actions: [
@@ -78,82 +79,74 @@ class WorkspaceShell extends ConsumerWidget {
           }
         }
 
-        final sidebar = SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: FilledButton.tonalIcon(
-                  key: const ValueKey('new-session'),
-                  onPressed: () => navigate('/'),
-                  icon: const Icon(Icons.add),
-                  label: Text(strings.newSession),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                child: Text(
-                  strings.sessionsTitle,
-                  style: Theme.of(context).textTheme.labelLarge,
-                ),
-              ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: sessions.length,
-                  itemBuilder: (context, index) {
-                    final session = sessions[index];
-                    return ListTile(
-                      key: ValueKey('session-${session.id}'),
-                      selected: location == '/sessions/${session.id}',
-                      leading: const Icon(Icons.chat_bubble_outline),
-                      title: Text(
-                        session.title.isEmpty
-                            ? strings.newSession
-                            : session.title,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      onTap: () => navigate('/sessions/${session.id}'),
-                      trailing: PopupMenuButton<String>(
-                        tooltip: strings.more,
-                        onSelected: (action) => edit(session, action),
-                        itemBuilder: (_) => [
-                          PopupMenuItem(
-                            value: 'rename',
-                            child: Text(strings.renameSession),
-                          ),
-                          PopupMenuItem(
-                            value: 'delete',
-                            child: Text(strings.deleteSession),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ),
-              const Divider(height: 1),
-              ListTile(
-                key: const ValueKey('cloud-navigation'),
-                selected: location == '/cloud',
-                leading: const Icon(Icons.cloud_outlined),
-                title: Text(strings.cloudServices),
-                onTap: () => navigate('/cloud', push: true),
-              ),
-              ListTile(
-                key: const ValueKey('settings-navigation'),
-                selected: location == '/settings',
-                leading: const Icon(Icons.settings_outlined),
-                title: Text(strings.settingsDestination),
-                onTap: () => navigate('/settings', push: true),
-              ),
-              const SizedBox(height: 8),
-            ],
+        final sidebar = NavigationDrawer(
+          key: const ValueKey('workspace-navigation'),
+          selectedIndex: switch (location) {
+            '/cloud' => 0,
+            '/settings' => 1,
+            _ => null,
+          },
+          onDestinationSelected: (index) =>
+              navigate(index == 0 ? '/cloud' : '/settings', push: true),
+          header: Padding(
+            padding: const EdgeInsets.all(16),
+            child: FilledButton.tonalIcon(
+              key: const ValueKey('new-session'),
+              onPressed: () => navigate('/'),
+              icon: const Icon(Icons.add),
+              label: Text(strings.newSession),
+            ),
           ),
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Text(
+                strings.sessionsTitle,
+                style: Theme.of(context).textTheme.labelLarge,
+              ),
+            ),
+            for (final session in sessions)
+              ListTile(
+                key: ValueKey('session-${session.id}'),
+                selected: location == '/sessions/${session.id}',
+                leading: const Icon(Icons.chat_bubble_outline),
+                title: Text(
+                  session.title.isEmpty ? strings.newSession : session.title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                onTap: () => navigate('/sessions/${session.id}'),
+                trailing: MenuAnchor(
+                  menuChildren: [
+                    MenuItemButton(
+                      onPressed: () => edit(session, 'rename'),
+                      child: Text(strings.renameSession),
+                    ),
+                    MenuItemButton(
+                      onPressed: () => edit(session, 'delete'),
+                      child: Text(strings.deleteSession),
+                    ),
+                  ],
+                  builder: (context, menu, _) => IconButton(
+                    key: ValueKey('session-menu-${session.id}'),
+                    tooltip: strings.more,
+                    onPressed: () => menu.isOpen ? menu.close() : menu.open(),
+                    icon: const Icon(Icons.more_vert),
+                  ),
+                ),
+              ),
+            const Divider(),
+            NavigationDrawerDestination(
+              key: const ValueKey('cloud-navigation'),
+              icon: const Icon(Icons.cloud_outlined),
+              label: Text(strings.cloudServices),
+            ),
+            NavigationDrawerDestination(
+              key: const ValueKey('settings-navigation'),
+              icon: const Icon(Icons.settings_outlined),
+              label: Text(strings.settingsDestination),
+            ),
+          ],
         );
         return Scaffold(
           appBar: wide
@@ -166,41 +159,31 @@ class WorkspaceShell extends ConsumerWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-          drawer: wide ? null : Drawer(child: sidebar),
+          drawer: wide ? null : sidebar,
           body: SafeArea(
             child: Row(
               children: [
-                if (wide) ...[
-                  SizedBox(width: 260, child: sidebar),
-                  const VerticalDivider(width: 1),
-                ],
+                if (wide) ...[sidebar, const VerticalDivider(width: 1)],
                 Expanded(
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 920),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          if (wide && location != '/')
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
-                              child: Semantics(
-                                header: true,
-                                child: Text(
-                                  title,
-                                  key: const ValueKey('workspace-page-title'),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headlineMedium,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      if (wide && location != '/')
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
+                          child: Semantics(
+                            header: true,
+                            child: Text(
+                              title,
+                              key: const ValueKey('workspace-page-title'),
+                              style: Theme.of(context).textTheme.headlineMedium,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                          Expanded(child: child),
-                        ],
-                      ),
-                    ),
+                          ),
+                        ),
+                      Expanded(child: child),
+                    ],
                   ),
                 ),
               ],
@@ -221,6 +204,7 @@ class _RenameSessionDialog extends HookWidget {
     final input = useTextEditingController(text: title);
     useListenable(input);
     return AlertDialog(
+      constraints: const BoxConstraints(maxWidth: 560),
       title: Text(strings.renameSession),
       content: TextField(
         controller: input,

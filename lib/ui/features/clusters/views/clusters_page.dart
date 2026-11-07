@@ -45,6 +45,7 @@ class ClustersPage extends ConsumerWidget {
       final confirmed = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
+          constraints: const BoxConstraints(maxWidth: 560),
           title: Text(strings.removeClusterTitle),
           content: Text(strings.removeClusterBody),
           actions: [
@@ -63,111 +64,103 @@ class ClustersPage extends ConsumerWidget {
     }
 
     return SafeArea(
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 920),
-          child: ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              Align(
-                alignment: Alignment.centerLeft,
-                child: FilledButton.icon(
-                  key: const ValueKey('add-cluster'),
-                  onPressed: connect,
-                  icon: const Icon(Icons.add),
-                  label: Text(strings.addCluster),
-                ),
+      child: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Align(
+            alignment: Alignment.centerLeft,
+            child: FilledButton.icon(
+              key: const ValueKey('add-cluster'),
+              onPressed: connect,
+              icon: const Icon(Icons.add),
+              label: Text(strings.addCluster),
+            ),
+          ),
+          const SizedBox(height: 24),
+          if (clusters.isEmpty) ...[
+            Text(
+              strings.clusterEmptyTitle,
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 8),
+            Text(strings.clusterEmptyBody),
+          ],
+          for (final cluster in clusters)
+            ExpansionTile(
+              key: PageStorageKey('cluster-${cluster.id}'),
+              leading: Icon(
+                cluster.status == ClusterStatus.connected
+                    ? Icons.cloud_done_outlined
+                    : Icons.cloud_off_outlined,
               ),
-              const SizedBox(height: 24),
-              if (clusters.isEmpty) ...[
-                Text(
-                  strings.clusterEmptyTitle,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: 8),
-                Text(strings.clusterEmptyBody),
-              ],
-              for (final cluster in clusters)
-                ExpansionTile(
-                  key: PageStorageKey('cluster-${cluster.id}'),
-                  leading: Icon(
-                    cluster.status == ClusterStatus.connected
-                        ? Icons.cloud_done_outlined
-                        : Icons.cloud_off_outlined,
+              title: Text(cluster.name),
+              subtitle: Text(
+                [
+                  clusterServiceLabel(strings, cluster.configuration.service),
+                  cluster.status == ClusterStatus.connected
+                      ? strings.clusterConnected
+                      : strings.clusterDisconnected,
+                ].join(' · '),
+              ),
+              children: [
+                if (cluster.configuration.service ==
+                    ClusterService.selfHosted) ...[
+                  ListTile(
+                    title: Text(strings.serverIp),
+                    subtitle: Text(cluster.configuration.ip),
                   ),
-                  title: Text(cluster.name),
-                  subtitle: Text(
-                    [
-                      clusterServiceLabel(
+                  ListTile(
+                    title: Text(strings.serverPort),
+                    subtitle: Text(cluster.configuration.port),
+                  ),
+                  ListTile(
+                    title: Text(strings.verificationLabel),
+                    subtitle: Text(
+                      clusterVerificationLabel(
                         strings,
-                        cluster.configuration.service,
-                      ),
-                      cluster.status == ClusterStatus.connected
-                          ? strings.clusterConnected
-                          : strings.clusterDisconnected,
-                    ].join(' · '),
-                  ),
-                  children: [
-                    if (cluster.configuration.service ==
-                        ClusterService.selfHosted) ...[
-                      ListTile(
-                        title: Text(strings.serverIp),
-                        subtitle: Text(cluster.configuration.ip),
-                      ),
-                      ListTile(
-                        title: Text(strings.serverPort),
-                        subtitle: Text(cluster.configuration.port),
-                      ),
-                      ListTile(
-                        title: Text(strings.verificationLabel),
-                        subtitle: Text(
-                          clusterVerificationLabel(
-                            strings,
-                            cluster.configuration.verification,
-                          ),
-                        ),
-                      ),
-                    ],
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: [
-                          OutlinedButton.icon(
-                            key: ValueKey('cluster-connect-${cluster.id}'),
-                            onPressed: cluster.status == ClusterStatus.connected
-                                ? () => controller.disconnect(cluster.id)
-                                : () => connect(cluster),
-                            icon: Icon(
-                              cluster.status == ClusterStatus.connected
-                                  ? Icons.link_off
-                                  : Icons.link,
-                            ),
-                            label: Text(
-                              cluster.status == ClusterStatus.connected
-                                  ? strings.disconnectCluster
-                                  : strings.configureCluster,
-                            ),
-                          ),
-                          TextButton(
-                            key: ValueKey('cluster-rename-${cluster.id}'),
-                            onPressed: () => rename(cluster),
-                            child: Text(strings.renameCluster),
-                          ),
-                          TextButton(
-                            key: ValueKey('cluster-remove-${cluster.id}'),
-                            onPressed: () => remove(cluster),
-                            child: Text(strings.removeCluster),
-                          ),
-                        ],
+                        cluster.configuration.verification,
                       ),
                     ),
-                  ],
+                  ),
+                ],
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      OutlinedButton.icon(
+                        key: ValueKey('cluster-connect-${cluster.id}'),
+                        onPressed: cluster.status == ClusterStatus.connected
+                            ? () => controller.disconnect(cluster.id)
+                            : () => connect(cluster),
+                        icon: Icon(
+                          cluster.status == ClusterStatus.connected
+                              ? Icons.link_off
+                              : Icons.link,
+                        ),
+                        label: Text(
+                          cluster.status == ClusterStatus.connected
+                              ? strings.disconnectCluster
+                              : strings.configureCluster,
+                        ),
+                      ),
+                      TextButton(
+                        key: ValueKey('cluster-rename-${cluster.id}'),
+                        onPressed: () => rename(cluster),
+                        child: Text(strings.renameCluster),
+                      ),
+                      TextButton(
+                        key: ValueKey('cluster-remove-${cluster.id}'),
+                        onPressed: () => remove(cluster),
+                        child: Text(strings.removeCluster),
+                      ),
+                    ],
+                  ),
                 ),
-            ],
-          ),
-        ),
+              ],
+            ),
+        ],
       ),
     );
   }
@@ -208,13 +201,14 @@ class _ClusterConnectionDialogState extends State<_ClusterConnectionDialog> {
       layoutBuilder: (fields, action, locked) => PopScope(
         canPop: !locked,
         child: AlertDialog(
+          constraints: const BoxConstraints(maxWidth: 560),
           title: Text(
             widget.cluster == null
                 ? strings.addCluster
                 : strings.configureCluster,
           ),
           content: SizedBox(
-            width: 560,
+            width: double.maxFinite,
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -258,6 +252,7 @@ class _ClusterNameDialog extends HookWidget {
     final input = useTextEditingController(text: name);
     final value = useValueListenable(input);
     return AlertDialog(
+      constraints: const BoxConstraints(maxWidth: 560),
       title: Text(strings.renameCluster),
       content: TextField(
         key: const ValueKey('rename-cluster-input'),

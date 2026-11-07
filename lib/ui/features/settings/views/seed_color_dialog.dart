@@ -28,6 +28,7 @@ class SeedColorDialog extends HookWidget {
     }
 
     return AlertDialog(
+      constraints: const BoxConstraints(maxWidth: 560),
       title: Text(strings.editColor),
       scrollable: true,
       content: Form(

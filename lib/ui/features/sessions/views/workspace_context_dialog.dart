@@ -13,9 +13,10 @@ class WorkspaceContextDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final strings = AppLocalizations.of(context)!;
     return AlertDialog(
+      constraints: const BoxConstraints(maxWidth: 560),
       title: Text(strings.workspaceContext),
       content: SizedBox(
-        width: 480,
+        width: double.maxFinite,
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,

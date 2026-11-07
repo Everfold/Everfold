@@ -51,6 +51,126 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  testWidgets('导航采用 M3 默认抽屉与目的地, 宽屏正文不再限定为 920', (tester) async {
+    await pumpApp(tester, size: const Size(1920, 900));
+    final navigation = find.byKey(const ValueKey('workspace-navigation'));
+    final drawer = find.descendant(
+      of: navigation,
+      matching: find.byType(Drawer),
+    );
+    expect(tester.widget<NavigationDrawer>(navigation).selectedIndex, isNull);
+    expect(tester.widget<Drawer>(drawer).width, isNull);
+    expect(find.byType(NavigationDrawerDestination), findsNWidgets(2));
+    expect(tester.getSize(find.byType(SessionPage)).width, greaterThan(920));
+
+    await tester.tap(find.byKey(const ValueKey('settings-navigation')));
+    await tester.pumpAndSettle();
+    expect(tester.widget<NavigationDrawer>(navigation).selectedIndex, 1);
+    await tester.tap(find.byKey(const ValueKey('cloud-navigation')));
+    await tester.pumpAndSettle();
+    expect(tester.widget<NavigationDrawer>(navigation).selectedIndex, 0);
+    expect(tester.takeException(), isNull);
+  });
+
+  for (final width in [390.0, 1280.0]) {
+    testWidgets('宽度 $width 的长会话列表可滚动到导航目的地', (tester) async {
+      await pumpApp(tester, size: Size(width, 900));
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(SessionPage)),
+      );
+      final controller = container.read(sessionsControllerProvider.notifier);
+      for (var index = 0; index < 30; index++) {
+        controller.setDraft(null, '会话 $index');
+        controller.submit(null);
+      }
+      await tester.pumpAndSettle();
+      if (width < 840) {
+        await tester.tap(find.byIcon(Icons.menu));
+        await tester.pumpAndSettle();
+      }
+      final navigation = find.byKey(const ValueKey('workspace-navigation'));
+      final settings = find.byKey(const ValueKey('settings-navigation'));
+      await tester.scrollUntilVisible(
+        settings,
+        300,
+        scrollable: find
+            .descendant(of: navigation, matching: find.byType(Scrollable))
+            .first,
+      );
+      await tester.tap(settings);
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<Text>(find.byKey(const ValueKey('workspace-page-title')))
+            .data,
+        '设置',
+      );
+      expect(
+        container.read(sessionsControllerProvider).sessions,
+        hasLength(30),
+      );
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  testWidgets('320 宽双倍字号和键盘下长目录名使用组件自身约束', (tester) async {
+    await pumpApp(
+      tester,
+      size: const Size(320, 900),
+      scale: 2,
+      selectWorkspace: () async =>
+          '/selected/${List.filled(80, 'long-name').join()}',
+    );
+    await tester.tap(find.byKey(const ValueKey('workspace-selector')));
+    await tester.pumpAndSettle();
+    final chip = find.byType(InputChip);
+    expect(tester.getSize(chip).width, lessThanOrEqualTo(320));
+    tester.view.viewInsets = const FakeViewPadding(bottom: 360);
+    addTearDown(tester.view.resetViewInsets);
+    final input = find.byKey(const ValueKey('prompt-input'));
+    await tester.ensureVisible(input);
+    await tester.enterText(input, '保留长目录上下文');
+    await tester.pumpAndSettle();
+    final send = find.byKey(const ValueKey('send-prompt'));
+    await tester.ensureVisible(send);
+    await tester.tap(send);
+    await tester.pumpAndSettle();
+    expect(find.text('未发送: 尚未接入模型'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('预设使用标准单选菜单, 可选中并用 Escape 关闭', (tester) async {
+    await pumpApp(tester);
+    final container = ProviderScope.containerOf(
+      tester.element(find.byType(SessionPage)),
+    );
+    final preset = find.byKey(const ValueKey('preset-selector'));
+    await tester.tap(preset);
+    await tester.pumpAndSettle();
+    expect(find.byType(RadioMenuButton<SessionPreset>), findsNWidgets(2));
+    await tester.tap(find.text('规划'));
+    await tester.pumpAndSettle();
+    expect(
+      container.read(sessionsControllerProvider).newSession.preset,
+      SessionPreset.plan,
+    );
+    expect(find.byType(RadioMenuButton<SessionPreset>), findsNothing);
+    await tester.tap(preset);
+    await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<RadioMenuButton<SessionPreset>>(
+            find.widgetWithText(RadioMenuButton<SessionPreset>, '规划'),
+          )
+          .groupValue,
+      SessionPreset.plan,
+    );
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(find.byType(RadioMenuButton<SessionPreset>), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('桌面没有全局顶栏, 正文标题与内容左边缘对齐且设置入口唯一', (tester) async {
     await pumpApp(tester);
     final heading = find.byKey(const ValueKey('workspace-page-title'));
@@ -258,7 +378,7 @@ void main() {
       container.read(sessionsControllerProvider).newSession.workspace,
       isNull,
     );
-    await tester.tap(find.byTooltip('预设'));
+    await tester.tap(find.byKey(const ValueKey('preset-selector')));
     await tester.pumpAndSettle();
     await tester.tap(find.text('规划'));
     await tester.pumpAndSettle();
@@ -362,10 +482,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('send-prompt')));
     await tester.pumpAndSettle();
-    final menu = find.descendant(
-      of: find.byKey(const ValueKey('session-1')),
-      matching: find.byType(PopupMenuButton<String>),
-    );
+    final menu = find.byKey(const ValueKey('session-menu-1'));
     await tester.tap(menu);
     await tester.pumpAndSettle();
     await tester.tap(find.text('重命名'));

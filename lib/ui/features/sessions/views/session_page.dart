@@ -118,33 +118,32 @@ class SessionPage extends HookConsumerWidget {
                   label: Text(strings.noModel),
                 ),
               ),
-              PopupMenuButton<SessionPreset>(
-                tooltip: strings.presetLabel,
-                initialValue: session.preset,
-                onSelected: (value) => controller.setPreset(sessionId, value),
-                itemBuilder: (_) => [
-                  PopupMenuItem(
-                    value: SessionPreset.standard,
-                    child: Text(strings.standardPreset),
-                  ),
-                  PopupMenuItem(
-                    value: SessionPreset.plan,
-                    child: Text(strings.planPreset),
-                  ),
-                ],
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.tune, size: 18),
-                      const SizedBox(width: 8),
-                      Text(
-                        session.preset == SessionPreset.standard
+              MenuAnchor(
+                menuChildren: [
+                  for (final preset in SessionPreset.values)
+                    RadioMenuButton<SessionPreset>(
+                      value: preset,
+                      groupValue: session.preset,
+                      onChanged: (value) {
+                        if (value != null) {
+                          controller.setPreset(sessionId, value);
+                        }
+                      },
+                      child: Text(
+                        preset == SessionPreset.standard
                             ? strings.standardPreset
                             : strings.planPreset,
                       ),
-                    ],
+                    ),
+                ],
+                builder: (context, menu, _) => TextButton.icon(
+                  key: const ValueKey('preset-selector'),
+                  onPressed: () => menu.isOpen ? menu.close() : menu.open(),
+                  icon: const Icon(Icons.tune),
+                  label: Text(
+                    session.preset == SessionPreset.standard
+                        ? strings.standardPreset
+                        : strings.planPreset,
                   ),
                 ),
               ),
@@ -159,13 +158,10 @@ class SessionPage extends HookConsumerWidget {
                 InputChip(
                   key: const ValueKey('workspace-selector'),
                   avatar: const Icon(Icons.folder_open, size: 18),
-                  label: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 180),
-                    child: Text(
-                      p.basename(p.normalize(session.workspace!)),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                  label: Text(
+                    p.basename(p.normalize(session.workspace!)),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   tooltip: session.workspace,
                   onPressed: pickingWorkspace.value
@@ -195,60 +191,55 @@ class SessionPage extends HookConsumerWidget {
       ),
     );
     return SafeArea(
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 920),
-          child: hasMessages
-              ? LayoutBuilder(
-                  builder: (context, constraints) => Column(
-                    children: [
-                      Expanded(
-                        child: SessionTranscript(
-                          key: ValueKey(sessionId),
-                          messages: session.messages,
-                          storageId: session.id,
-                        ),
-                      ),
-                      // 小窗口或软键盘压缩空间时, 输入区自身可滚动
-                      ConstrainedBox(
-                        constraints: BoxConstraints(
-                          maxHeight: constraints.maxHeight * 0.65,
-                        ),
-                        child: SingleChildScrollView(
-                          primary: false,
-                          child: composer,
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              : SingleChildScrollView(
-                  controller: scroll,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 48),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Everfold',
-                          style: Theme.of(context).textTheme.headlineMedium,
-                        ),
-                        const SizedBox(height: 8),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Text(
-                            strings.newPromptTitle,
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-                        composer,
-                      ],
+      child: hasMessages
+          ? LayoutBuilder(
+              builder: (context, constraints) => Column(
+                children: [
+                  Expanded(
+                    child: SessionTranscript(
+                      key: ValueKey(sessionId),
+                      messages: session.messages,
+                      storageId: session.id,
                     ),
                   ),
+                  // 小窗口或软键盘压缩空间时, 输入区自身可滚动
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: constraints.maxHeight * 0.65,
+                    ),
+                    child: SingleChildScrollView(
+                      primary: false,
+                      child: composer,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : SingleChildScrollView(
+              controller: scroll,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 48),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Everfold',
+                      style: Theme.of(context).textTheme.headlineMedium,
+                    ),
+                    const SizedBox(height: 8),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        strings.newPromptTitle,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    composer,
+                  ],
                 ),
-        ),
-      ),
+              ),
+            ),
     );
   }
 }
