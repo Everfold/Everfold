@@ -191,7 +191,10 @@ class SessionPage extends HookConsumerWidget {
                         constraints: BoxConstraints(
                           maxHeight: constraints.maxHeight * 0.65,
                         ),
-                        child: SingleChildScrollView(child: composer),
+                        child: SingleChildScrollView(
+                          primary: false,
+                          child: composer,
+                        ),
                       ),
                     ],
                   ),

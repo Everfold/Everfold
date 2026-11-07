@@ -1,4 +1,4 @@
-# 通用业务框架
+# Everfold 架构
 
 ## 快速入口
 
@@ -15,10 +15,12 @@ lib/
 │   ├── observers/
 │   └── router/
 ├── application/                  # 用例协调与 Riverpod 状态
-│   └── settings/
+│   ├── settings/
+│   └── sessions/
 ├── domain/                       # 纯 Dart 模型, 仓储契约, Result
 │   ├── common/
-│   └── settings/
+│   ├── settings/
+│   └── sessions/
 ├── data/                         # DTO, 仓储实现, 外部访问
 │   ├── models/
 │   ├── repositories/
@@ -28,7 +30,7 @@ lib/
 ├── core/                         # 非业务配置与安全错误报告
 ├── ui/                           # Material 展示层
 │   ├── core/
-│   └── features/home/
+│   └── features/                  # setup, sessions, settings
 ├── l10n/
 ├── src/rust/                     # 保留现有原生桥接代码
 └── previews.dart
@@ -53,7 +55,7 @@ Application 通过仓储契约访问数据, 不导入具体 Data 实现. AppScop
 
 ## 已贯通的技术模块
 
-应用设置只是基础设施示例, 不是预设业务模型
+设置和初始化进度持久化到平台偏好存储, 会话暂时只保存在内存中
 
 ```text
 EverfoldApp
@@ -66,7 +68,7 @@ EverfoldApp
 
 | 层 | 当前职责 |
 | --- | --- |
-| Domain | 不可变 AppSettings, AppLanguage, AppAppearance, AppColorMode, 仓储契约与 Result |
+| Domain | 不可变设置, 初始化阶段, 连接模式, 会话与消息, 仓储契约与 Result |
 | Data | JSON 转换, 版本化存储键, 预期存储异常转换 |
 | Application | 异步加载, 顺序保存, 成功后发布状态 |
 | UI | 设置页明暗, 配色与语言选择, 启动与保存状态, 应用外壳中的平台颜色与主题映射 |
@@ -84,6 +86,20 @@ EverfoldApp
 加载失败不会自动重试或覆盖原数据, 启动界面提供显式重试. 重试不能修复持久化格式损坏, 遇到此情况应在确认数据策略后增加定向迁移或恢复操作, 不能清空全部用户存储
 
 内存存储只用于预览和测试. 生产入口始终使用平台偏好存储
+
+## 初始化与会话
+
+GoRouter 将未完成初始化的用户重定向到 /setup. 初始化进度保存在 AppSettings 中, 重新启动恢复未完成阶段. 跳过后采用本地模式, 保留已选择的语言与外观. 云模式停在尚未接入的认证界面, 不能伪造成功或完成云初始化
+
+ShellRoute 保持侧栏与页面共享. 宽度达到 840 时使用 260 宽侧栏, 更窄时切换标准 Drawer. 路由包括 /, /sessions/:id, /settings 和空内容的 /cloud. 设置变化刷新路由判断, 不重建路由实例或导航栈
+
+SessionsController 管理进程内会话, 草稿, 预设和工作区路径. 提交只创建 pending 的用户消息, 不调用模型或创建助手回复. 暂不增加会话仓储或数据库, 也不自动恢复会话
+
+目录选择通过 Application 的 selectWorkspaceProvider 声明能力, AppScope 连接 Data 的 file_selector 实现. UI 仅保存用户明确选中的路径, 取消不修改状态, 不枚举或读取目录内容
+
+SessionTranscript 仅显示调用方传入的消息, 思考摘要与工具事件. 摘要是公开摘要字段, 不是模型内部推理. 正式界面没有演示回复或模拟执行状态
+
+产品流程与尚未实现的边界见 [product_scope.md](product_scope.md)
 
 ## 错误约定
 

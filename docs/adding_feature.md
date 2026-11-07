@@ -1,6 +1,6 @@
 # 新增业务模块
 
-先阅读现有设置模块, 再按真实业务名称新增目录, 不复制整个首页展示模块
+先阅读现有设置和会话模块, 再按真实业务名称新增目录, 不恢复已删除的控件展示页
 
 ## 实现顺序
 
@@ -22,7 +22,7 @@ Controller 不导入 Data, App 或设计系统. 页面不直接创建 Dio, 访�
 | 依赖装配与路由 | lib/app/app_scope.dart, lib/app/router/app_router.dart |
 | 异步内容与错误展示 | lib/ui/core/widgets/async_value_view.dart, lib/ui/core/error/failure_message.dart |
 
-新增跨模块业务规则时, 可以在 Application 中提取用例, 不要求为每个仓储方法增加一层转发类
+仅进程内状态可参考 sessions 模块, 不要求预先创建仓储或数据库. 平台目录选择通过 Application 声明的能力 Provider 与 AppScope 装配, 页面不导入插件\n\n新增跨模块业务规则时, 可以在 Application 中提取用例, 不要求为每个仓储方法增加一层转发类
 
 ## 页面与状态
 
@@ -52,7 +52,7 @@ Controller 不导入 Data, App 或设计系统. 页面不直接创建 Dio, 访�
 
 Material 页面使用 `package:material_ui/material_ui.dart` 与标准主题 API, 不混用旧 Material 导入, 不新增主题类
 
-首页设置入口提供 appearance, colorMode 与 language, 另外保存自选种子色 seedColor. 明暗与语言默认跟随系统, 配色默认 standard. 通过 Controller 的 setAppearance, setColorMode, setSeedColor 与 setLanguage 修改, 使用 copyWith 保留其他字段. setSeedColor 只接受不透明 ARGB, 原子保存颜色与 custom 模式
+设置页提供无后续效果的模型接入入口, 以及 appearance, colorMode 与 language, 另外保存自选种子色 seedColor. 明暗与语言默认跟随系统, 配色默认 standard. 通过 Controller 的 setAppearance, setColorMode, setSeedColor 与 setLanguage 修改, 使用 copyWith 保留其他字段. setSeedColor 只接受不透明 ARGB, 原子保存颜色与 custom 模式
 
 Locale, ThemeMode 和 ColorScheme 映射位于 app/everfold_app.dart, 不把 Flutter 类型放进纯 Dart 领域模型. 默认配色保持 ThemeData 默认值, 自选颜色使用 ColorScheme.fromSeed, 系统颜色通过 DynamicColorBuilder 提供. 系统颜色为空或插件失败时独立回退默认浅色和深色主题, 不新增主题类
 
