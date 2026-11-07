@@ -54,10 +54,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get validationFailure => 'The input does not meet the requirements';
 
   @override
-  String get serverFailure => 'The service is unavailable. Try again later';
+  String get serverFailure =>
+      'The cluster is temporarily unavailable. Try again later';
 
   @override
-  String get invalidDataFailure => 'The data format is invalid';
+  String get invalidDataFailure =>
+      'The data format is invalid. The operation could not be completed';
 
   @override
   String get storageFailure => 'Unable to access local storage. Try again';
@@ -70,7 +72,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get saveFailure => 'Unable to save settings. Try again';
 
   @override
-  String get brightnessTitle => 'Appearance';
+  String get brightnessTitle => 'Brightness mode';
 
   @override
   String get followSystem => 'Follow system';
@@ -109,14 +111,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get save => 'Save';
 
   @override
-  String get welcomeTagline => 'Your cross-platform agent workspace';
+  String get welcomeTagline => 'Your boundless AI workspace';
 
   @override
-  String get featureSessions => 'Keep tasks in sessions';
+  String get featureSessions => 'Organize tasks by session';
 
   @override
   String get featureSessionsBody =>
-      'Prompts, responses, and tool activity stay together';
+      'Keep every prompt, response, and tool record tied to its session';
 
   @override
   String get featureModels => 'Choose your models';
@@ -126,14 +128,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'Local mode can also connect to third-party model services';
 
   @override
-  String get featureWorkspace => 'Work in context';
+  String get featureWorkspace => 'Collaborate around your workspace';
 
   @override
   String get featureWorkspaceBody =>
       'Keep prompts, presets, and workspaces in one workflow';
 
   @override
-  String get startSetup => 'Get started';
+  String get startSetup => 'Set up';
 
   @override
   String get skipSetup => 'Skip';
@@ -145,14 +147,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get localMode => 'Local only';
 
   @override
-  String get localModeBody =>
-      'Without Everfold cloud, with third-party model support';
+  String get localModeBody => 'Use only this device, without cross-node mode';
 
   @override
-  String get cloudMode => 'Connect to cloud';
+  String get cloudMode => 'Connect to cluster';
 
   @override
-  String get cloudModeBody => 'Sign in to use cloud services';
+  String get cloudModeBody => 'Connect to a cluster to work across devices';
 
   @override
   String get continueAction => 'Continue';
@@ -161,10 +162,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get back => 'Back';
 
   @override
-  String get loginTitle => 'Sign in to cloud';
+  String get loginTitle => 'Connect to cluster';
 
   @override
-  String get identityProvider => 'Sign-in provider';
+  String get identityProvider => 'Provider';
 
   @override
   String get lanProvider => 'Local network';
@@ -242,7 +243,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signInSucceeded => 'Signed in';
 
   @override
-  String get continueLocal => 'Continue in local mode';
+  String get continueLocal => 'Skip and use local mode';
 
   @override
   String get preferencesTitle => 'Personalize';
@@ -322,7 +323,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get planPreset => 'Plan';
 
   @override
-  String get noWorkspace => 'No workspace';
+  String get noWorkspace => 'No workspace selected';
 
   @override
   String get clearWorkspace => 'Clear workspace';
@@ -378,7 +379,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reasoningSummary => 'Reasoning summary';
 
   @override
-  String get toolCalls => 'Tool activity';
+  String get toolCalls => 'Tool calls';
 
   @override
   String get copyCode => 'Copy code';
