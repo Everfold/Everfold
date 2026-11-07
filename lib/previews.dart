@@ -13,11 +13,6 @@ import 'data/services/storage/preferences_store.dart';
 Widget materialHomePreview() => AppScope(
   config: AppConfig(),
   talker: Talker(settings: TalkerSettings(enabled: false)),
-  preferencesStore: MemoryPreferencesStore(
-    initialValues: {
-      'everfold.app_settings.v1':
-          '{"language":"system","designSystem":"material"}',
-    },
-  ),
+  preferencesStore: MemoryPreferencesStore(),
   child: const EverfoldApp(),
 );

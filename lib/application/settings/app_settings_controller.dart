@@ -18,7 +18,7 @@ final appSettingsControllerProvider =
       retry: (retryCount, error) => null,
     );
 
-/// 协调设置加载与保存, 不依赖 Material 或 Cupertino
+/// 协调设置加载与保存, 不依赖 UI 组件
 ///
 /// 写入按调用顺序执行, 只在持久化成功后发布新状态
 final class AppSettingsController extends AsyncNotifier<AppSettings> {
@@ -34,11 +34,7 @@ final class AppSettingsController extends AsyncNotifier<AppSettings> {
   Future<Result<void>> setLanguage(AppLanguage language) =>
       _update((current) => current.copyWith(language: language));
 
-  /// 保存界面风格, 不重置语言选择
-  Future<Result<void>> setDesignSystem(AppDesignSystem designSystem) =>
-      _update((current) => current.copyWith(designSystem: designSystem));
-
-  /// 保存明暗模式, 保留界面风格与语言
+  /// 保存明暗模式, 保留语言选择
   Future<Result<void>> setAppearance(AppAppearance appearance) =>
       _update((current) => current.copyWith(appearance: appearance));
 

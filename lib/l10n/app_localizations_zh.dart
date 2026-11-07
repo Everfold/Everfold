@@ -194,22 +194,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get unexpectedFailure => '操作未完成, 请重试';
 
   @override
-  String get appearanceTitle => '界面风格';
-
-  @override
-  String get followPlatform => '跟随平台';
-
-  @override
   String get saveFailure => '无法保存设置, 请重试';
 
   @override
-  String get cupertinoHomeTitle => 'Cupertino 控件展示';
-
-  @override
   String get openSettings => '打开设置';
-
-  @override
-  String get backHome => '返回首页';
 
   @override
   String get brightnessTitle => '明暗模式';

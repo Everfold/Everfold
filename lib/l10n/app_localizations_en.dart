@@ -198,22 +198,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'The operation could not be completed. Try again';
 
   @override
-  String get appearanceTitle => 'Interface style';
-
-  @override
-  String get followPlatform => 'Follow platform';
-
-  @override
   String get saveFailure => 'Unable to save settings. Try again';
 
   @override
-  String get cupertinoHomeTitle => 'Cupertino components';
-
-  @override
   String get openSettings => 'Open settings';
-
-  @override
-  String get backHome => 'Back to home';
 
   @override
   String get brightnessTitle => 'Appearance';

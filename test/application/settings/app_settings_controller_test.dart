@@ -102,24 +102,22 @@ void main() {
     ]);
     expect(store.writes, 3);
     expect(store.value, contains('"language":"system"'));
-    expect(store.value, contains('"designSystem":"system"'));
+    expect(store.value, contains('"appearance":"system"'));
     expect(
       container.read(appSettingsControllerProvider).requireValue,
       const AppSettings(),
     );
   });
 
-  test('并发修改三维设置后均被保存, 可从存储重新加载', () async {
+  test('并发修改明暗与语言后均被保存, 可从存储重新加载', () async {
     await container.read(appSettingsControllerProvider.future);
     final controller = container.read(appSettingsControllerProvider.notifier);
     await Future.wait([
-      controller.setDesignSystem(AppDesignSystem.cupertino),
       controller.setAppearance(AppAppearance.dark),
       controller.setLanguage(AppLanguage.chinese),
     ]);
     const expected = AppSettings(
       language: AppLanguage.chinese,
-      designSystem: AppDesignSystem.cupertino,
       appearance: AppAppearance.dark,
     );
     expect(
@@ -130,11 +128,11 @@ void main() {
       (await LocalAppSettingsRepository(store).load()).getOrThrow(),
       expected,
     );
-    expect(store.writes, 3);
+    expect(store.writes, 2);
   });
 
-  test('明暗保存失败不发布新设置, 重试保留语言和风格', () async {
-    store.value = '{"language":"zh","designSystem":"cupertino"}';
+  test('明暗保存失败不发布新设置, 重试保留语言', () async {
+    store.value = '{"language":"zh"}';
     await container.read(appSettingsControllerProvider.future);
     final controller = container.read(appSettingsControllerProvider.notifier);
     store.failWrite = true;
@@ -155,7 +153,6 @@ void main() {
       container.read(appSettingsControllerProvider).requireValue,
       const AppSettings(
         language: AppLanguage.chinese,
-        designSystem: AppDesignSystem.cupertino,
         appearance: AppAppearance.dark,
       ),
     );
