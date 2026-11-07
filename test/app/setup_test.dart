@@ -33,6 +33,25 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  void expectConnectionNavigationFrozen(WidgetTester tester) {
+    expect(
+      tester
+          .widget<IconButton>(
+            find.byWidgetPredicate(
+              (widget) => widget is IconButton && widget.tooltip == '返回',
+            ),
+          )
+          .onPressed,
+      isNull,
+    );
+    expect(
+      tester
+          .widget<TextButton>(find.widgetWithText(TextButton, '跳过, 使用本地模式'))
+          .onPressed,
+      isNull,
+    );
+  }
+
   testWidgets('首次介绍可跳过, 重启后不再显示', (tester) async {
     final store = MemoryPreferencesStore();
     await pumpApp(tester, store);
@@ -129,6 +148,10 @@ void main() {
       await tester.pump(const Duration(seconds: 1));
       await tester.pumpAndSettle();
       expect(find.text('下一步'), findsOneWidget);
+      expectConnectionNavigationFrozen(tester);
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(find.text('下一步'), findsOneWidget);
       final beforeNext = await store.readString('everfold.app_settings.v1');
       expect(
         AppSettingsDto.fromJson(jsonDecode(beforeNext!)).settings.setupStage,
@@ -159,10 +182,56 @@ void main() {
     await tap(tester, '下一步');
     expect(find.text('无法保存设置, 请重试'), findsOneWidget);
     expect(find.text('下一步'), findsOneWidget);
+    expectConnectionNavigationFrozen(tester);
     store.failWrite = false;
     await tap(tester, '下一步');
     expect(find.text('个性化设置'), findsOneWidget);
   });
+  testWidgets('进入偏好设置后恢复导航, 返回新连接页可重新配置', (tester) async {
+    final store = MemoryPreferencesStore(
+      initialValues: {
+        'everfold.app_settings.v1':
+            '{"language":"zh","connectionMode":"cloud","setupStage":"login"}',
+      },
+    );
+    await pumpApp(tester, store);
+    await tester.tap(find.byKey(const ValueKey('connection-connect')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pumpAndSettle();
+    expectConnectionNavigationFrozen(tester);
+    await tap(tester, '下一步');
+    expect(find.text('个性化设置'), findsOneWidget);
+    expect(
+      tester
+          .widget<IconButton>(
+            find.byWidgetPredicate(
+              (widget) => widget is IconButton && widget.tooltip == '返回',
+            ),
+          )
+          .onPressed,
+      isNotNull,
+    );
+    await tester.tap(find.byIcon(Icons.arrow_back));
+    await tester.pumpAndSettle();
+    await tap(tester, '继续');
+    expect(
+      tester
+          .widget<DropdownMenu<String>>(
+            find.byKey(const ValueKey('login-provider')),
+          )
+          .enabled,
+      isTrue,
+    );
+    expect(
+      tester
+          .widget<TextButton>(find.widgetWithText(TextButton, '跳过, 使用本地模式'))
+          .onPressed,
+      isNotNull,
+    );
+    expect(find.text('连接'), findsOneWidget);
+  });
+
   testWidgets('保存失败停留介绍, 不写入完成状态', (tester) async {
     final store = TestPreferencesStore()..failWrite = true;
     await pumpApp(tester, store);

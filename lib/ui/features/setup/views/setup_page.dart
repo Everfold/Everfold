@@ -21,17 +21,21 @@ class SetupPage extends HookConsumerWidget {
     final busy = useState(false);
     final failed = useState(false);
     final selectedMode = useState(settings.connectionMode);
-    final connecting = useState(false);
-    final pageBusy = busy.value || connecting.value;
-    Future<void> run(Future<Result<void>> Function() operation) async {
-      if (busy.value) return;
+    final connectionLocked = useState(false);
+    final pageBusy =
+        busy.value ||
+        (settings.setupStage == AppSetupStage.login && connectionLocked.value);
+    Future<bool> run(Future<Result<void>> Function() operation) async {
+      if (busy.value) return false;
       busy.value = true;
       failed.value = false;
       try {
         final result = await operation();
         if (context.mounted) failed.value = result is Failure<void>;
+        return result is Success<void>;
       } catch (_) {
         if (context.mounted) failed.value = true;
+        return false;
       } finally {
         if (context.mounted) busy.value = false;
       }
@@ -103,8 +107,11 @@ class SetupPage extends HookConsumerWidget {
       if (stage == AppSetupStage.login)
         ConnectionForm(
           saving: busy.value,
-          onConnectingChanged: (value) => connecting.value = value,
-          onNext: () => run(controller.continueConnectionSetup),
+          onConnectionStarted: () => connectionLocked.value = true,
+          onNext: () async {
+            final advanced = await run(controller.continueConnectionSetup);
+            if (context.mounted && advanced) connectionLocked.value = false;
+          },
         ),
     ];
     return PopScope(

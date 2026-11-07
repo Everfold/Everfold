@@ -13,12 +13,12 @@ class ConnectionForm extends StatefulWidget {
   const ConnectionForm({
     super.key,
     required this.saving,
-    required this.onConnectingChanged,
+    required this.onConnectionStarted,
     required this.onNext,
   });
 
   final bool saving;
-  final ValueChanged<bool> onConnectingChanged;
+  final VoidCallback onConnectionStarted;
   final VoidCallback onNext;
 
   @override
@@ -36,7 +36,9 @@ class _ConnectionFormState extends State<ConnectionForm> {
   _ConnectionStatus _status = _ConnectionStatus.idle;
   Timer? _timer;
 
-  bool get _locked => widget.saving || _status == _ConnectionStatus.connecting;
+  bool get _locked => widget.saving || _status != _ConnectionStatus.idle;
+  bool get _actionBusy =>
+      widget.saving || _status == _ConnectionStatus.connecting;
 
   @override
   void dispose() {
@@ -46,12 +48,6 @@ class _ConnectionFormState extends State<ConnectionForm> {
     _username.dispose();
     _password.dispose();
     super.dispose();
-  }
-
-  void _invalidate(String _) {
-    if (_status == _ConnectionStatus.succeeded) {
-      setState(() => _status = _ConnectionStatus.idle);
-    }
   }
 
   void _selectProvider(String? value) {
@@ -80,19 +76,18 @@ class _ConnectionFormState extends State<ConnectionForm> {
   }
 
   void _connect() {
-    if (_locked) return;
+    if (_actionBusy) return;
     if (_status == _ConnectionStatus.succeeded) {
       widget.onNext();
       return;
     }
     FocusScope.of(context).unfocus();
     setState(() => _status = _ConnectionStatus.connecting);
-    widget.onConnectingChanged(true);
+    widget.onConnectionStarted();
     // 后端接入前固定等待 1 秒, 不做地址校验, 认证或 TLS 握手
     _timer = Timer(const Duration(seconds: 1), () {
       if (!mounted) return;
       setState(() => _status = _ConnectionStatus.succeeded);
-      widget.onConnectingChanged(false);
     });
   }
 
@@ -117,7 +112,6 @@ class _ConnectionFormState extends State<ConnectionForm> {
           labelText: label,
           border: const OutlineInputBorder(),
         ),
-        onChanged: _invalidate,
       ),
     );
   }
@@ -282,7 +276,7 @@ class _ConnectionFormState extends State<ConnectionForm> {
           alignment: Alignment.centerRight,
           child: FilledButton.icon(
             key: const ValueKey('connection-connect'),
-            onPressed: _locked ? null : _connect,
+            onPressed: _actionBusy ? null : _connect,
             icon: Icon(
               succeeded
                   ? Icons.arrow_forward
