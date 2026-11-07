@@ -2,11 +2,13 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:path/path.dart' as p;
 
 import '../../../../application/sessions/sessions_controller.dart';
 import '../../../../domain/sessions/agent_session.dart';
 import '../../../../l10n/app_localizations.dart';
 import 'session_transcript.dart';
+import 'workspace_context_dialog.dart';
 
 class SessionPage extends HookConsumerWidget {
   const SessionPage({super.key, this.sessionId});
@@ -58,6 +60,21 @@ class SessionPage extends HookConsumerWidget {
         }
       } finally {
         if (context.mounted) pickingWorkspace.value = false;
+      }
+    }
+
+    Future<void> openWorkspaceContext() async {
+      final path = session.workspace;
+      if (path == null || pickingWorkspace.value) return;
+      final action = await showDialog<WorkspaceContextAction>(
+        context: context,
+        builder: (_) => WorkspaceContextDialog(path: path),
+      );
+      if (!context.mounted) return;
+      if (action == WorkspaceContextAction.replace) {
+        await pickWorkspace();
+      } else if (action == WorkspaceContextAction.remove) {
+        controller.setWorkspace(sessionId, null);
       }
     }
 
@@ -133,24 +150,30 @@ class SessionPage extends HookConsumerWidget {
               ),
               if (session.workspace == null)
                 TextButton.icon(
+                  key: const ValueKey('workspace-selector'),
                   onPressed: pickingWorkspace.value ? null : pickWorkspace,
                   icon: const Icon(Icons.folder_open),
                   label: Text(strings.noWorkspace),
                 )
               else
                 InputChip(
+                  key: const ValueKey('workspace-selector'),
                   avatar: const Icon(Icons.folder_open, size: 18),
                   label: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 180),
                     child: Text(
-                      session.workspace!,
+                      p.basename(p.normalize(session.workspace!)),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   tooltip: session.workspace,
-                  onPressed: pickingWorkspace.value ? null : pickWorkspace,
-                  onDeleted: () => controller.setWorkspace(sessionId, null),
+                  onPressed: pickingWorkspace.value
+                      ? null
+                      : openWorkspaceContext,
+                  onDeleted: pickingWorkspace.value
+                      ? null
+                      : () => controller.setWorkspace(sessionId, null),
                   deleteButtonTooltipMessage: strings.clearWorkspace,
                 ),
               IconButton(

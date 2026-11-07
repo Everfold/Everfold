@@ -10,6 +10,7 @@ import 'l10n/app_localizations.dart';
 import 'ui/features/clusters/views/clusters_page.dart';
 import 'domain/sessions/agent_session.dart';
 import 'ui/features/sessions/views/session_transcript.dart';
+import 'ui/features/sessions/views/workspace_context_dialog.dart';
 
 /// 首次启动预览, 不访问生产偏好或原生服务
 @Preview(name: 'Setup · Mobile', size: Size(390, 844))
@@ -66,6 +67,30 @@ Widget transcriptPreview() => MaterialApp(
           ],
         ),
       ],
+    ),
+  ),
+);
+
+@Preview(name: 'Workspace context · Mobile', size: Size(390, 844))
+@Preview(name: 'Workspace context · Desktop', size: Size(1280, 900))
+Widget workspaceContextPreview() => MaterialApp(
+  localizationsDelegates: const [
+    AppLocalizations.delegate,
+    ...GlobalMaterialLocalizations.delegates,
+  ],
+  supportedLocales: AppLocalizations.supportedLocales,
+  home: Scaffold(
+    body: Builder(
+      builder: (context) => Center(
+        child: TextButton(
+          onPressed: () => showDialog<WorkspaceContextAction>(
+            context: context,
+            builder: (_) =>
+                const WorkspaceContextDialog(path: '/workspace/everfold'),
+          ),
+          child: Text(AppLocalizations.of(context)!.workspaceContext),
+        ),
+      ),
     ),
   ),
 );

@@ -325,6 +325,24 @@ class AppLocalizationsZh extends AppLocalizations {
   String get workspaceFailure => '无法打开工作区选择器';
 
   @override
+  String get workspaceContext => '工作区上下文';
+
+  @override
+  String get workspaceDirectory => '关联目录';
+
+  @override
+  String get workspaceContextBody => '此目录仅关联到当前会话. 不会自动读取或发送文件内容, 移除关联不会删除本地文件';
+
+  @override
+  String get changeWorkspace => '更换目录';
+
+  @override
+  String get copyWorkspacePath => '复制路径';
+
+  @override
+  String get closeAction => '关闭';
+
+  @override
   String get renameSession => '重命名';
 
   @override

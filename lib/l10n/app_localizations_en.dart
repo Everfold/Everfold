@@ -334,6 +334,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get workspaceFailure => 'Unable to open the workspace picker';
 
   @override
+  String get workspaceContext => 'Workspace context';
+
+  @override
+  String get workspaceDirectory => 'Linked directory';
+
+  @override
+  String get workspaceContextBody =>
+      'This directory is linked only to this session. Files are not read or sent automatically. Removing the link does not delete local files';
+
+  @override
+  String get changeWorkspace => 'Change directory';
+
+  @override
+  String get copyWorkspacePath => 'Copy path';
+
+  @override
+  String get closeAction => 'Close';
+
+  @override
   String get renameSession => 'Rename';
 
   @override

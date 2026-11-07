@@ -1,4 +1,5 @@
 import 'package:everfold/app/app_scope.dart';
+import 'package:flutter/services.dart';
 import 'package:everfold/app/everfold_app.dart';
 import 'package:everfold/app/router/app_router.dart';
 import 'package:everfold/application/sessions/sessions_controller.dart';
@@ -137,11 +138,16 @@ void main() {
     );
     await tester.tap(find.byType(InputChip));
     await tester.pumpAndSettle();
+    expect(find.text('/chosen/project'), findsOneWidget);
+    await tester.tap(find.text('更换目录'));
+    await tester.pumpAndSettle();
     expect(
       container.read(sessionsControllerProvider).newSession.workspace,
       '/chosen/project',
     );
     await tester.tap(find.byType(InputChip));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('更换目录'));
     await tester.pumpAndSettle();
     expect(find.text('无法打开工作区选择器'), findsOneWidget);
     expect(find.textContaining('private filesystem detail'), findsNothing);
@@ -166,6 +172,93 @@ void main() {
     expect(calls, 3);
     expect(tester.takeException(), isNull);
   });
+  testWidgets('工作区详情可复制完整路径与移除关联, 不修改草稿', (tester) async {
+    String? copied;
+    var selections = 0;
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(SystemChannels.platform, (call) async {
+          if (call.method == 'Clipboard.setData') {
+            copied = (call.arguments as Map)['text'] as String;
+          }
+          return null;
+        });
+    addTearDown(
+      () => TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(SystemChannels.platform, null),
+    );
+    const path = '/selected/parent/project';
+    await pumpApp(
+      tester,
+      selectWorkspace: () async {
+        selections++;
+        return path;
+      },
+    );
+    await tester.enterText(find.byKey(const ValueKey('prompt-input')), '保留草稿');
+    await tester.tap(find.byKey(const ValueKey('workspace-selector')));
+    await tester.pumpAndSettle();
+    expect(find.text('project'), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('workspace-selector')));
+    await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<SelectableText>(
+            find.byKey(const ValueKey('workspace-full-path')),
+          )
+          .data,
+      path,
+    );
+    expect(copied, isNull);
+    await tester.tap(find.byKey(const ValueKey('copy-workspace-path')));
+    await tester.pumpAndSettle();
+    expect(copied, path);
+    await tester.tap(find.text('关闭'));
+    await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('prompt-input')))
+          .controller!
+          .text,
+      '保留草稿',
+    );
+    await tester.tap(find.byKey(const ValueKey('workspace-selector')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('清除工作区'));
+    await tester.pumpAndSettle();
+    expect(find.text('未选择工作区'), findsOneWidget);
+    expect(selections, 1);
+    expect(tester.takeException(), isNull);
+  });
+  testWidgets('工作区只属于对应会话, 移除一项不影响其他会话', (tester) async {
+    await pumpApp(tester);
+    final container = ProviderScope.containerOf(
+      tester.element(find.byType(SessionPage)),
+    );
+    final controller = container.read(sessionsControllerProvider.notifier);
+    controller.setDraft(null, '第一项');
+    controller.setWorkspace(null, '/projects/alpha');
+    final first = controller.submit(null)!;
+    controller.setDraft(null, '第二项');
+    controller.setWorkspace(null, '/projects/beta');
+    final second = controller.submit(null)!;
+    container.read(appRouterProvider).go('/sessions/$first');
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('workspace-selector')));
+    await tester.pumpAndSettle();
+    expect(find.text('/projects/alpha'), findsOneWidget);
+    await tester.tap(find.text('清除工作区'));
+    await tester.pumpAndSettle();
+    expect(
+      container.read(sessionsControllerProvider).find(first)!.workspace,
+      isNull,
+    );
+    expect(
+      container.read(sessionsControllerProvider).find(second)!.workspace,
+      '/projects/beta',
+    );
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('重命名与删除需确认, 当前会话删除后返回新会话', (tester) async {
     await pumpApp(tester);
     await tester.enterText(find.byKey(const ValueKey('prompt-input')), '原会话');

@@ -728,6 +728,42 @@ abstract class AppLocalizations {
   /// **'无法打开工作区选择器'**
   String get workspaceFailure;
 
+  /// No description provided for @workspaceContext.
+  ///
+  /// In zh, this message translates to:
+  /// **'工作区上下文'**
+  String get workspaceContext;
+
+  /// No description provided for @workspaceDirectory.
+  ///
+  /// In zh, this message translates to:
+  /// **'关联目录'**
+  String get workspaceDirectory;
+
+  /// No description provided for @workspaceContextBody.
+  ///
+  /// In zh, this message translates to:
+  /// **'此目录仅关联到当前会话. 不会自动读取或发送文件内容, 移除关联不会删除本地文件'**
+  String get workspaceContextBody;
+
+  /// No description provided for @changeWorkspace.
+  ///
+  /// In zh, this message translates to:
+  /// **'更换目录'**
+  String get changeWorkspace;
+
+  /// No description provided for @copyWorkspacePath.
+  ///
+  /// In zh, this message translates to:
+  /// **'复制路径'**
+  String get copyWorkspacePath;
+
+  /// No description provided for @closeAction.
+  ///
+  /// In zh, this message translates to:
+  /// **'关闭'**
+  String get closeAction;
+
   /// No description provided for @renameSession.
   ///
   /// In zh, this message translates to:

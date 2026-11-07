@@ -16,10 +16,12 @@ lib/
 │   └── router/
 ├── application/                  # 用例协调与 Riverpod 状态
 │   ├── settings/
+│   ├── clusters/
 │   └── sessions/
 ├── domain/                       # 纯 Dart 模型, 仓储契约, Result
 │   ├── common/
 │   ├── settings/
+│   ├── clusters/
 │   └── sessions/
 ├── data/                         # DTO, 仓储实现, 外部访问
 │   ├── models/
@@ -30,7 +32,7 @@ lib/
 ├── core/                         # 非业务配置与安全错误报告
 ├── ui/                           # Material 展示层
 │   ├── core/
-│   └── features/                  # setup, sessions, settings
+│   └── features/                  # setup, clusters, sessions, settings
 ├── l10n/
 ├── src/rust/                     # 保留现有原生桥接代码
 └── previews.dart
@@ -55,7 +57,7 @@ Application 通过仓储契约访问数据, 不导入具体 Data 实现. AppScop
 
 ## 已贯通的技术模块
 
-设置和初始化进度持久化到平台偏好存储, 会话暂时只保存在内存中
+设置和初始化进度持久化到平台偏好存储, 会话与集群暂时只保存在内存中
 
 ```text
 EverfoldApp
@@ -89,15 +91,17 @@ EverfoldApp
 
 ## 初始化与会话
 
-GoRouter 将未完成初始化的用户重定向到 /setup. 初始化进度保存在 AppSettings 中, 重新启动恢复未完成阶段. 跳过后采用本地模式, 保留已选择的语言与外观. 连接页提供局域网, 自部署与测试云. 当前按钮固定等待 1 秒后进入成功状态, 用户点击下一步后保存 preferences 阶段, 随后可完成初始化. 尚无真实认证, 登录会话或凭据持久化, 不能将初始化完成视为已认证. 地址, 账号与证书选择只保留在页面内存中, 返回或重启后丢弃
+GoRouter 将未完成初始化的用户重定向到 /setup. 初始化进度保存在 AppSettings 中, 重新启动恢复未完成阶段. 跳过后采用本地模式, 保留已选择的语言与外观. 连接页提供局域网, 自部署与测试云. 当前按钮固定等待 1 秒后进入成功状态, 用户点击下一步后保存 preferences 阶段, 随后可完成初始化. 尚无真实认证, 登录会话或凭据持久化, 不能将初始化完成视为已认证. 账号与证书选择只保留在页面内存中, 返回或重启后丢弃. 非敏感地址与验证方式在确认后交给 ClustersController, 随当前运行结束而释放
 
-ShellRoute 保持侧栏与页面共享. 宽度达到 840 时使用 260 宽侧栏, 更窄时切换标准 Drawer. 路由包括 /, /sessions/:id, /settings 和空内容的 /cloud. 设置变化刷新路由判断, 不重建路由实例或导航栈
+ShellRoute 保持侧栏与页面共享. 宽度达到 840 时使用 260 宽侧栏, 更窄时切换标准 Drawer. 路由包括 /, /sessions/:id, /settings 和多集群管理页 /cloud. 设置变化刷新路由判断, 不重建路由实例或导航栈
 
 SessionsController 管理进程内会话, 草稿, 预设和工作区路径. 提交只创建 pending 的用户消息, 不调用模型或创建助手回复. 暂不增加会话仓储或数据库, 也不自动恢复会话
 
-目录选择通过 Application 的 selectWorkspaceProvider 声明能力, AppScope 连接 Data 的 file_selector 实现. UI 仅保存用户明确选中的路径, 取消不修改状态, 不枚举或读取目录内容
+ClustersController 独立管理多个集群的非敏感配置与连接状态, 不限制为单一当前集群, 不进入设置模块. 每项可单独断开, 重连, 重命名和移除, 状态不跨重启恢复
 
-SessionTranscript 仅显示调用方传入的消息, 思考摘要与工具事件. 摘要是公开摘要字段, 不是模型内部推理. 正式界面没有演示回复或模拟执行状态
+目录选择通过 Application 的 selectWorkspaceProvider 声明能力, AppScope 连接 Data 的 file_selector 实现. UI 仅保存用户明确选中的路径, 取消不修改状态, 不枚举或读取目录内容. 工作区详情显示完整路径, 支持用户主动复制, 更换与移除关联, 不删除本地目录
+
+SessionTranscript 仅显示调用方传入的消息, 思考摘要与工具事件. 助手文本通过纯 Dart markdown 解析器与标准 Material 控件组合展示, 不执行 HTML, 加载远程图片或自动打开链接. 长内容和工具输出独立折叠, 代码复制仅响应明确用户操作. 摘要是公开摘要字段, 不是模型内部推理. 正式界面没有演示回复或模拟执行状态
 
 产品流程与尚未实现的边界见 [product_scope.md](product_scope.md)
 
