@@ -329,7 +329,7 @@ void main() {
     });
   }
 
-  testWidgets('导航采用 M3 默认抽屉与目的地, 宽屏正文不再限定为 920', (tester) async {
+  testWidgets('导航采用默认抽屉与底部标准入口, 宽屏正文不再限定为 920', (tester) async {
     await pumpApp(tester, size: const Size(1920, 900));
     final navigation = find.byKey(const ValueKey('workspace-navigation'));
     final drawer = find.descendant(
@@ -338,20 +338,36 @@ void main() {
     );
     expect(tester.widget<NavigationDrawer>(navigation).selectedIndex, isNull);
     expect(tester.widget<Drawer>(drawer).width, isNull);
-    expect(find.byType(NavigationDrawerDestination), findsNWidgets(2));
+    expect(tester.widget<NavigationDrawer>(navigation).footer, isNotNull);
+    for (final key in ['cloud-navigation', 'settings-navigation']) {
+      final entry = tester.widget<ListTile>(find.byKey(ValueKey(key)));
+      expect(entry.selected, isFalse);
+      expect(entry.shape, isNull);
+      expect(entry.selectedTileColor, isNull);
+    }
     expect(tester.getSize(find.byType(SessionPage)).width, greaterThan(920));
 
     await tester.tap(find.byKey(const ValueKey('settings-navigation')));
     await tester.pumpAndSettle();
-    expect(tester.widget<NavigationDrawer>(navigation).selectedIndex, 1);
+    expect(
+      tester
+          .widget<ListTile>(find.byKey(const ValueKey('settings-navigation')))
+          .selected,
+      isTrue,
+    );
     await tester.tap(find.byKey(const ValueKey('cloud-navigation')));
     await tester.pumpAndSettle();
-    expect(tester.widget<NavigationDrawer>(navigation).selectedIndex, 0);
+    expect(
+      tester
+          .widget<ListTile>(find.byKey(const ValueKey('cloud-navigation')))
+          .selected,
+      isTrue,
+    );
     expect(tester.takeException(), isNull);
   });
 
   for (final width in [320.0, 390.0, 840.0, 1280.0]) {
-    testWidgets('宽度 $width 双倍字号下集群与设置在最上方, 会话列表仍可滚动选择', (tester) async {
+    testWidgets('宽度 $width 双倍字号下集群与设置固定在底部, 会话列表独立滚动', (tester) async {
       await pumpApp(tester, size: Size(width, 900), scale: 2);
       final container = ProviderScope.containerOf(
         tester.element(find.byType(SessionPage)),
@@ -382,8 +398,8 @@ void main() {
         lessThan(tester.getTopLeft(settings).dy),
       );
       expect(
-        tester.getTopLeft(settings).dy,
-        lessThan(tester.getTopLeft(newSession).dy),
+        tester.getTopLeft(firstSession).dy,
+        lessThan(tester.getTopLeft(cloud).dy),
       );
       expect(
         tester.getTopLeft(newSession).dy,
@@ -401,7 +417,15 @@ void main() {
         await tester.tap(find.byIcon(Icons.menu));
         await tester.pumpAndSettle();
       }
-      expect(tester.widget<NavigationDrawer>(navigation).selectedIndex, 1);
+      expect(tester.widget<ListTile>(settings).selected, isTrue);
+      final footer = find.byKey(const ValueKey('workspace-navigation-footer'));
+      final footerBounds = tester.getRect(footer);
+      final cloudBounds = tester.getRect(cloud);
+      final settingsBounds = tester.getRect(settings);
+      expect(
+        footerBounds.bottom,
+        closeTo(tester.getBottomRight(navigation).dy, 0.1),
+      );
       final lastSession = savedSessions.last;
       final lastItem = find.byKey(ValueKey('session-${lastSession.id}'));
       await tester.scrollUntilVisible(
@@ -413,6 +437,13 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(lastItem.hitTestable(), findsOneWidget);
+      expect(tester.getRect(footer), footerBounds);
+      expect(tester.getRect(cloud), cloudBounds);
+      expect(tester.getRect(settings), settingsBounds);
+      expect(
+        tester.getBottomRight(lastItem).dy,
+        lessThanOrEqualTo(footerBounds.top),
+      );
       await tester.tap(lastItem);
       await tester.pumpAndSettle();
       expect(
@@ -425,6 +456,107 @@ void main() {
         container.read(sessionsControllerProvider).sessions,
         hasLength(30),
       );
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  for (final locale in [const Locale('zh'), const Locale('en')]) {
+    for (final width in [320.0, 1280.0]) {
+      testWidgets('${locale.languageCode} 宽度 $width 短窗口底部入口避开安全区, 折叠列表不移动底部', (
+        tester,
+      ) async {
+        tester.view.padding = const FakeViewPadding(bottom: 24);
+        tester.view.viewPadding = const FakeViewPadding(bottom: 24);
+        addTearDown(tester.view.resetPadding);
+        addTearDown(tester.view.resetViewPadding);
+        await pumpApp(tester, size: Size(width, 480), scale: 2, locale: locale);
+        final container = ProviderScope.containerOf(
+          tester.element(find.byType(SessionPage)),
+        );
+        final router = container.read(appRouterProvider);
+        final controller = container.read(sessionsControllerProvider.notifier);
+        controller.setDraft(null, '保留的会话');
+        final id = controller.submit(null)!;
+        await tester.pumpAndSettle();
+        if (width < 840) {
+          await tester.tap(find.byIcon(Icons.menu));
+          await tester.pumpAndSettle();
+        }
+        final footer = find.byKey(
+          const ValueKey('workspace-navigation-footer'),
+        );
+        final settings = find.byKey(const ValueKey('settings-navigation'));
+        await tester.ensureVisible(settings);
+        await tester.pumpAndSettle();
+        final bounds = tester.getRect(footer);
+        expect(settings.hitTestable(), findsOneWidget);
+        expect(tester.getBottomRight(settings).dy, lessThanOrEqualTo(456));
+        final header = find
+            .descendant(
+              of: find.byKey(const PageStorageKey('workspace-session-list')),
+              matching: find.byType(ListTile),
+            )
+            .first;
+        await tester.ensureVisible(header);
+        await tester.pumpAndSettle();
+        await tester.tap(header);
+        await tester.pumpAndSettle();
+        expect(find.byKey(ValueKey('session-$id')), findsNothing);
+        expect(tester.getRect(footer), bounds);
+        expect(controller.state.sessions.single.id, id);
+        await tester.tap(settings);
+        await tester.pumpAndSettle();
+        expect(container.read(appRouterProvider), same(router));
+        // 入口保留 push 导航语义, 用实际页面标题而非浏览器地址验证栈顶页面
+        expect(
+          tester
+              .widget<Text>(find.byKey(const ValueKey('workspace-page-title')))
+              .data,
+          locale.languageCode == 'zh' ? '设置' : 'Settings',
+        );
+        if (width < 840) {
+          await tester.tap(find.byIcon(Icons.menu));
+          await tester.pumpAndSettle();
+        }
+        await tester.ensureVisible(settings);
+        await tester.pumpAndSettle();
+        expect(tester.widget<ListTile>(settings).selected, isTrue);
+        expect(tester.takeException(), isNull);
+      });
+    }
+  }
+
+  for (final width in [840.0, 1280.0]) {
+    testWidgets('宽度 $width 极短窗口与键盘下底部入口可独立滚动访问', (tester) async {
+      await pumpApp(tester, size: Size(width, 400), scale: 2);
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(SessionPage)),
+      );
+      final router = container.read(appRouterProvider);
+      tester.view.viewInsets = const FakeViewPadding(bottom: 240);
+      addTearDown(tester.view.resetViewInsets);
+      await tester.pumpAndSettle();
+      final footer = find.byKey(const ValueKey('workspace-navigation-footer'));
+      expect(tester.getSize(footer).height, lessThanOrEqualTo(80));
+      for (final (key, title) in [
+        ('cloud-navigation', '集群'),
+        ('settings-navigation', '设置'),
+      ]) {
+        final destination = find.byKey(ValueKey(key));
+        await tester.ensureVisible(destination);
+        await tester.pumpAndSettle();
+        expect(destination.hitTestable(), findsOneWidget);
+        await tester.tap(destination);
+        await tester.pumpAndSettle();
+        expect(container.read(appRouterProvider), same(router));
+        expect(
+          tester
+              .widget<Text>(find.byKey(const ValueKey('workspace-page-title')))
+              .data,
+          title,
+        );
+        expect(tester.widget<ListTile>(destination).selected, isTrue);
+      }
       expect(tester.takeException(), isNull);
     });
   }

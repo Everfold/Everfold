@@ -36,7 +36,7 @@ WorkspaceShell
             └── Expanded → child    当前路由提供的设置, 集群或会话页面
 ```
 
-导航顺序写在 `_WorkspaceNavigation` 的 `children` 中: 集群 → 设置 → 新建会话 → 会话列表. 集群和设置的选中索引也在这个区块中, 调整目的地顺序时需要同时核对索引. 新建会话下方的分隔线区分创建操作与会话历史, `ExpansionTile` 默认展开并允许折叠整个列表. `PageStorageKey('workspace-session-list')` 只恢复当前页面作用域内的展开状态, 不把它写入设置
+`_WorkspaceNavigation` 的 `children` 放置新建会话和可折叠会话列表, `footer` 固定放置集群与设置, 会话列表滚动不移动底部入口. `NavigationDrawer` 的目的地索引只包装 `children` 中的目的地, 不适用于 `footer`; 底部因此使用标准 `ListTile.selected` 显示当前路由, 两个入口分别接收具名导航回调, 不手绘选中样式. 底部区域使用 `SafeArea`, 极矮窗口下最多占一半高度并可独立滚动, 为会话区保留空间 新建会话下方的分隔线区分创建操作与会话历史, `ExpansionTile` 默认展开并允许折叠整个列表. `PageStorageKey('workspace-session-list')` 只恢复当前页面作用域内的展开状态, 不把它写入设置
 
 `child` 是路由传入的页面, 不是另一份导航. 路由配置位于 [app_router.dart](../lib/app/router/app_router.dart), 全局颜色和明暗主题位于 [everfold_app.dart](../lib/app/everfold_app.dart)
 

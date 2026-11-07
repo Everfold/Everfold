@@ -88,8 +88,8 @@ class WorkspaceShell extends ConsumerWidget {
           location: location,
           sessions: sessions,
           onNewSession: () => navigate('/'),
-          onSelectDestination: (index) =>
-              navigate(index == 0 ? '/cloud' : '/settings', push: true),
+          onOpenClusters: () => navigate('/cloud', push: true),
+          onOpenSettings: () => navigate('/settings', push: true),
           onOpenSession: (session) => navigate('/sessions/${session.id}'),
           onEditSession: edit,
         );
@@ -133,7 +133,8 @@ class _WorkspaceNavigation extends StatelessWidget {
     required this.location,
     required this.sessions,
     required this.onNewSession,
-    required this.onSelectDestination,
+    required this.onOpenClusters,
+    required this.onOpenSettings,
     required this.onOpenSession,
     required this.onEditSession,
   });
@@ -141,89 +142,107 @@ class _WorkspaceNavigation extends StatelessWidget {
   final String location;
   final List<AgentSession> sessions;
   final VoidCallback onNewSession;
-  final ValueChanged<int> onSelectDestination;
+  final VoidCallback onOpenClusters;
+  final VoidCallback onOpenSettings;
   final ValueChanged<AgentSession> onOpenSession;
   final void Function(AgentSession session, String action) onEditSession;
 
   @override
   Widget build(BuildContext context) {
     final strings = AppLocalizations.of(context)!;
-    // 目的地索引与显示顺序一致: 0 为集群, 1 为设置
-    return NavigationDrawer(
-      key: const ValueKey('workspace-navigation'),
-      selectedIndex: switch (location) {
-        '/cloud' => 0,
-        '/settings' => 1,
-        _ => null,
-      },
-      onDestinationSelected: onSelectDestination,
-      children: [
-        NavigationDrawerDestination(
-          key: const ValueKey('cloud-navigation'),
-          icon: const Icon(Icons.cloud_outlined),
-          label: Text(strings.cloudServices),
-        ),
-        NavigationDrawerDestination(
-          key: const ValueKey('settings-navigation'),
-          icon: const Icon(Icons.settings_outlined),
-          label: Text(strings.settingsDestination),
-        ),
-        const Divider(),
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: FilledButton.tonalIcon(
-            key: const ValueKey('new-session'),
-            onPressed: onNewSession,
-            icon: const Icon(Icons.add),
-            label: Text(strings.newSession),
+    return LayoutBuilder(
+      builder: (context, constraints) => NavigationDrawer(
+        key: const ValueKey('workspace-navigation'),
+        selectedIndex: null,
+        // footer 不随会话列表滚动, 极短窗口下可独立滚动且保留会话区空间
+        footer: ConstrainedBox(
+          key: const ValueKey('workspace-navigation-footer'),
+          constraints: BoxConstraints(maxHeight: constraints.maxHeight * 0.5),
+          child: SafeArea(
+            top: false,
+            child: SingleChildScrollView(
+              primary: false,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Divider(),
+                  // footer 不提供目的地索引上下文, 由标准 ListTile 显示选中状态
+                  ListTile(
+                    key: const ValueKey('cloud-navigation'),
+                    selected: location == '/cloud',
+                    leading: const Icon(Icons.cloud_outlined),
+                    title: Text(strings.cloudServices),
+                    onTap: onOpenClusters,
+                  ),
+                  ListTile(
+                    key: const ValueKey('settings-navigation'),
+                    selected: location == '/settings',
+                    leading: const Icon(Icons.settings_outlined),
+                    title: Text(strings.settingsDestination),
+                    onTap: onOpenSettings,
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
-        const Divider(key: ValueKey('session-list-divider')),
-        // 只折叠列表的显示, 会话与草稿仍由页面外的 Application 状态持有
-        ExpansionTile(
-          key: const PageStorageKey('workspace-session-list'),
-          initiallyExpanded: true,
-          // 分隔线由外部提供, 展开时不再重复绘制边线
-          shape: const Border(),
-          collapsedShape: const Border(),
-          title: Text(
-            strings.sessionsTitle,
-            style: Theme.of(context).textTheme.labelLarge,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: FilledButton.tonalIcon(
+              key: const ValueKey('new-session'),
+              onPressed: onNewSession,
+              icon: const Icon(Icons.add),
+              label: Text(strings.newSession),
+            ),
           ),
-          children: [
-            for (final session in sessions)
-              ListTile(
-                key: ValueKey('session-${session.id}'),
-                selected: location == '/sessions/${session.id}',
-                leading: const Icon(Icons.chat_bubble_outline),
-                title: Text(
-                  session.title.isEmpty ? strings.newSession : session.title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                onTap: () => onOpenSession(session),
-                trailing: MenuAnchor(
-                  menuChildren: [
-                    MenuItemButton(
-                      onPressed: () => onEditSession(session, 'rename'),
-                      child: Text(strings.renameSession),
+          const Divider(key: ValueKey('session-list-divider')),
+          // 只折叠列表的显示, 会话与草稿仍由页面外的 Application 状态持有
+          ExpansionTile(
+            key: const PageStorageKey('workspace-session-list'),
+            initiallyExpanded: true,
+            // 分隔线由外部提供, 展开时不再重复绘制边线
+            shape: const Border(),
+            collapsedShape: const Border(),
+            title: Text(
+              strings.sessionsTitle,
+              style: Theme.of(context).textTheme.labelLarge,
+            ),
+            children: [
+              for (final session in sessions)
+                ListTile(
+                  key: ValueKey('session-${session.id}'),
+                  selected: location == '/sessions/${session.id}',
+                  leading: const Icon(Icons.chat_bubble_outline),
+                  title: Text(
+                    session.title.isEmpty ? strings.newSession : session.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  onTap: () => onOpenSession(session),
+                  trailing: MenuAnchor(
+                    menuChildren: [
+                      MenuItemButton(
+                        onPressed: () => onEditSession(session, 'rename'),
+                        child: Text(strings.renameSession),
+                      ),
+                      MenuItemButton(
+                        onPressed: () => onEditSession(session, 'delete'),
+                        child: Text(strings.deleteSession),
+                      ),
+                    ],
+                    builder: (context, menu, _) => IconButton(
+                      key: ValueKey('session-menu-${session.id}'),
+                      tooltip: strings.more,
+                      onPressed: () => menu.isOpen ? menu.close() : menu.open(),
+                      icon: const Icon(Icons.more_vert),
                     ),
-                    MenuItemButton(
-                      onPressed: () => onEditSession(session, 'delete'),
-                      child: Text(strings.deleteSession),
-                    ),
-                  ],
-                  builder: (context, menu, _) => IconButton(
-                    key: ValueKey('session-menu-${session.id}'),
-                    tooltip: strings.more,
-                    onPressed: () => menu.isOpen ? menu.close() : menu.open(),
-                    icon: const Icon(Icons.more_vert),
                   ),
                 ),
-              ),
-          ],
-        ),
-      ],
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
