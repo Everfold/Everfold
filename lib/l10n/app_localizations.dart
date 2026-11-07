@@ -379,6 +379,90 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'标准 Material 工具提示'**
   String get tooltipMessage;
+
+  /// No description provided for @loading.
+  ///
+  /// In zh, this message translates to:
+  /// **'正在加载'**
+  String get loading;
+
+  /// No description provided for @retry.
+  ///
+  /// In zh, this message translates to:
+  /// **'重试'**
+  String get retry;
+
+  /// No description provided for @configurationFailure.
+  ///
+  /// In zh, this message translates to:
+  /// **'网络服务尚未配置'**
+  String get configurationFailure;
+
+  /// No description provided for @networkFailure.
+  ///
+  /// In zh, this message translates to:
+  /// **'无法连接网络, 请检查网络连接'**
+  String get networkFailure;
+
+  /// No description provided for @timeoutFailure.
+  ///
+  /// In zh, this message translates to:
+  /// **'请求超时, 请稍后重试'**
+  String get timeoutFailure;
+
+  /// No description provided for @cancelledFailure.
+  ///
+  /// In zh, this message translates to:
+  /// **'操作已取消'**
+  String get cancelledFailure;
+
+  /// No description provided for @unauthorizedFailure.
+  ///
+  /// In zh, this message translates to:
+  /// **'当前操作需要身份验证'**
+  String get unauthorizedFailure;
+
+  /// No description provided for @forbiddenFailure.
+  ///
+  /// In zh, this message translates to:
+  /// **'没有执行此操作的权限'**
+  String get forbiddenFailure;
+
+  /// No description provided for @conflictFailure.
+  ///
+  /// In zh, this message translates to:
+  /// **'数据已发生变化, 请重新加载'**
+  String get conflictFailure;
+
+  /// No description provided for @validationFailure.
+  ///
+  /// In zh, this message translates to:
+  /// **'输入内容不符合要求'**
+  String get validationFailure;
+
+  /// No description provided for @serverFailure.
+  ///
+  /// In zh, this message translates to:
+  /// **'服务暂时不可用, 请稍后重试'**
+  String get serverFailure;
+
+  /// No description provided for @invalidDataFailure.
+  ///
+  /// In zh, this message translates to:
+  /// **'数据格式不正确, 无法完成操作'**
+  String get invalidDataFailure;
+
+  /// No description provided for @storageFailure.
+  ///
+  /// In zh, this message translates to:
+  /// **'无法访问本地存储, 请重试'**
+  String get storageFailure;
+
+  /// No description provided for @unexpectedFailure.
+  ///
+  /// In zh, this message translates to:
+  /// **'操作未完成, 请重试'**
+  String get unexpectedFailure;
 }
 
 class _AppLocalizationsDelegate

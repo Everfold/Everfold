@@ -45,5 +45,19 @@
   "feedbackTitle": "Progress and tooltips",
   "linearProgress": "Linear progress",
   "circularProgress": "Circular progress · 60%",
-  "tooltipMessage": "Standard Material tooltip"
+  "tooltipMessage": "Standard Material tooltip",
+  "loading": "Loading",
+  "retry": "Retry",
+  "configurationFailure": "The network service is not configured",
+  "networkFailure": "Unable to connect. Check your network connection",
+  "timeoutFailure": "The request timed out. Try again later",
+  "cancelledFailure": "The operation was cancelled",
+  "unauthorizedFailure": "Authentication is required for this action",
+  "forbiddenFailure": "You do not have permission for this action",
+  "conflictFailure": "The data has changed. Reload and try again",
+  "validationFailure": "The input does not meet the requirements",
+  "serverFailure": "The service is unavailable. Try again later",
+  "invalidDataFailure": "The data format is invalid",
+  "storageFailure": "Unable to access local storage. Try again",
+  "unexpectedFailure": "The operation could not be completed. Try again"
 }

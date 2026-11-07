@@ -150,4 +150,46 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get tooltipMessage => '标准 Material 工具提示';
+
+  @override
+  String get loading => '正在加载';
+
+  @override
+  String get retry => '重试';
+
+  @override
+  String get configurationFailure => '网络服务尚未配置';
+
+  @override
+  String get networkFailure => '无法连接网络, 请检查网络连接';
+
+  @override
+  String get timeoutFailure => '请求超时, 请稍后重试';
+
+  @override
+  String get cancelledFailure => '操作已取消';
+
+  @override
+  String get unauthorizedFailure => '当前操作需要身份验证';
+
+  @override
+  String get forbiddenFailure => '没有执行此操作的权限';
+
+  @override
+  String get conflictFailure => '数据已发生变化, 请重新加载';
+
+  @override
+  String get validationFailure => '输入内容不符合要求';
+
+  @override
+  String get serverFailure => '服务暂时不可用, 请稍后重试';
+
+  @override
+  String get invalidDataFailure => '数据格式不正确, 无法完成操作';
+
+  @override
+  String get storageFailure => '无法访问本地存储, 请重试';
+
+  @override
+  String get unexpectedFailure => '操作未完成, 请重试';
 }

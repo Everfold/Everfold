@@ -1,8 +1,5 @@
-import 'package:flutter/widgets.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-
-import 'app/everfold_app.dart';
+import 'app/bootstrap.dart';
 
 void main() {
-  runApp(const ProviderScope(child: EverfoldApp()));
+  bootstrap();
 }

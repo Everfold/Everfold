@@ -151,4 +151,49 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tooltipMessage => 'Standard Material tooltip';
+
+  @override
+  String get loading => 'Loading';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get configurationFailure => 'The network service is not configured';
+
+  @override
+  String get networkFailure =>
+      'Unable to connect. Check your network connection';
+
+  @override
+  String get timeoutFailure => 'The request timed out. Try again later';
+
+  @override
+  String get cancelledFailure => 'The operation was cancelled';
+
+  @override
+  String get unauthorizedFailure =>
+      'Authentication is required for this action';
+
+  @override
+  String get forbiddenFailure => 'You do not have permission for this action';
+
+  @override
+  String get conflictFailure => 'The data has changed. Reload and try again';
+
+  @override
+  String get validationFailure => 'The input does not meet the requirements';
+
+  @override
+  String get serverFailure => 'The service is unavailable. Try again later';
+
+  @override
+  String get invalidDataFailure => 'The data format is invalid';
+
+  @override
+  String get storageFailure => 'Unable to access local storage. Try again';
+
+  @override
+  String get unexpectedFailure =>
+      'The operation could not be completed. Try again';
 }
