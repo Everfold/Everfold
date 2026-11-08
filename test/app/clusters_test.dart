@@ -12,6 +12,10 @@ import 'package:material_ui/material_ui.dart';
 import 'package:talker/talker.dart';
 
 void main() {
+  final connectionForm = find.byKey(const ValueKey('cluster-connection-form'));
+  final cancelConnection = find.byKey(
+    const ValueKey('cluster-connection-cancel'),
+  );
   Future<void> pumpApp(
     WidgetTester tester, {
     double width = 1280,
@@ -56,12 +60,12 @@ void main() {
     await tester.ensureVisible(button);
     await tester.tap(button);
     await tester.pump();
-    expect(
-      tester
-          .widget<TextButton>(find.widgetWithText(TextButton, '取消'))
-          .onPressed,
-      isNull,
-    );
+    final cancel = tester.widget(cancelConnection);
+    if (cancel is IconButton) {
+      expect(cancel.onPressed, isNull);
+    } else {
+      expect((cancel as TextButton).onPressed, isNull);
+    }
     expect(
       tester
           .widget<TextField>(find.byKey(const ValueKey('cluster-name-input')))
@@ -70,14 +74,14 @@ void main() {
     );
     await tester.binding.handlePopRoute();
     await tester.pump();
-    expect(find.byType(AlertDialog), findsOneWidget);
+    expect(connectionForm, findsOneWidget);
     await tester.pump(const Duration(milliseconds: 999));
-    expect(find.byType(AlertDialog), findsOneWidget);
+    expect(connectionForm, findsOneWidget);
     expect(find.text('下一步'), findsNothing);
     await tester.pump(const Duration(milliseconds: 1));
     expect(find.text('下一步'), findsNothing);
     await tester.pumpAndSettle();
-    expect(find.byType(AlertDialog), findsNothing);
+    expect(connectionForm, findsNothing);
     expect(find.text('下一步'), findsNothing);
   }
 
@@ -89,6 +93,113 @@ void main() {
     );
     await finishConnection(tester);
   }
+
+  testWidgets('窄窗口全屏连接可取消, 返回与 Esc 不增加集群', (tester) async {
+    await pumpApp(tester, width: 390);
+    final container = ProviderScope.containerOf(
+      tester.element(find.byType(ClustersPage)),
+    );
+    for (final dismiss in ['close', 'back', 'escape']) {
+      await tap(tester, find.byKey(const ValueKey('add-cluster')));
+      final dialog = find.byKey(
+        const ValueKey('cluster-connection-fullscreen'),
+      );
+      expect(tester.getSize(dialog).width, 390);
+      expect(find.byType(AlertDialog), findsNothing);
+      await tester.enterText(
+        find.byKey(const ValueKey('cluster-name-input')),
+        '取消的配置',
+      );
+      if (dismiss == 'close') {
+        await tester.tap(cancelConnection);
+      } else if (dismiss == 'back') {
+        await tester.binding.handlePopRoute();
+      } else {
+        await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      }
+      await tester.pumpAndSettle();
+      expect(connectionForm, findsNothing);
+      expect(container.read(clustersControllerProvider), isEmpty);
+    }
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('跨 600dp 调整窗口保留表单输入和焦点, 连接中继续锁定', (tester) async {
+    await pumpApp(tester);
+    final container = ProviderScope.containerOf(
+      tester.element(find.byType(ClustersPage)),
+    );
+    await tap(tester, find.byKey(const ValueKey('add-cluster')));
+    await tester.enterText(
+      find.byKey(const ValueKey('cluster-name-input')),
+      '保留配置',
+    );
+    await tap(tester, find.byKey(const ValueKey('login-provider')));
+    await tap(tester, find.text('自部署').last);
+    await tap(tester, find.byKey(const ValueKey('login-verification')));
+    await tap(tester, find.text('用户名/密码').last);
+    for (final (field, value) in [
+      ('ip', '10.0.0.8'),
+      ('port', '8443'),
+      ('username', 'test-user'),
+      ('password', 'test-password'),
+    ]) {
+      final input = find.byKey(ValueKey('connection-$field'));
+      await tester.ensureVisible(input);
+      await tester.enterText(input, value);
+    }
+    final password = find.byKey(const ValueKey('connection-password'));
+    for (final width in [599.0, 600.0, 390.0, 1280.0]) {
+      tester.view.physicalSize = Size(width, 900);
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('cluster-connection-fullscreen')),
+        width < 600 ? findsOneWidget : findsNothing,
+      );
+      for (final (key, value) in [
+        ('cluster-name-input', '保留配置'),
+        ('connection-ip', '10.0.0.8'),
+        ('connection-port', '8443'),
+        ('connection-username', 'test-user'),
+        ('connection-password', 'test-password'),
+      ]) {
+        expect(
+          tester.widget<TextField>(find.byKey(ValueKey(key))).controller!.text,
+          value,
+        );
+      }
+      expect(
+        tester
+            .widget<EditableText>(
+              find.descendant(
+                of: password,
+                matching: find.byType(EditableText),
+              ),
+            )
+            .focusNode
+            .hasFocus,
+        isTrue,
+      );
+    }
+    await tester.tap(find.byKey(const ValueKey('connection-connect')));
+    await tester.pump();
+    tester.view.physicalSize = const Size(390, 900);
+    await tester.pump();
+    expect(tester.widget<IconButton>(cancelConnection).onPressed, isNull);
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.binding.handlePopRoute();
+    await tester.pump();
+    expect(connectionForm, findsOneWidget);
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pumpAndSettle();
+    expect(connectionForm, findsNothing);
+    final cluster = container.read(clustersControllerProvider).single;
+    expect(cluster.name, '保留配置');
+    expect(cluster.configuration.ip, '10.0.0.8');
+    expect(cluster.configuration.port, '8443');
+    expect(cluster.configuration.verification, ClusterVerification.credentials);
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets('添加集群的取消与连接在同一操作区, 取消不增加集群', (tester) async {
     await pumpApp(tester);

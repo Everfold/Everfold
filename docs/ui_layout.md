@@ -84,7 +84,7 @@ WorkspaceShell
 
 ## 表单与消息的进一步阅读
 
-1. [ConnectionForm](../lib/ui/features/setup/views/connection_form.dart): 先看 State 的 `build`, 再看 `_buildFields` 和 `_buildAction`. `_input` 和 `_certificate` 负责重复字段的排列, 控制器和 1 秒计时器仍由原来的 State 持有. `layoutBuilder` 允许集群弹窗把主按钮放入底部操作区, 不改变表单状态规则
+1. [ConnectionForm](../lib/ui/features/setup/views/connection_form.dart): 先看 State 的 `build`, 再看 `_buildFields` 和 `_buildAction`. `_input` 和 `_certificate` 负责重复字段的排列, 控制器和 1 秒计时器仍由原来的 State 持有. `layoutBuilder` 允许集群连接在小于 600dp 时使用全屏 Dialog, 把主操作放在 AppBar 右侧; 其余尺寸使用 AlertDialog 的底部操作区. 共享字段滚动区用稳定 GlobalKey 保留切换外壳时的焦点与编辑状态, 表单控制器与连接计时器不随尺寸切换重建
 2. [SessionTranscript](../lib/ui/features/sessions/views/session_transcript.dart): 列表按需创建 `_MessageEntry`, 每条消息包含正文, 可选摘要和工具组. `_ToolEntry` 单独折叠工具输出, `MessageContent` 决定是否折叠长内容, `MessageMarkdown` 处理助手正文的 Markdown
 
 `ValueKey` 用于稳定识别控件, `PageStorageKey` 用于恢复列表滚动或展开状态. 阅读时可以先略过键值, 修改区块时不要随意删除或重名, 否则可能把另一个会话的滚动或展开状态带过来

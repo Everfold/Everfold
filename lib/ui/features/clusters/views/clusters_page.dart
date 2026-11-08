@@ -212,6 +212,8 @@ class _ClusterConnectionDialog extends StatefulWidget {
 
 class _ClusterConnectionDialogState extends State<_ClusterConnectionDialog> {
   late final _name = TextEditingController(text: widget.cluster?.name ?? '');
+  // 切换弹窗外壳时保留字段的焦点, 选择范围和滚动状态。
+  final _fieldsKey = GlobalKey();
 
   @override
   void dispose() {
@@ -222,7 +224,12 @@ class _ClusterConnectionDialogState extends State<_ClusterConnectionDialog> {
   @override
   Widget build(BuildContext context) {
     final strings = AppLocalizations.of(context);
+    final compact = MediaQuery.sizeOf(context).width < 600;
+    final title = widget.cluster == null
+        ? strings.clusterAdd
+        : strings.clusterConfigure;
     return ConnectionForm(
+      key: const ValueKey('cluster-connection-form'),
       initialConfiguration:
           widget.cluster?.configuration ?? const ClusterConfiguration(),
       saving: false,
@@ -233,54 +240,74 @@ class _ClusterConnectionDialogState extends State<_ClusterConnectionDialog> {
             : _name.text.trim(),
         configuration: configuration,
       )),
-      // 表单提供字段, 主操作和锁定状态, 弹窗只把取消与主操作排在同一区域
-      layoutBuilder: (fields, action, locked) => CallbackShortcuts(
-        bindings: {
-          const SingleActivator(LogicalKeyboardKey.escape): () {
-            if (!locked) Navigator.pop(context);
-          },
-        },
-        child: PopScope(
-          canPop: !locked,
-          child: AlertDialog(
-            constraints: const BoxConstraints(maxWidth: 560),
-            title: Text(
-              widget.cluster == null
-                  ? strings.clusterAdd
-                  : strings.clusterConfigure,
-            ),
-            content: SizedBox(
-              width: double.maxFinite,
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    TextField(
-                      key: const ValueKey('cluster-name-input'),
-                      controller: _name,
-                      enabled: !locked,
-                      decoration: InputDecoration(
-                        labelText: strings.clusterOptionalName,
-                        border: const OutlineInputBorder(),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    fields,
-                  ],
+      layoutBuilder: (fields, action, locked) {
+        void cancel() {
+          if (!locked) Navigator.pop(context);
+        }
+
+        final content = SingleChildScrollView(
+          key: _fieldsKey,
+          padding: compact ? pagePaddingOf(context) : EdgeInsets.zero,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TextField(
+                key: const ValueKey('cluster-name-input'),
+                controller: _name,
+                enabled: !locked,
+                decoration: InputDecoration(
+                  labelText: strings.clusterOptionalName,
+                  border: const OutlineInputBorder(),
                 ),
               ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: locked ? null : () => Navigator.pop(context),
-                child: Text(strings.commonCancel),
-              ),
-              action,
+              const SizedBox(height: 16),
+              fields,
             ],
           ),
-        ),
-      ),
+        );
+        return CallbackShortcuts(
+          bindings: {const SingleActivator(LogicalKeyboardKey.escape): cancel},
+          child: PopScope(
+            canPop: !locked,
+            child: compact
+                ? Dialog.fullscreen(
+                    key: const ValueKey('cluster-connection-fullscreen'),
+                    child: Scaffold(
+                      appBar: AppBar(
+                        leading: IconButton(
+                          key: const ValueKey('cluster-connection-cancel'),
+                          tooltip: strings.commonCancel,
+                          onPressed: locked ? null : cancel,
+                          icon: const Icon(Icons.close),
+                        ),
+                        title: Text(title),
+                        actions: [
+                          Padding(
+                            padding: const EdgeInsetsDirectional.only(end: 16),
+                            child: action,
+                          ),
+                        ],
+                      ),
+                      body: SafeArea(child: content),
+                    ),
+                  )
+                : AlertDialog(
+                    constraints: const BoxConstraints(maxWidth: 560),
+                    title: Text(title),
+                    content: SizedBox(width: double.maxFinite, child: content),
+                    actions: [
+                      TextButton(
+                        key: const ValueKey('cluster-connection-cancel'),
+                        onPressed: locked ? null : cancel,
+                        child: Text(strings.commonCancel),
+                      ),
+                      action,
+                    ],
+                  ),
+          ),
+        );
+      },
     );
   }
 }

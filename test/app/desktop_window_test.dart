@@ -175,6 +175,28 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('桌面窄窗全屏连接表单位于窗口栏下方, 窗口按钮可用', (tester) async {
+    final window = TestDesktopWindow();
+    await pumpApp(tester, width: 390, window: window);
+    await tester.pumpAndSettle();
+    container(tester).read(appRouterProvider).go('/cloud');
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('add-cluster')));
+    await tester.pumpAndSettle();
+    final dialog = find.byKey(const ValueKey('cluster-connection-fullscreen'));
+    expect(
+      tester.getTopLeft(dialog).dy,
+      greaterThanOrEqualTo(tester.getBottomLeft(control('close')).dy),
+    );
+    await tester.tap(control('minimize'));
+    expect(window.minimizes, 1);
+    expect(dialog, findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('cluster-connection-cancel')));
+    await tester.pumpAndSettle();
+    expect(dialog, findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('栈顶标题跟随 push, 会话重命名和未知路由, 不出现重复内容标题', (tester) async {
     final window = TestDesktopWindow();
     await pumpApp(tester, window: window);
