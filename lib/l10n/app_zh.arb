@@ -116,6 +116,18 @@
   "@windowActionFailure": {
     "description": "窗口控制操作失败时显示的提示。"
   },
+  "navigationReturnToWorkspace": "返回工作台",
+  "@navigationReturnToWorkspace": {
+    "description": "离开设置或集群界面并返回之前的工作台页面。"
+  },
+  "settingsGeneral": "常规",
+  "@settingsGeneral": {
+    "description": "设置侧栏中的常规设置页面名称。"
+  },
+  "clusterConnections": "连接管理",
+  "@clusterConnections": {
+    "description": "集群侧栏中的连接管理页面名称。"
+  },
   "settingsTitle": "设置",
   "@settingsTitle": {
     "description": "导航中进入应用设置的入口名称。"

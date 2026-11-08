@@ -52,6 +52,68 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  for (final width in [390.0, 1280.0]) {
+    testWidgets('宽度 $width 设置与集群独立导航, 返回恢复原会话草稿', (tester) async {
+      await pumpApp(tester, size: Size(width, 900));
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(SessionPage)),
+      );
+      final router = container.read(appRouterProvider);
+      final sessions = container.read(sessionsControllerProvider.notifier);
+      sessions.setDraft(null, '原任务');
+      final id = sessions.submit(null)!;
+      router.go('/sessions/$id');
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byKey(const ValueKey('prompt-input')),
+        '待发送草稿',
+      );
+      for (final (entry, sidebar, label) in [
+        ('settings-navigation', 'settings-section-navigation', '常规'),
+        ('cloud-navigation', 'clusters-section-navigation', '连接管理'),
+      ]) {
+        if (width < 840) {
+          await tester.tap(find.byIcon(Icons.menu));
+          await tester.pumpAndSettle();
+        }
+        await tester.tap(find.byKey(ValueKey(entry)));
+        await tester.pumpAndSettle();
+        expect(
+          find.byKey(const ValueKey('workspace-navigation')),
+          findsNothing,
+        );
+        if (width < 840) {
+          await tester.tap(find.byIcon(Icons.menu));
+          await tester.pumpAndSettle();
+        }
+        expect(find.byKey(ValueKey(sidebar)), findsOneWidget);
+        expect(find.text(label), findsOneWidget);
+        await tester.tap(find.byKey(const ValueKey('return-to-workspace')));
+        await tester.pumpAndSettle();
+        expect(find.byType(SessionPage), findsOneWidget);
+        expect(router.routerDelegate.state.uri.path, '/sessions/$id');
+        expect(
+          tester
+              .widget<TextField>(find.byKey(const ValueKey('prompt-input')))
+              .controller!
+              .text,
+          '待发送草稿',
+        );
+      }
+      router.go('/settings');
+      await tester.pumpAndSettle();
+      if (width < 840) {
+        await tester.tap(find.byIcon(Icons.menu));
+        await tester.pumpAndSettle();
+      }
+      await tester.tap(find.byKey(const ValueKey('return-to-workspace')));
+      await tester.pumpAndSettle();
+      expect(router.routerDelegate.state.uri.path, '/');
+      expect(find.byType(SessionPage), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
   for (final locale in [const Locale('zh'), const Locale('en')]) {
     for (final (width, scale, inline) in [
       (320.0, 1.0, false),
@@ -289,6 +351,8 @@ void main() {
       expect(controller.state.newSession.draft, '新建页的独立草稿');
       await tester.tap(find.byKey(const ValueKey('settings-navigation')));
       await tester.pumpAndSettle();
+      container.read(appRouterProvider).pop();
+      await tester.pumpAndSettle();
       if (width < 840) {
         await tester.tap(find.byIcon(Icons.menu));
         await tester.pumpAndSettle();
@@ -349,19 +413,19 @@ void main() {
 
     await tester.tap(find.byKey(const ValueKey('settings-navigation')));
     await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('workspace-navigation')), findsNothing);
     expect(
-      tester
-          .widget<ListTile>(find.byKey(const ValueKey('settings-navigation')))
-          .selected,
-      isTrue,
+      find.byKey(const ValueKey('settings-section-navigation')),
+      findsOneWidget,
     );
+    await tester.tap(find.byKey(const ValueKey('return-to-workspace')));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('cloud-navigation')));
     await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('workspace-navigation')), findsNothing);
     expect(
-      tester
-          .widget<ListTile>(find.byKey(const ValueKey('cloud-navigation')))
-          .selected,
-      isTrue,
+      find.byKey(const ValueKey('clusters-section-navigation')),
+      findsOneWidget,
     );
     expect(tester.takeException(), isNull);
   });
@@ -409,15 +473,17 @@ void main() {
       await tester.pumpAndSettle();
       expect(
         tester
-            .widget<Text>(find.byKey(const ValueKey('workspace-page-title')))
+            .widget<Text>(find.byKey(const ValueKey('section-page-title')))
             .data,
         '设置',
       );
+      container.read(appRouterProvider).pop();
+      await tester.pumpAndSettle();
       if (width < 840) {
         await tester.tap(find.byIcon(Icons.menu));
         await tester.pumpAndSettle();
       }
-      expect(tester.widget<ListTile>(settings).selected, isTrue);
+      expect(tester.widget<ListTile>(settings).selected, isFalse);
       final footer = find.byKey(const ValueKey('workspace-navigation-footer'));
       final footerBounds = tester.getRect(footer);
       final cloudBounds = tester.getRect(cloud);
@@ -510,7 +576,7 @@ void main() {
         // 入口保留 push 导航语义, 用实际页面标题而非浏览器地址验证栈顶页面
         expect(
           tester
-              .widget<Text>(find.byKey(const ValueKey('workspace-page-title')))
+              .widget<Text>(find.byKey(const ValueKey('section-page-title')))
               .data,
           locale.languageCode == 'zh' ? '设置' : 'Settings',
         );
@@ -518,9 +584,11 @@ void main() {
           await tester.tap(find.byIcon(Icons.menu));
           await tester.pumpAndSettle();
         }
-        await tester.ensureVisible(settings);
-        await tester.pumpAndSettle();
-        expect(tester.widget<ListTile>(settings).selected, isTrue);
+        expect(
+          find.byKey(const ValueKey('settings-section-navigation')),
+          findsOneWidget,
+        );
+        expect(settings, findsNothing);
         expect(tester.takeException(), isNull);
       });
     }
@@ -551,11 +619,13 @@ void main() {
         expect(container.read(appRouterProvider), same(router));
         expect(
           tester
-              .widget<Text>(find.byKey(const ValueKey('workspace-page-title')))
+              .widget<Text>(find.byKey(const ValueKey('section-page-title')))
               .data,
           title,
         );
-        expect(tester.widget<ListTile>(destination).selected, isTrue);
+        expect(destination, findsNothing);
+        router.pop();
+        await tester.pumpAndSettle();
       }
       expect(tester.takeException(), isNull);
     });
@@ -669,7 +739,7 @@ void main() {
 
   testWidgets('桌面没有全局顶栏, 正文标题与内容左边缘对齐且设置入口唯一', (tester) async {
     await pumpApp(tester);
-    final heading = find.byKey(const ValueKey('workspace-page-title'));
+    final heading = find.byKey(const ValueKey('section-page-title'));
     expect(find.byType(AppBar), findsNothing);
     expect(find.byIcon(Icons.settings_outlined), findsOneWidget);
     expect(find.text('Everfold'), findsNothing);
@@ -687,6 +757,8 @@ void main() {
       lessThan(tester.getTopLeft(find.text('明暗模式')).dy),
     );
 
+    await tester.tap(find.byKey(const ValueKey('return-to-workspace')));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('cloud-navigation')));
     await tester.pumpAndSettle();
     expect(tester.widget<Text>(heading).data, '集群');
@@ -695,7 +767,7 @@ void main() {
       tester.getTopLeft(find.byKey(const ValueKey('add-cluster'))).dx,
     );
     expect(find.byType(AppBar), findsNothing);
-    expect(find.byIcon(Icons.settings_outlined), findsOneWidget);
+    expect(find.byIcon(Icons.settings_outlined), findsNothing);
     expect(tester.takeException(), isNull);
   });
 
@@ -738,7 +810,7 @@ void main() {
   for (final width in [320.0, 390.0, 839.0, 840.0, 1280.0]) {
     testWidgets('宽度 $width 双倍字号下设置和集群标题只在正确位置显示', (tester) async {
       await pumpApp(tester, size: Size(width, 900), scale: 2);
-      final heading = find.byKey(const ValueKey('workspace-page-title'));
+      final heading = find.byKey(const ValueKey('section-page-title'));
       for (final destination in [
         (key: 'settings-navigation', title: '设置'),
         (key: 'cloud-navigation', title: '集群'),
@@ -755,10 +827,11 @@ void main() {
           find.ancestor(of: heading, matching: find.byType(AppBar)),
           width < 840 ? findsOneWidget : findsNothing,
         );
-        expect(
-          find.byIcon(Icons.settings_outlined),
-          width < 840 ? findsNothing : findsOneWidget,
-        );
+        expect(find.byIcon(Icons.settings_outlined), findsNothing);
+        ProviderScope.containerOf(tester.element(find.byType(EverfoldApp)))
+            .read(appRouterProvider)
+            .pop();
+        await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
       }
     });
@@ -826,7 +899,7 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('cloud-navigation')));
     await tester.pumpAndSettle();
     expect(find.byType(SessionPage), findsNothing);
-    expect(find.text('集群'), findsNWidgets(2));
+    expect(find.text('集群'), findsOneWidget);
     expect(find.text('尚未添加集群'), findsOneWidget);
     container.read(appRouterProvider).pop();
     await tester.pumpAndSettle();

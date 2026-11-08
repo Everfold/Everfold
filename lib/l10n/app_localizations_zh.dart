@@ -97,6 +97,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get windowActionFailure => '无法操作窗口，请重试';
 
   @override
+  String get navigationReturnToWorkspace => '返回工作台';
+
+  @override
+  String get settingsGeneral => '常规';
+
+  @override
+  String get clusterConnections => '连接管理';
+
+  @override
   String get settingsTitle => '设置';
 
   @override

@@ -100,6 +100,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get windowActionFailure => 'Unable to control the window. Try again';
 
   @override
+  String get navigationReturnToWorkspace => 'Back to workspace';
+
+  @override
+  String get settingsGeneral => 'General';
+
+  @override
+  String get clusterConnections => 'Connections';
+
+  @override
   String get settingsTitle => 'Settings';
 
   @override

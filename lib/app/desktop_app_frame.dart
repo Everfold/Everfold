@@ -7,6 +7,7 @@ import '../application/sessions/sessions_controller.dart';
 import '../domain/settings/app_settings.dart';
 import '../l10n/app_localizations.dart';
 import '../ui/core/widgets/desktop_window_frame.dart';
+import '../ui/core/widgets/section_shell.dart';
 import '../ui/features/sessions/views/workspace_shell.dart';
 
 /// 将当前栈顶页面映射为窗口标题, 不依据 push 时可能不变的浏览器地址
@@ -75,24 +76,34 @@ class DesktopAppFrame extends HookConsumerWidget {
         ? strings.errorPageNotFound
         : setup
         ? switch (preferences?.setupStage) {
-            AppSetupStage.introduction => strings.setupStart,
+            AppSetupStage.introduction => 'Everfold',
             AppSetupStage.mode => strings.setupModeTitle,
             AppSetupStage.login => strings.clusterConnectionTitle,
             _ => strings.setupPreferencesTitle,
           }
-        : path == '/settings'
+        : (path == '/settings' || (path?.startsWith('/settings/') ?? false))
         ? strings.settingsTitle
-        : path == '/cloud'
+        : (path == '/cloud' || (path?.startsWith('/cloud/') ?? false))
         ? strings.clusterTitle
         : sessionTitle.isNotEmpty && path != '/'
         ? sessionTitle
         : strings.sessionNew;
+    final section =
+        path == '/settings' || (path?.startsWith('/settings/') ?? false)
+        ? AppSection.settings
+        : path == '/cloud' || (path?.startsWith('/cloud/') ?? false)
+        ? AppSection.clusters
+        : null;
     return LayoutBuilder(
       builder: (context, constraints) => DesktopWindowFrame(
         title: title,
         onOpenDrawer: workspace && constraints.maxWidth < 840
             ? () => ref
-                  .read(workspaceScaffoldKeyProvider)
+                  .read(
+                    section == null
+                        ? workspaceScaffoldKeyProvider
+                        : sectionScaffoldKeyProvider(section),
+                  )
                   .currentState
                   ?.openDrawer()
             : null,

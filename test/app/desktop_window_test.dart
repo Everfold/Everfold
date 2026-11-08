@@ -142,6 +142,39 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('欢迎页只在窗口栏显示 Everfold', (tester) async {
+    await pumpApp(
+      tester,
+      window: TestDesktopWindow(),
+      store: storeFor(AppSetupStage.introduction),
+    );
+    await tester.pumpAndSettle();
+    expect(tester.widget<Text>(title).data, 'Everfold');
+    expect(find.text('Everfold'), findsOneWidget);
+    expect(find.text('开始使用'), findsOneWidget);
+  });
+
+  testWidgets('桌面窄窗口菜单打开当前设置或集群抽屉', (tester) async {
+    await pumpApp(tester, width: 390, window: TestDesktopWindow());
+    await tester.pumpAndSettle();
+    final router = container(tester).read(appRouterProvider);
+    for (final (path, sidebar) in [
+      ('/settings', 'settings-section-navigation'),
+      ('/cloud', 'clusters-section-navigation'),
+    ]) {
+      unawaited(router.push<void>(path));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byIcon(Icons.menu));
+      await tester.pumpAndSettle();
+      expect(find.byKey(ValueKey(sidebar)), findsOneWidget);
+      expect(find.byKey(const ValueKey('workspace-navigation')), findsNothing);
+      await tester.tap(find.byKey(const ValueKey('return-to-workspace')));
+      await tester.pumpAndSettle();
+      expect(router.routerDelegate.state.uri.path, '/');
+    }
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('栈顶标题跟随 push, 会话重命名和未知路由, 不出现重复内容标题', (tester) async {
     final window = TestDesktopWindow();
     await pumpApp(tester, window: window);
@@ -160,7 +193,7 @@ void main() {
     unawaited(router.push<void>('/settings'));
     await tester.pumpAndSettle();
     expect(tester.widget<Text>(title).data, '设置');
-    expect(find.text('设置'), findsNWidgets(2));
+    expect(find.text('设置'), findsOneWidget);
     router.pop();
     await tester.pumpAndSettle();
     expect(tester.widget<Text>(title).data, '更新后的会话');
@@ -372,7 +405,12 @@ void main() {
     final router = ref.read(appRouterProvider);
     router.go('/settings');
     await tester.pumpAndSettle();
-    expect(tester.widget<Text>(title).data, '设置');
+    expect(
+      tester
+          .widget<Text>(find.byKey(const ValueKey('section-page-title')))
+          .data,
+      '设置',
+    );
     expect(find.byType(AppBar), findsNothing);
     expect(ref.read(appRouterProvider), same(router));
   });

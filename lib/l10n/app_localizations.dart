@@ -272,6 +272,24 @@ abstract class AppLocalizations {
   /// **'无法操作窗口，请重试'**
   String get windowActionFailure;
 
+  /// 离开设置或集群界面并返回之前的工作台页面。
+  ///
+  /// In zh, this message translates to:
+  /// **'返回工作台'**
+  String get navigationReturnToWorkspace;
+
+  /// 设置侧栏中的常规设置页面名称。
+  ///
+  /// In zh, this message translates to:
+  /// **'常规'**
+  String get settingsGeneral;
+
+  /// 集群侧栏中的连接管理页面名称。
+  ///
+  /// In zh, this message translates to:
+  /// **'连接管理'**
+  String get clusterConnections;
+
   /// 导航中进入应用设置的入口名称。
   ///
   /// In zh, this message translates to:

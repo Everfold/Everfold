@@ -5,6 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../application/settings/app_settings_controller.dart';
 import '../../domain/settings/app_settings.dart';
 import '../../l10n/app_localizations.dart';
+import '../../ui/core/widgets/section_shell.dart';
 import '../../ui/features/sessions/views/session_page.dart';
 import '../../ui/features/clusters/views/clusters_page.dart';
 import '../../ui/features/sessions/views/workspace_shell.dart';
@@ -57,6 +58,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               child: SessionPage(sessionId: state.pathParameters['id']),
             ),
           ),
+        ],
+      ),
+      ShellRoute(
+        builder: (context, state, child) =>
+            SectionShell(section: AppSection.settings, child: child),
+        routes: [
           GoRoute(
             path: '/settings',
             name: 'settings',
@@ -65,6 +72,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               child: const SettingsPage(),
             ),
           ),
+        ],
+      ),
+      ShellRoute(
+        builder: (context, state, child) =>
+            SectionShell(section: AppSection.clusters, child: child),
+        routes: [
           GoRoute(
             path: '/cloud',
             pageBuilder: (context, state) => MaterialPage<void>(

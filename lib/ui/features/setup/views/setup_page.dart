@@ -90,16 +90,18 @@ class SetupPage extends HookConsumerWidget {
         if (!didPop && !pageBusy) back();
       },
       child: Scaffold(
-        appBar: intro || customWindow
+        appBar: customWindow
             ? null
             : AppBar(
                 title: Text(title),
                 automaticallyImplyLeading: false,
-                leading: IconButton(
-                  tooltip: strings.commonBack,
-                  onPressed: pageBusy ? null : back,
-                  icon: const Icon(Icons.arrow_back),
-                ),
+                leading: intro
+                    ? null
+                    : IconButton(
+                        tooltip: strings.commonBack,
+                        onPressed: pageBusy ? null : back,
+                        icon: const Icon(Icons.arrow_back),
+                      ),
               ),
         body: SafeArea(
           child: Column(
@@ -154,8 +156,6 @@ class _SetupIntroduction extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text('Everfold', style: Theme.of(context).textTheme.headlineLarge),
-        const SizedBox(height: 8),
         Text(
           strings.setupWelcomeTagline,
           style: Theme.of(context).textTheme.titleMedium,
