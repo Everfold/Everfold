@@ -25,6 +25,7 @@ test:
 fmt:
   dart format lib hook test
   cargo fmt --all
+  prek run --all-files
   nixfmt flake.nix nix/*.nix
 
 android-emulator:
