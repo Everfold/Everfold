@@ -59,31 +59,7 @@ class SetupPage extends HookConsumerWidget {
     };
     // 阶段内容只决定正文显示什么, 外层始终保留相同的页面骨架
     final content = <Widget>[
-      if (intro) ...[
-        DropdownMenu<AppLanguage>(
-          key: const ValueKey('setup-language'),
-          initialSelection: settings.language,
-          requestFocusOnTap: false,
-          label: Text(strings.languageTitle),
-          enabled: !busy.value,
-          dropdownMenuEntries: [
-            DropdownMenuEntry(
-              value: AppLanguage.system,
-              label: strings.followSystem,
-            ),
-            const DropdownMenuEntry(value: AppLanguage.chinese, label: '中文'),
-            const DropdownMenuEntry(
-              value: AppLanguage.english,
-              label: 'English',
-            ),
-          ],
-          onSelected: (value) {
-            if (value != null) run(() => controller.setLanguage(value));
-          },
-        ),
-        const SizedBox(height: 24),
-        const _SetupIntroduction(),
-      ],
+      if (intro) const _SetupIntroduction(),
       if (stage == AppSetupStage.mode)
         _SetupModeChoices(
           selected: selectedMode.value,

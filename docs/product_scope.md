@@ -2,7 +2,7 @@
 
 ## 首次启动
 
-1. 展示 Everfold 介绍, 欢迎页可选择语言, 默认跟随系统; 可跳过或点击“开始使用”
+1. 展示 Everfold 介绍, 语言默认跟随系统, 可在设置页修改; 可跳过或点击“开始使用”
 2. 直接选择离线或集群; 离线方式进入工作区
 3. 集群方式选择局域网, 自部署或测试云, 连接或登录等待 1 秒成功后点击下一步进入工作区
 4. 明暗与配色采用默认偏好, 完整个性化配置保留在设置页
@@ -47,7 +47,7 @@
 
 ## UI 与实现边界
 
-界面复用 material_ui 的 Scaffold, NavigationDrawer, ListTile, 标准按钮, 菜单, 对话框和输入控件, 不新增自定义主题或手绘控件. 欢迎页提供简洁的语言选择, 完整个性化设置由 SettingsContent 展示, 连接表单独立为 ConnectionForm
+界面复用 material_ui 的 Scaffold, NavigationDrawer, ListTile, 标准按钮, 菜单, 对话框和输入控件, 不新增自定义主题或手绘控件. 语言与完整个性化设置由设置页的 SettingsContent 展示, 连接表单独立为 ConnectionForm
 
 导航宽度, 列表项选中状态和组件样式交给库的默认实现, 不手工设置侧栏宽度. 菜单统一使用 MenuAnchor 和标准菜单按钮, 预设使用 RadioMenuButton
 

@@ -20,17 +20,12 @@ import 'ui/features/sessions/views/workspace_context_dialog.dart';
 /// 首次启动预览, 不访问生产偏好或原生服务
 @Preview(name: 'Setup · Mobile', size: Size(390, 844))
 @Preview(name: 'Setup · Desktop', size: Size(1280, 900))
-Widget setupPreview() => _preview();
-
-/// 欢迎页的语言选择预览, 使用独立内存偏好
-@Preview(name: 'Setup language · Mobile', size: Size(390, 844))
-@Preview(name: 'Setup language · Desktop', size: Size(1280, 900))
 @Preview(
-  name: 'Setup language · Compact large text',
+  name: 'Setup · Compact large text',
   size: Size(320, 900),
   textScaleFactor: 2,
 )
-Widget setupLanguagePreview() => _preview(stage: AppSetupStage.introduction);
+Widget setupPreview() => _preview();
 
 /// 已初始化的会话工作区预览
 @Preview(name: 'Workspace · Mobile', size: Size(390, 844))

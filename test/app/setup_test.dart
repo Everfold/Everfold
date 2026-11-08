@@ -69,7 +69,7 @@ void main() {
     await pumpApp(tester, store);
     expect(find.byType(SessionPage), findsOneWidget);
   });
-  testWidgets('窄屏双倍字号欢迎页可选择语言并完成离线引导', (tester) async {
+  testWidgets('窄屏双倍字号欢迎页跟随系统语言并完成离线引导', (tester) async {
     tester.view.devicePixelRatio = 1;
     tester.view.physicalSize = const Size(320, 900);
     tester.platformDispatcher.textScaleFactorTestValue = 2;
@@ -78,14 +78,9 @@ void main() {
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
     final store = MemoryPreferencesStore();
     await pumpApp(tester, store);
-    await tester.tap(
-      find.descendant(
-        of: find.byKey(const ValueKey('setup-language')),
-        matching: find.byType(TextField),
-      ),
-    );
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('English').last);
+    expect(find.text('开始使用'), findsOneWidget);
+    expect(find.byType(DropdownMenu<AppLanguage>), findsNothing);
+    tester.platformDispatcher.localesTestValue = [const Locale('en')];
     await tester.pumpAndSettle();
     await tap(tester, 'Get started');
     expect(find.text('Choose how to work'), findsOneWidget);
@@ -99,7 +94,7 @@ void main() {
     final saved = AppSettingsDto.fromJson(
       jsonDecode((await store.readString('everfold.app_settings.v1'))!),
     ).settings;
-    expect(saved.language, AppLanguage.english);
+    expect(saved.language, AppLanguage.system);
     expect(saved.appearance, AppAppearance.system);
     expect(saved.connectionMode, AppConnectionMode.offline);
     expect(saved.setupStage, AppSetupStage.complete);
