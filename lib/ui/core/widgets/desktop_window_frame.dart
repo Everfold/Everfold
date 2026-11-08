@@ -52,79 +52,87 @@ class DesktopWindowFrame extends HookConsumerWidget {
       onDoubleTap: () => command(window!.titleBarDoubleClick),
       child: child,
     );
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        if (window == null)
-          child
-        else
-          Scaffold(
-            appBar: AppBar(
-              flexibleSpace: dragArea(
-                const SizedBox.expand(),
-                'window-background-drag',
-              ),
-              automaticallyImplyLeading: false,
-              leading: onOpenDrawer == null
-                  ? null
-                  : IconButton(
-                      key: const ValueKey('window-open-drawer'),
-                      tooltip: MaterialLocalizations.of(context)
-                          .openAppDrawerTooltip,
-                      onPressed: onOpenDrawer,
-                      icon: const Icon(Icons.menu),
+    return LayoutBuilder(
+      builder: (context, constraints) => Stack(
+        fit: StackFit.expand,
+        children: [
+          if (window == null)
+            child
+          else
+            Scaffold(
+              appBar: AppBar(
+                flexibleSpace: dragArea(
+                  const SizedBox.expand(),
+                  'window-background-drag',
+                ),
+                automaticallyImplyLeading: false,
+                leading: onOpenDrawer == null
+                    ? null
+                    : IconButton(
+                        key: const ValueKey('window-open-drawer'),
+                        tooltip: MaterialLocalizations.of(context)
+                            .openAppDrawerTooltip,
+                        onPressed: onOpenDrawer,
+                        icon: const Icon(Icons.menu),
+                      ),
+                title: dragArea(
+                  SizedBox(
+                    width: double.infinity,
+                    child: Text(
+                      title,
+                      key: const ValueKey('workspace-page-title'),
+                      style: constraints.maxWidth >= 840
+                          ? const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                            )
+                          : null,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-              title: dragArea(
-                SizedBox(
-                  width: double.infinity,
-                  child: Text(
-                    title,
-                    key: const ValueKey('workspace-page-title'),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                   ),
+                  'window-title-drag',
                 ),
-                'window-title-drag',
+                actions: [
+                  IconButton(
+                    key: const ValueKey('window-minimize'),
+                    iconSize: 18,
+                    tooltip: strings.windowMinimize,
+                    onPressed: () => command(window.minimize),
+                    icon: const Icon(Icons.minimize),
+                  ),
+                  IconButton(
+                    key: const ValueKey('window-maximize'),
+                    iconSize: 18,
+                    tooltip: state!.maximized || state.fullScreen
+                        ? strings.windowRestore
+                        : strings.windowMaximize,
+                    onPressed: () => command(window.toggleMaximize),
+                    icon: Icon(
+                      state.maximized || state.fullScreen
+                          ? Icons.filter_none
+                          : Icons.crop_square,
+                    ),
+                  ),
+                  IconButton(
+                    key: const ValueKey('window-close'),
+                    iconSize: 18,
+                    tooltip: strings.windowClose,
+                    onPressed: () => command(window.close),
+                    icon: const Icon(Icons.close),
+                  ),
+                ],
               ),
-              actions: [
-                IconButton(
-                  key: const ValueKey('window-minimize'),
-                  iconSize: 18,
-                  tooltip: strings.windowMinimize,
-                  onPressed: () => command(window.minimize),
-                  icon: const Icon(Icons.minimize),
-                ),
-                IconButton(
-                  key: const ValueKey('window-maximize'),
-                  iconSize: 18,
-                  tooltip: state!.maximized || state.fullScreen
-                      ? strings.windowRestore
-                      : strings.windowMaximize,
-                  onPressed: () => command(window.toggleMaximize),
-                  icon: Icon(
-                    state.maximized || state.fullScreen
-                        ? Icons.filter_none
-                        : Icons.crop_square,
-                  ),
-                ),
-                IconButton(
-                  key: const ValueKey('window-close'),
-                  iconSize: 18,
-                  tooltip: strings.windowClose,
-                  onPressed: () => command(window.close),
-                  icon: const Icon(Icons.close),
-                ),
-              ],
+              body: child,
             ),
-            body: child,
-          ),
-        if (window != null && !state!.maximized && !state.fullScreen)
-          Positioned.fill(
-            child: _WindowResizeAreas(
-              onResize: (edge) => command(() => window.startResizing(edge)),
+          if (window != null && !state!.maximized && !state.fullScreen)
+            Positioned.fill(
+              child: _WindowResizeAreas(
+                onResize: (edge) => command(() => window.startResizing(edge)),
+              ),
             ),
-          ),
-      ],
+        ],
+      ),
     );
   }
 }
