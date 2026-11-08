@@ -831,6 +831,95 @@ void main() {
     }
   }
 
+  for (final width in [390.0, 1280.0]) {
+    testWidgets('$width 更多菜单优先于抽屉响应返回, 选择操作后不残留拦截', (tester) async {
+      await pumpApp(tester, size: Size(width, 900));
+      final calls = <String>[];
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        (call) async {
+          calls.add(call.method);
+          return null;
+        },
+      );
+      addTearDown(
+        () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          SystemChannels.platform,
+          null,
+        ),
+      );
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(SessionPage)),
+      );
+      final sessions = container.read(sessionsControllerProvider.notifier);
+      sessions.setDraft(null, 'Example');
+      final id = sessions.submit(null)!;
+      await tester.pumpAndSettle();
+      final entry = find.byKey(ValueKey('session-menu-$id'));
+      for (final dismiss in ['back', 'escape', 'outside', 'rename', 'delete']) {
+        if (width < 840) {
+          await tester.tap(find.byIcon(Icons.menu));
+          await tester.pumpAndSettle();
+        }
+        calls.clear();
+        await tester.tap(entry);
+        await tester.pumpAndSettle();
+        switch (dismiss) {
+          case 'back':
+            await tester.binding.handlePopRoute();
+          case 'escape':
+            await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+          case 'outside':
+            await tester.tapAt(const Offset(20, 350));
+          case 'rename':
+          case 'delete':
+            await tester.tap(
+              find.widgetWithText(
+                MenuItemButton,
+                dismiss == 'rename' ? '重命名' : '删除',
+              ),
+            );
+            await tester.pumpAndSettle();
+            expect(find.byType(Dialog), findsOneWidget);
+            await tester.binding.handlePopRoute();
+        }
+        await tester.pumpAndSettle();
+        expect(find.byType(MenuItemButton), findsNothing);
+        expect(find.byType(Dialog), findsNothing);
+        expect(entry.hitTestable(), findsOneWidget, reason: dismiss);
+        expect(calls, isNot(contains('SystemNavigator.pop')));
+        expect(
+          container.read(sessionsControllerProvider).sessions.single.title,
+          'Example',
+        );
+        await tester.binding.handlePopRoute();
+        await tester.pumpAndSettle();
+        if (width < 840) {
+          expect(entry.hitTestable(), findsNothing);
+          expect(calls, isNot(contains('SystemNavigator.pop')));
+          await tester.binding.handlePopRoute();
+          await tester.pumpAndSettle();
+        }
+        expect(
+          calls.where((call) => call == 'SystemNavigator.pop'),
+          hasLength(1),
+        );
+        expect(tester.takeException(), isNull);
+      }
+      // 打开时切换宽窄布局, 卸载的菜单不能留下返回记录。
+      if (width < 840) {
+        await tester.tap(find.byIcon(Icons.menu));
+        await tester.pumpAndSettle();
+      }
+      await tester.tap(entry);
+      await tester.pumpAndSettle();
+      tester.view.physicalSize = Size(width < 840 ? 1280 : 390, 900);
+      await tester.pumpAndSettle();
+      expect(find.byType(MenuItemButton), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
   testWidgets('预设使用标准单选菜单, 可选中并用 Escape 关闭', (tester) async {
     await pumpApp(tester);
     final container = ProviderScope.containerOf(

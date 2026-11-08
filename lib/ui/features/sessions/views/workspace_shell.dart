@@ -8,6 +8,7 @@ import '../../../../application/window/desktop_window_provider.dart';
 import '../../../../domain/sessions/agent_session.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../core/widgets/adaptive_dialog.dart';
+import '../../../core/widgets/back_dismissible_menu_anchor.dart';
 
 /// 连接窗口顶栏中的菜单按钮与当前工作区抽屉, 生命周期跟随页面作用域
 final workspaceScaffoldKeyProvider = Provider<GlobalKey<ScaffoldState>>(
@@ -229,7 +230,7 @@ class _WorkspaceNavigation extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   onTap: () => onOpenSession(session),
-                  trailing: MenuAnchor(
+                  trailing: BackDismissibleMenuAnchor(
                     menuChildren: [
                       MenuItemButton(
                         onPressed: () => onEditSession(session, 'rename'),
