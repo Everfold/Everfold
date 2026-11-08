@@ -9,7 +9,7 @@
 ```text
 lib/
 ├── main.dart
-├── app/                          # 启动, 装配, 路由, Provider 观察器
+├── app/                          # 启动, 装配, 路由, 窗口外壳, Provider 观察器
 │   ├── bootstrap.dart
 │   ├── app_scope.dart
 │   ├── everfold_app.dart
@@ -19,18 +19,21 @@ lib/
 ├── application/                  # 用例协调与 Riverpod 状态
 │   ├── settings/
 │   ├── clusters/
-│   └── sessions/
+│   ├── sessions/
+│   └── window/
 ├── domain/                       # 纯 Dart 模型, 仓储契约, Result
 │   ├── common/
 │   ├── settings/
 │   ├── clusters/
-│   └── sessions/
+│   ├── sessions/
+│   └── window/
 ├── data/                         # DTO, 仓储实现, 外部访问
 │   ├── models/
 │   ├── repositories/
 │   └── services/
 │       ├── network/
-│       └── storage/
+│       ├── storage/
+│       └── window/
 ├── core/                         # 非业务配置与安全错误报告
 ├── ui/                           # Material 展示层
 │   ├── core/
@@ -54,6 +57,8 @@ Domain -> 不依赖 Flutter, Riverpod, Dio 或平台插件
 Application 通过仓储契约访问数据, 不导入具体 Data 实现. AppScope 使用 Provider override 连接契约与实现, 因此测试和预览可以替换存储而不修改业务代码
 
 缺少必须装配的仓储时会明确失败, 不会在生产环境静默退回内存仓储. 应用入口和组件预览必须经过 AppScope, 单元测试可以用 ProviderContainer 显式覆盖仓储 Provider
+
+桌面窗口通过 Domain 的 `DesktopWindow` 契约暴露命令与原生状态流, Application 不导入窗口插件. `bootstrap` 仅为桌面装配 `window_manager` 实现, `AppScope` 管理服务释放. Web 工厂通过条件导出避开 FFI, 手机工厂不读取窗口句柄, 测试和 Widget Previewer 使用独立替代实现. 标题栏主题沿用现有 Material 主题, 不新增窗口主题设置
 
 `test/architecture/layer_dependencies_test.dart` 检查受管目录的直接 import/export 方向, 不是完整的依赖图分析器. `l10n/` 和原生生成代码不参与此检查
 

@@ -7,6 +7,7 @@ import '../domain/settings/app_settings.dart';
 import '../l10n/app_localizations.dart';
 import '../ui/core/widgets/async_value_view.dart';
 import 'router/app_router.dart';
+import 'desktop_app_frame.dart';
 
 /// 使用标准 Material 外壳, 只在装配层将应用设置映射为 Locale 与 ThemeMode
 class EverfoldApp extends ConsumerWidget {
@@ -53,14 +54,24 @@ class EverfoldApp extends ConsumerWidget {
           },
           locale: locale,
           builder: (context, child) {
-            if (settings is AsyncData<AppSettings>) return child!;
-            return Scaffold(
-              body: SafeArea(
-                child: AsyncValueView<AppSettings>(
-                  value: settings,
-                  data: (_) => child!,
-                  onRetry: () => ref.invalidate(appSettingsControllerProvider),
-                ),
+            final content = settings is AsyncData<AppSettings>
+                ? child!
+                : Scaffold(
+                    body: SafeArea(
+                      child: AsyncValueView<AppSettings>(
+                        value: settings,
+                        data: (_) => child!,
+                        onRetry: () =>
+                            ref.invalidate(appSettingsControllerProvider),
+                      ),
+                    ),
+                  );
+            // 顶栏位于路由 Navigator 之外, 额外 Overlay 为标准 Tooltip 提供宿主
+            return Overlay.wrap(
+              child: DesktopAppFrame(
+                router: router,
+                settings: settings,
+                child: content,
               ),
             );
           },

@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:talker/talker.dart';
 
 import '../core/config/app_config.dart';
+import '../data/services/window/desktop_window_factory.dart';
 import '../core/logging/app_error_reporter.dart';
 import 'app_scope.dart';
 import 'everfold_app.dart';
@@ -31,5 +32,16 @@ void bootstrap() {
     return false;
   };
 
-  runApp(AppScope(config: config, talker: talker, child: const EverfoldApp()));
+  final window = createDesktopWindow(
+    onError: (error, stack) =>
+        reporter.report(error, stack, source: 'Desktop window'),
+  );
+  runApp(
+    AppScope(
+      config: config,
+      talker: talker,
+      desktopWindow: window,
+      child: const EverfoldApp(),
+    ),
+  );
 }

@@ -1,6 +1,6 @@
 # UI 布局阅读指南
 
-先打开 `lib/ui/features/sessions/views/workspace_shell.dart`, 找到 `WorkspaceShell.build` 最后的 `return Scaffold`. 这里决定侧栏, 顶栏和正文的位置, 不需要先读完重命名或删除的回调
+先打开 `lib/ui/features/sessions/views/workspace_shell.dart`, 找到 `WorkspaceShell.build` 最后的 `return Scaffold`. 这里决定侧栏, 抽屉和正文的位置, 不需要先读完重命名或删除的回调
 
 ## 按三个层次阅读
 
@@ -22,21 +22,31 @@
 
 阅读单个文件时, 先看公开页面的 `build` 返回值, 再跳到不熟悉的区块定义. 先弄清位置关系, 再追踪具体按钮的回调
 
+## 桌面窗口的布局关系
+
+`EverfoldApp.builder` 的稳定 `Overlay.wrap` 为窗口按钮的标准 Tooltip 提供宿主. [DesktopAppFrame](../lib/app/desktop_app_frame.dart) 根据路由栈顶与设置计算标题, 再由 [DesktopWindowFrame](../lib/ui/core/widgets/desktop_window_frame.dart) 将主题 AppBar 放在路由 Navigator 上方. 因此连接弹窗或启动失败不会遮挡窗口控制
+
+窗口服务由 `bootstrap` 经 `AppScope` 装配, UI 只调用 Application 暴露的 Domain 契约. 首帧控制区完成后才隐藏系统栏; 恢复系统栏成功才移除自定义栏. Web 使用编译期替代实现, 预览与测试默认不调用原生窗口. 窗口状态事件更新最大化或还原图标, 不把请求发送当作系统已完成操作
+
+桌面窄窗口的菜单按钮经 `workspaceScaffoldKeyProvider` 打开当前工作区抽屉; 引导返回仍由 SetupPage 持有并受连接锁控制, 显示在底部操作区. 路由在首次挂载期间可能同步通知, 窗口标题因此在帧末更新, 避免修改正在构建的祖先组件
+
+原生窗口验证以 `just run` 的实际图形后端为准, 当前已直接检查 Linux 默认 Wayland 的启动, 主题切换和窗口命令, 不据此宣称 Windows 或 macOS 已验证. 最小化是否执行以及窗口是否允许拖动或缩放由桌面窗口管理器决定, Wayland 不一定报告最小化状态. 强制 X11 的独立预览仍观察到插件阴影预留边距, 未为该预览修改生产启动方式或原生 runner
+
 ## 工作区的布局关系
 
 ```text
 WorkspaceShell
 └── Scaffold
-    ├── AppBar                      仅窄窗口显示标题和抽屉入口
+    ├── AppBar                      无自定义窗口栏时, 仅窄窗口显示标题和抽屉入口
     ├── drawer                      窄窗口使用 _WorkspaceNavigation
     └── body: SafeArea → Row
         ├── _WorkspaceNavigation    宽窗口直接显示同一套导航
         └── Expanded → _WorkspaceBody
-            ├── 页面标题             宽窗口且不是空会话首页时显示
+            ├── 页面标题             无自定义窗口栏时, 宽窗口且非空会话首页显示
             └── Expanded → child    当前路由提供的设置, 集群或会话页面
 ```
 
-`_WorkspaceNavigation` 的 `children` 放置新建会话和可折叠会话列表, `footer` 固定放置集群与设置, 会话列表滚动不移动底部入口. `NavigationDrawer` 的目的地索引只包装 `children` 中的目的地, 不适用于 `footer`; 底部因此使用标准 `ListTile.selected` 显示当前路由, 两个入口分别接收具名导航回调, 不手绘选中样式. 底部区域使用 `SafeArea`, 极矮窗口下最多占一半高度并可独立滚动, 为会话区保留空间 新建会话下方的分隔线区分创建操作与会话历史, `ExpansionTile` 默认展开并允许折叠整个列表. `PageStorageKey('workspace-session-list')` 只恢复当前页面作用域内的展开状态, 不把它写入设置
+`_WorkspaceNavigation` 的 `children` 放置新建会话和可折叠会话列表, `footer` 固定放置集群与设置, 会话列表滚动不移动底部入口. `NavigationDrawer` 的目的地索引只包装 `children` 中的目的地, 不适用于 `footer`; 底部因此使用标准 `ListTile.selected` 显示当前路由, 两个入口分别接收具名导航回调, 不手绘选中样式. 底部区域使用 `SafeArea`, 极矮窗口下最多占一半高度并可独立滚动, 为会话区保留空间. 新建会话下方的分隔线区分创建操作与会话历史, `ExpansionTile` 默认展开并允许折叠整个列表. `PageStorageKey('workspace-session-list')` 只恢复当前页面作用域内的展开状态, 不把它写入设置
 
 `child` 是路由传入的页面, 不是另一份导航. 路由配置位于 [app_router.dart](../lib/app/router/app_router.dart), 全局颜色和明暗主题位于 [everfold_app.dart](../lib/app/everfold_app.dart)
 

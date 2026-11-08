@@ -3,6 +3,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:talker/talker.dart';
 
 import '../application/settings/app_settings_controller.dart';
+import '../application/window/desktop_window_provider.dart';
+import '../domain/window/desktop_window.dart';
 import '../application/sessions/sessions_controller.dart';
 import '../data/services/storage/workspace_selector.dart';
 import '../core/config/app_config.dart';
@@ -22,18 +24,25 @@ class AppScope extends StatelessWidget {
     required this.talker,
     required this.child,
     this.preferencesStore,
+    this.desktopWindow,
   });
 
   final AppConfig config;
   final Talker talker;
   final Widget child;
   final PreferencesStore? preferencesStore;
+  final DesktopWindow? desktopWindow;
 
   @override
   Widget build(BuildContext context) {
     return ProviderScope(
       overrides: [
         appConfigProvider.overrideWithValue(config),
+        desktopWindowBackendProvider.overrideWith((ref) {
+          final window = desktopWindow;
+          if (window != null) ref.onDispose(window.dispose);
+          return window;
+        }),
         selectWorkspaceProvider.overrideWithValue(selectWorkspaceDirectory),
         talkerProvider.overrideWithValue(talker),
         if (preferencesStore != null)

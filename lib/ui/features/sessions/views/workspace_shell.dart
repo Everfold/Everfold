@@ -4,8 +4,14 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../application/sessions/sessions_controller.dart';
+import '../../../../application/window/desktop_window_provider.dart';
 import '../../../../domain/sessions/agent_session.dart';
 import '../../../../l10n/app_localizations.dart';
+
+/// 连接窗口顶栏中的菜单按钮与当前工作区抽屉, 生命周期跟随页面作用域
+final workspaceScaffoldKeyProvider = Provider<GlobalKey<ScaffoldState>>(
+  (ref) => GlobalKey<ScaffoldState>(),
+);
 
 /// 组合导航与路由正文, 宽窗口使用侧栏, 窄窗口使用抽屉
 ///
@@ -23,6 +29,7 @@ class WorkspaceShell extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // 页面状态: 根据当前路由和会话数据确定标题与选中项
     final strings = AppLocalizations.of(context)!;
+    final customWindow = ref.watch(desktopWindowProvider) != null;
     final sessions = ref.watch(sessionsControllerProvider).sessions;
     final controller = ref.read(sessionsControllerProvider.notifier);
     final currentSession = sessions
@@ -96,7 +103,8 @@ class WorkspaceShell extends ConsumerWidget {
 
         // 页面骨架只决定导航位置, 路由页面本身通过 child 放入正文区
         return Scaffold(
-          appBar: wide
+          key: ref.watch(workspaceScaffoldKeyProvider),
+          appBar: wide || customWindow
               ? null
               : AppBar(
                   title: Text(
@@ -114,7 +122,7 @@ class WorkspaceShell extends ConsumerWidget {
                 Expanded(
                   child: _WorkspaceBody(
                     title: title,
-                    showTitle: wide && location != '/',
+                    showTitle: wide && !customWindow && location != '/',
                     child: child,
                   ),
                 ),

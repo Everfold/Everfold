@@ -25,6 +25,21 @@ class AppLocalizationsZh extends AppLocalizations {
   String get loading => '正在加载';
 
   @override
+  String get minimizeWindow => '最小化窗口';
+
+  @override
+  String get maximizeWindow => '最大化窗口';
+
+  @override
+  String get restoreWindow => '还原窗口';
+
+  @override
+  String get closeWindow => '关闭窗口';
+
+  @override
+  String get windowActionFailure => '无法操作窗口, 请重试';
+
+  @override
   String get retry => '重试';
 
   @override

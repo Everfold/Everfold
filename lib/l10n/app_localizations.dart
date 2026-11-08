@@ -128,6 +128,36 @@ abstract class AppLocalizations {
   /// **'正在加载'**
   String get loading;
 
+  /// No description provided for @minimizeWindow.
+  ///
+  /// In zh, this message translates to:
+  /// **'最小化窗口'**
+  String get minimizeWindow;
+
+  /// No description provided for @maximizeWindow.
+  ///
+  /// In zh, this message translates to:
+  /// **'最大化窗口'**
+  String get maximizeWindow;
+
+  /// No description provided for @restoreWindow.
+  ///
+  /// In zh, this message translates to:
+  /// **'还原窗口'**
+  String get restoreWindow;
+
+  /// No description provided for @closeWindow.
+  ///
+  /// In zh, this message translates to:
+  /// **'关闭窗口'**
+  String get closeWindow;
+
+  /// No description provided for @windowActionFailure.
+  ///
+  /// In zh, this message translates to:
+  /// **'无法操作窗口, 请重试'**
+  String get windowActionFailure;
+
   /// No description provided for @retry.
   ///
   /// In zh, this message translates to:

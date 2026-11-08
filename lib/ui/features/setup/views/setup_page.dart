@@ -4,6 +4,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../../application/clusters/clusters_controller.dart';
 import '../../../../application/settings/app_settings_controller.dart';
+import '../../../../application/window/desktop_window_provider.dart';
 import '../../../../domain/common/result.dart';
 import '../../../../domain/settings/app_settings.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -22,6 +23,7 @@ class SetupPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final strings = AppLocalizations.of(context)!;
+    final customWindow = ref.watch(desktopWindowProvider) != null;
     final controller = ref.read(appSettingsControllerProvider.notifier);
     // 保存和连接是两类锁定: 连接成功后仍需等待下一步提交完成状态
     final busy = useState(false);
@@ -89,7 +91,7 @@ class SetupPage extends HookConsumerWidget {
         if (!didPop && !pageBusy) back();
       },
       child: Scaffold(
-        appBar: intro
+        appBar: intro || customWindow
             ? null
             : AppBar(
                 title: Text(title),
@@ -129,6 +131,7 @@ class SetupPage extends HookConsumerWidget {
                 selectedMode: selectedMode.value,
                 saving: busy.value,
                 navigationLocked: pageBusy,
+                onBack: customWindow && !intro ? back : null,
                 onSkip: () => run(controller.skipSetup),
                 onContinue: () => run(switch (stage) {
                   AppSetupStage.introduction => controller.startSetup,
@@ -235,6 +238,7 @@ class _SetupActions extends StatelessWidget {
     required this.navigationLocked,
     required this.onSkip,
     required this.onContinue,
+    this.onBack,
   });
 
   final AppSetupStage stage;
@@ -243,6 +247,7 @@ class _SetupActions extends StatelessWidget {
   final bool navigationLocked;
   final VoidCallback onSkip;
   final VoidCallback onContinue;
+  final VoidCallback? onBack;
 
   @override
   Widget build(BuildContext context) {
@@ -255,6 +260,12 @@ class _SetupActions extends StatelessWidget {
         runSpacing: 12,
         alignment: WrapAlignment.end,
         children: [
+          if (onBack != null)
+            TextButton.icon(
+              onPressed: navigationLocked ? null : onBack,
+              icon: const Icon(Icons.arrow_back),
+              label: Text(strings.back),
+            ),
           if (intro)
             TextButton(
               onPressed: saving ? null : onSkip,

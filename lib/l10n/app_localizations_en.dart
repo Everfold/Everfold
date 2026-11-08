@@ -25,6 +25,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loading => 'Loading';
 
   @override
+  String get minimizeWindow => 'Minimize window';
+
+  @override
+  String get maximizeWindow => 'Maximize window';
+
+  @override
+  String get restoreWindow => 'Restore window';
+
+  @override
+  String get closeWindow => 'Close window';
+
+  @override
+  String get windowActionFailure => 'Unable to control the window. Try again';
+
+  @override
   String get retry => 'Retry';
 
   @override
