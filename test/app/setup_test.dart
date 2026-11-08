@@ -373,6 +373,54 @@ void main() {
     expect(find.text('连接'), findsOneWidget);
   });
 
+  for (final width in [390.0, 1280.0]) {
+    for (final menuKey in ['login-provider', 'login-verification']) {
+      testWidgets('$width $menuKey 引导返回先收起下拉菜单, 再退回上一阶段', (tester) async {
+        tester.view.devicePixelRatio = 1;
+        tester.view.physicalSize = Size(width, 900);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        addTearDown(tester.view.resetPhysicalSize);
+        final store = MemoryPreferencesStore(
+          initialValues: {
+            'everfold.app_settings.v1': '{"language":"zh","connectionMode":"cluster","setupStage":"login"}',
+          },
+        );
+        await pumpApp(tester, store);
+        await tester.tap(find.byKey(const ValueKey('login-provider')));
+        await tester.pumpAndSettle();
+        await tester.tap(find.widgetWithText(MenuItemButton, '自部署'));
+        await tester.pumpAndSettle();
+        final ip = find.byKey(const ValueKey('connection-ip'));
+        await tester.enterText(ip, '10.0.0.8');
+        final menu = find.byKey(ValueKey(menuKey));
+        await tester.ensureVisible(menu);
+        await tester.tap(menu);
+        await tester.pumpAndSettle();
+        expect(
+          find.byType(MenuItemButton).hitTestable(),
+          findsNWidgets(menuKey == 'login-provider' ? 3 : 4),
+        );
+        await tester.binding.handlePopRoute();
+        await tester.pumpAndSettle();
+        expect(menu, findsOneWidget);
+        expect(find.byType(MenuItemButton).hitTestable(), findsNothing);
+        expect(tester.widget<TextField>(ip).controller!.text, '10.0.0.8');
+        final saved = (await store.readString('everfold.app_settings.v1'))!;
+        expect(
+          AppSettingsDto.fromJson(jsonDecode(saved)).settings.setupStage,
+          AppSetupStage.login,
+        );
+        await tester.binding.handlePopRoute();
+        await tester.pumpAndSettle();
+        expect(find.text('选择使用方式'), findsOneWidget);
+        await tester.binding.handlePopRoute();
+        await tester.pumpAndSettle();
+        expect(find.text('开始使用'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      });
+    }
+  }
+
   testWidgets('保存失败停留介绍, 不写入完成状态', (tester) async {
     final store = TestPreferencesStore()..failWrite = true;
     await pumpApp(tester, store);

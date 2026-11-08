@@ -264,7 +264,9 @@ class _ConnectionFormState extends State<ConnectionForm> {
           initialSelection: _provider,
           expandedInsets: EdgeInsets.zero,
           enabled: !_locked,
-          label: Text(strings.clusterIdentityProvider),
+          label: _DropdownMenuBackHandler(
+            child: Text(strings.clusterIdentityProvider),
+          ),
           dropdownMenuEntries: [
             DropdownMenuEntry(value: 'lan', label: strings.clusterLanProvider),
             DropdownMenuEntry(
@@ -292,7 +294,9 @@ class _ConnectionFormState extends State<ConnectionForm> {
             initialSelection: _verification,
             expandedInsets: EdgeInsets.zero,
             enabled: !_locked,
-            label: Text(strings.clusterVerificationLabel),
+            label: _DropdownMenuBackHandler(
+              child: Text(strings.clusterVerificationLabel),
+            ),
             dropdownMenuEntries: [
               DropdownMenuEntry(
                 value: 'none',
@@ -371,4 +375,68 @@ class _ConnectionFormState extends State<ConnectionForm> {
       ),
     );
   }
+}
+
+// DropdownMenu 没有开关回调; label 位于内部 MenuAnchor 下方, 可观察菜单状态。
+// 使用本地历史让返回先关闭选项, 避免同时触发弹窗退出或引导的阶段返回。
+class _DropdownMenuBackHandler extends StatefulWidget {
+  const _DropdownMenuBackHandler({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_DropdownMenuBackHandler> createState() =>
+      _DropdownMenuBackHandlerState();
+}
+
+class _DropdownMenuBackHandlerState extends State<_DropdownMenuBackHandler> {
+  LocalHistoryEntry? _history;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final open = MenuController.maybeIsOpenOf(context) ?? false;
+    if (!open) {
+      _removeHistory();
+      return;
+    }
+    if (_history != null) return;
+    final controller = MenuController.maybeOf(context)!;
+    final route = ModalRoute.of(context);
+    // 注册历史会通知路由重建, 必须等当前菜单的构建完成。
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted ||
+          _history != null ||
+          !controller.isOpen ||
+          route == null ||
+          !route.isCurrent) {
+        return;
+      }
+      final entry = LocalHistoryEntry(
+        impliesAppBarDismissal: false,
+        onRemove: () {
+          if (_history == null) return;
+          _history = null;
+          controller.close();
+        },
+      );
+      _history = entry;
+      route.addLocalHistoryEntry(entry);
+    });
+  }
+
+  void _removeHistory() {
+    final entry = _history;
+    _history = null;
+    entry?.remove();
+  }
+
+  @override
+  void dispose() {
+    _removeHistory();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }

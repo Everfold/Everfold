@@ -391,6 +391,85 @@ void main() {
     }, variant: TargetPlatformVariant.all());
   }
 
+  for (final width in [390.0, 1280.0]) {
+    for (final menuKey in ['login-provider', 'login-verification']) {
+      testWidgets('$width $menuKey 返回先收起下拉菜单, 保留表单且不残留返回拦截', (tester) async {
+        await pumpApp(tester, width: width, language: 'en');
+        final container = ProviderScope.containerOf(
+          tester.element(find.byType(ClustersPage)),
+        );
+        final strings = AppLocalizations.of(
+          tester.element(find.byType(ClustersPage)),
+        );
+        final name = find.byKey(const ValueKey('cluster-name-input'));
+        final ip = find.byKey(const ValueKey('connection-ip'));
+        final port = find.byKey(const ValueKey('connection-port'));
+        for (final dismiss in [
+          'back',
+          'escape',
+          'outside',
+          'select',
+          'resize',
+        ]) {
+          await tap(tester, find.byKey(const ValueKey('add-cluster')));
+          await tap(tester, find.byKey(const ValueKey('login-provider')));
+          await tap(
+            tester,
+            find.widgetWithText(
+              MenuItemButton,
+              strings.clusterSelfHostedProvider,
+            ),
+          );
+          await tester.enterText(name, 'Keep this cluster draft');
+          await tester.enterText(ip, '10.0.0.8');
+          await tester.enterText(port, '8443');
+          await tap(tester, find.byKey(ValueKey(menuKey)));
+          expect(
+            find.byType(MenuItemButton).hitTestable(),
+            findsNWidgets(menuKey == 'login-provider' ? 3 : 4),
+          );
+          switch (dismiss) {
+            case 'back':
+              await tester.binding.handlePopRoute();
+            case 'escape':
+              await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+            case 'outside':
+              await tap(tester, name);
+            case 'select':
+              await tap(
+                tester,
+                find.widgetWithText(
+                  MenuItemButton,
+                  menuKey == 'login-provider'
+                      ? strings.clusterSelfHostedProvider
+                      : strings.clusterVerificationNone,
+                ),
+              );
+            case 'resize':
+              tester.view.physicalSize = Size(width == 390 ? 1280 : 390, 900);
+          }
+          await tester.pumpAndSettle();
+          expect(connectionForm, findsOneWidget, reason: dismiss);
+          expect(find.byType(MenuItemButton).hitTestable(), findsNothing);
+          expect(
+            tester.widget<TextField>(name).controller!.text,
+            'Keep this cluster draft',
+          );
+          expect(tester.widget<TextField>(ip).controller!.text, '10.0.0.8');
+          expect(tester.widget<TextField>(port).controller!.text, '8443');
+          await tester.binding.handlePopRoute();
+          await tester.pumpAndSettle();
+          expect(connectionForm, findsNothing, reason: dismiss);
+          expect(container.read(clustersControllerProvider), isEmpty);
+          expect(find.byType(ClustersPage), findsOneWidget);
+          tester.view.physicalSize = Size(width, 900);
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull);
+        }
+      });
+    }
+  }
+
   testWidgets('集群重命名支持回车提交并拒绝空名称', (tester) async {
     await pumpApp(tester);
     await add(tester, '测试集群');

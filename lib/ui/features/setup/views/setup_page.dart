@@ -86,7 +86,9 @@ class SetupPage extends HookConsumerWidget {
         ),
     ];
     return PopScope(
-      canPop: intro,
+      // 菜单先消费本地历史; 没有菜单时才拦截返回并切换引导阶段。
+      canPop:
+          intro || (ModalRoute.of(context)?.willHandlePopInternally ?? false),
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop && !pageBusy) back();
       },
