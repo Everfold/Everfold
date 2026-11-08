@@ -162,7 +162,7 @@ class _ConnectionFormState extends State<ConnectionForm> {
 
   // 这里只显示来源选择状态, 不读取文件或启动摄像头
   Widget _certificate(String slot, String label) {
-    final strings = AppLocalizations.of(context)!;
+    final strings = AppLocalizations.of(context);
     final selected = _certificates[slot];
     void choose(_CertificateSource source) {
       setState(() {
@@ -229,7 +229,7 @@ class _ConnectionFormState extends State<ConnectionForm> {
 
   @override
   Widget build(BuildContext context) {
-    final strings = AppLocalizations.of(context)!;
+    final strings = AppLocalizations.of(context);
     final fields = _buildFields(strings);
     final action = _buildAction(strings);
 

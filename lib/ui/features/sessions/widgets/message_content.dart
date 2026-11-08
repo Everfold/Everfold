@@ -23,7 +23,7 @@ class MessageContent extends StatelessWidget {
           )
         : SelectableText(data, key: PageStorageKey('text-$storageId'));
     if (data.length <= 1200 && '\n'.allMatches(data).length < 20) return body();
-    final strings = AppLocalizations.of(context)!;
+    final strings = AppLocalizations.of(context);
     return ExpansionTile(
       key: PageStorageKey('content-$storageId'),
       title: Text(strings.longContent),

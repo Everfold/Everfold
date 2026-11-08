@@ -67,8 +67,8 @@ abstract class AppLocalizations {
 
   final String localeName;
 
-  static AppLocalizations? of(BuildContext context) {
-    return Localizations.of<AppLocalizations>(context, AppLocalizations);
+  static AppLocalizations of(BuildContext context) {
+    return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
   }
 
   static const LocalizationsDelegate<AppLocalizations> delegate =
@@ -98,814 +98,814 @@ abstract class AppLocalizations {
     Locale('zh'),
   ];
 
-  /// No description provided for @pageNotFound.
+  /// 找不到目标页面时显示的提示。
   ///
   /// In zh, this message translates to:
   /// **'页面不存在'**
   String get pageNotFound;
 
-  /// No description provided for @settingsDestination.
+  /// 导航中进入应用设置的入口名称。
   ///
   /// In zh, this message translates to:
   /// **'设置'**
   String get settingsDestination;
 
-  /// No description provided for @more.
+  /// 打开更多操作菜单的按钮标签。
   ///
   /// In zh, this message translates to:
   /// **'更多'**
   String get more;
 
-  /// No description provided for @add.
+  /// 添加条目的通用操作标签。
   ///
   /// In zh, this message translates to:
   /// **'添加'**
   String get add;
 
-  /// No description provided for @loading.
+  /// 内容加载期间显示的状态提示。
   ///
   /// In zh, this message translates to:
   /// **'正在加载'**
   String get loading;
 
-  /// No description provided for @minimizeWindow.
+  /// 桌面窗口最小化按钮的提示和无障碍标签。
   ///
   /// In zh, this message translates to:
   /// **'最小化窗口'**
   String get minimizeWindow;
 
-  /// No description provided for @maximizeWindow.
+  /// 桌面窗口最大化按钮的提示和无障碍标签。
   ///
   /// In zh, this message translates to:
   /// **'最大化窗口'**
   String get maximizeWindow;
 
-  /// No description provided for @restoreWindow.
+  /// 将最大化窗口恢复到原尺寸的操作标签。
   ///
   /// In zh, this message translates to:
   /// **'还原窗口'**
   String get restoreWindow;
 
-  /// No description provided for @closeWindow.
+  /// 关闭桌面应用窗口的操作标签。
   ///
   /// In zh, this message translates to:
   /// **'关闭窗口'**
   String get closeWindow;
 
-  /// No description provided for @windowActionFailure.
+  /// 窗口控制操作失败时显示的提示。
   ///
   /// In zh, this message translates to:
-  /// **'无法操作窗口, 请重试'**
+  /// **'无法操作窗口，请重试'**
   String get windowActionFailure;
 
-  /// No description provided for @retry.
+  /// 重新尝试失败操作的按钮标签。
   ///
   /// In zh, this message translates to:
   /// **'重试'**
   String get retry;
 
-  /// No description provided for @configurationFailure.
+  /// 网络服务缺少配置时显示的错误提示。
   ///
   /// In zh, this message translates to:
   /// **'网络服务尚未配置'**
   String get configurationFailure;
 
-  /// No description provided for @networkFailure.
+  /// 网络连接失败时显示的错误提示。
   ///
   /// In zh, this message translates to:
-  /// **'无法连接网络, 请检查网络连接'**
+  /// **'无法连接网络，请检查网络连接'**
   String get networkFailure;
 
-  /// No description provided for @timeoutFailure.
+  /// 请求超过等待时限时显示的错误提示。
   ///
   /// In zh, this message translates to:
-  /// **'请求超时, 请稍后重试'**
+  /// **'请求超时，请稍后重试'**
   String get timeoutFailure;
 
-  /// No description provided for @cancelledFailure.
+  /// 请求被取消时显示的提示。
   ///
   /// In zh, this message translates to:
   /// **'操作已取消'**
   String get cancelledFailure;
 
-  /// No description provided for @unauthorizedFailure.
+  /// 当前操作需要身份验证时显示的错误提示。
   ///
   /// In zh, this message translates to:
   /// **'当前操作需要身份验证'**
   String get unauthorizedFailure;
 
-  /// No description provided for @forbiddenFailure.
+  /// 用户没有执行当前操作的权限时显示的错误提示。
   ///
   /// In zh, this message translates to:
   /// **'没有执行此操作的权限'**
   String get forbiddenFailure;
 
-  /// No description provided for @conflictFailure.
+  /// 数据发生冲突，需要重新加载时显示的错误提示。
   ///
   /// In zh, this message translates to:
-  /// **'数据已发生变化, 请重新加载'**
+  /// **'数据已发生变化，请重新加载'**
   String get conflictFailure;
 
-  /// No description provided for @validationFailure.
+  /// 提交的输入未通过验证时显示的错误提示。
   ///
   /// In zh, this message translates to:
   /// **'输入内容不符合要求'**
   String get validationFailure;
 
-  /// No description provided for @serverFailure.
+  /// 集群服务暂时不可用时显示的错误提示。
   ///
   /// In zh, this message translates to:
-  /// **'集群暂时不可用, 请稍后重试'**
+  /// **'集群暂时不可用，请稍后重试'**
   String get serverFailure;
 
-  /// No description provided for @invalidDataFailure.
+  /// 收到或处理的数据格式无效时显示的错误提示。
   ///
   /// In zh, this message translates to:
-  /// **'数据格式不正确, 无法完成操作'**
+  /// **'数据格式不正确，无法完成操作'**
   String get invalidDataFailure;
 
-  /// No description provided for @storageFailure.
+  /// 本地存储无法访问时显示的错误提示。
   ///
   /// In zh, this message translates to:
-  /// **'无法访问本地存储, 请重试'**
+  /// **'无法访问本地存储，请重试'**
   String get storageFailure;
 
-  /// No description provided for @unexpectedFailure.
+  /// 无法归类的操作失败所使用的通用错误提示。
   ///
   /// In zh, this message translates to:
-  /// **'操作未完成, 请重试'**
+  /// **'操作未完成，请重试'**
   String get unexpectedFailure;
 
-  /// No description provided for @saveFailure.
+  /// 应用设置保存失败时显示的错误提示。
   ///
   /// In zh, this message translates to:
-  /// **'无法保存设置, 请重试'**
+  /// **'无法保存设置，请重试'**
   String get saveFailure;
 
-  /// No description provided for @brightnessTitle.
+  /// 选择浅色、深色或跟随系统外观的设置标题。
   ///
   /// In zh, this message translates to:
   /// **'明暗模式'**
   String get brightnessTitle;
 
-  /// No description provided for @followSystem.
+  /// 使用操作系统当前设置的选项标签。
   ///
   /// In zh, this message translates to:
   /// **'跟随系统'**
   String get followSystem;
 
-  /// No description provided for @lightAppearance.
+  /// 浅色外观选项的标签。
   ///
   /// In zh, this message translates to:
   /// **'浅色'**
   String get lightAppearance;
 
-  /// No description provided for @darkAppearance.
+  /// 深色外观选项的标签。
   ///
   /// In zh, this message translates to:
   /// **'深色'**
   String get darkAppearance;
 
-  /// No description provided for @languageTitle.
+  /// 应用界面语言设置的标题。
   ///
   /// In zh, this message translates to:
   /// **'语言'**
   String get languageTitle;
 
-  /// No description provided for @colorTitle.
+  /// 应用主题配色设置的标题。
   ///
   /// In zh, this message translates to:
   /// **'配色'**
   String get colorTitle;
 
-  /// No description provided for @defaultColor.
+  /// 使用默认主题配色的选项标签。
   ///
   /// In zh, this message translates to:
   /// **'默认'**
   String get defaultColor;
 
-  /// No description provided for @customColor.
+  /// 使用用户自选主题颜色的选项标签。
   ///
   /// In zh, this message translates to:
   /// **'自选颜色'**
   String get customColor;
 
-  /// No description provided for @editColor.
+  /// 打开自定义颜色编辑器的操作标签。
   ///
   /// In zh, this message translates to:
   /// **'编辑颜色'**
   String get editColor;
 
-  /// No description provided for @hexColor.
+  /// 输入十六进制颜色值的字段标签。
   ///
   /// In zh, this message translates to:
   /// **'十六进制颜色'**
   String get hexColor;
 
-  /// No description provided for @invalidColor.
+  /// 颜色值不符合六位十六进制格式时的验证提示。
   ///
   /// In zh, this message translates to:
   /// **'请输入 6 位十六进制颜色'**
   String get invalidColor;
 
-  /// No description provided for @cancel.
+  /// 取消当前操作或关闭编辑对话框的按钮标签。
   ///
   /// In zh, this message translates to:
   /// **'取消'**
   String get cancel;
 
-  /// No description provided for @save.
+  /// 保存当前编辑内容的按钮标签。
   ///
   /// In zh, this message translates to:
   /// **'保存'**
   String get save;
 
-  /// No description provided for @welcomeTagline.
+  /// 首次设置欢迎页面的产品标语。人工智能工作台是产品定位。
   ///
   /// In zh, this message translates to:
   /// **'你的无界人工智能工作台'**
   String get welcomeTagline;
 
-  /// No description provided for @featureSessions.
+  /// 欢迎页面介绍按会话组织任务的功能标题。
   ///
   /// In zh, this message translates to:
   /// **'按会话组织任务'**
   String get featureSessions;
 
-  /// No description provided for @featureSessionsBody.
+  /// 欢迎页面对会话如何组织提问、回复和工具记录的说明。
   ///
   /// In zh, this message translates to:
-  /// **'让每一次提问, 回复与工具记录都有清晰的归属'**
+  /// **'让每一次提问、回复与工具记录都有清晰的归属'**
   String get featureSessionsBody;
 
-  /// No description provided for @featureModels.
+  /// 欢迎页面介绍模型选择能力的功能标题。
   ///
   /// In zh, this message translates to:
   /// **'自由选择模型'**
   String get featureModels;
 
-  /// No description provided for @featureModelsBody.
+  /// 说明本地模式也支持连接第三方模型服务。
   ///
   /// In zh, this message translates to:
   /// **'本地模式也可以接入第三方模型服务'**
   String get featureModelsBody;
 
-  /// No description provided for @featureWorkspace.
+  /// 欢迎页面介绍工作区协作能力的功能标题。
   ///
   /// In zh, this message translates to:
   /// **'围绕工作区协作'**
   String get featureWorkspace;
 
-  /// No description provided for @featureWorkspaceBody.
+  /// 说明提示、预设和工作区可以在同一工作流中使用。
   ///
   /// In zh, this message translates to:
-  /// **'将提示, 预设和工作区放在同一个工作流中'**
+  /// **'将提示、预设和工作区放在同一个工作流中'**
   String get featureWorkspaceBody;
 
-  /// No description provided for @startSetup.
+  /// 欢迎页面开始首次设置的按钮标签。
   ///
   /// In zh, this message translates to:
   /// **'初始化'**
   String get startSetup;
 
-  /// No description provided for @skipSetup.
+  /// 跳过首次设置的操作标签。
   ///
   /// In zh, this message translates to:
   /// **'跳过'**
   String get skipSetup;
 
-  /// No description provided for @setupModeTitle.
+  /// 首次设置中选择本地模式或集群模式的页面标题。
   ///
   /// In zh, this message translates to:
   /// **'选择使用模式'**
   String get setupModeTitle;
 
-  /// No description provided for @localMode.
+  /// 仅在当前设备使用应用的模式名称。
   ///
   /// In zh, this message translates to:
   /// **'仅本地'**
   String get localMode;
 
-  /// No description provided for @localModeBody.
+  /// 说明仅本地模式不使用跨节点能力。
   ///
   /// In zh, this message translates to:
-  /// **'不使用跨节点模式, 仅在本机使用'**
+  /// **'不使用跨节点模式，仅在本机使用'**
   String get localModeBody;
 
-  /// No description provided for @cloudMode.
+  /// 连接集群以使用多端能力的模式名称。
   ///
   /// In zh, this message translates to:
   /// **'连接集群'**
   String get cloudMode;
 
-  /// No description provided for @cloudModeBody.
+  /// 说明连接集群模式支持跨设备使用。
   ///
   /// In zh, this message translates to:
-  /// **'连接集群, 使用多端能力'**
+  /// **'连接集群，使用多端能力'**
   String get cloudModeBody;
 
-  /// No description provided for @continueAction.
+  /// 继续当前流程的通用按钮标签。
   ///
   /// In zh, this message translates to:
   /// **'继续'**
   String get continueAction;
 
-  /// No description provided for @back.
+  /// 返回上一步或上一页面的操作标签。
   ///
   /// In zh, this message translates to:
   /// **'返回'**
   String get back;
 
-  /// No description provided for @loginTitle.
+  /// 配置集群连接的页面标题。
   ///
   /// In zh, this message translates to:
   /// **'连接集群'**
   String get loginTitle;
 
-  /// No description provided for @identityProvider.
+  /// 集群连接表单中的供应商类型标签，选项包括局域网、自部署和测试云。
   ///
   /// In zh, this message translates to:
   /// **'供应商'**
   String get identityProvider;
 
-  /// No description provided for @lanProvider.
+  /// 通过局域网连接集群的供应商类型名称。
   ///
   /// In zh, this message translates to:
   /// **'局域网'**
   String get lanProvider;
 
-  /// No description provided for @selfHostedProvider.
+  /// 连接用户自行部署集群的供应商类型名称。
   ///
   /// In zh, this message translates to:
   /// **'自部署'**
   String get selfHostedProvider;
 
-  /// No description provided for @testCloudProvider.
+  /// 连接测试云集群的供应商类型名称。
   ///
   /// In zh, this message translates to:
   /// **'测试云'**
   String get testCloudProvider;
 
-  /// No description provided for @loginAction.
+  /// 提交身份凭据并登录的按钮标签。
   ///
   /// In zh, this message translates to:
   /// **'登录'**
   String get loginAction;
 
-  /// No description provided for @connectAction.
+  /// 发起集群连接的按钮标签。
   ///
   /// In zh, this message translates to:
   /// **'连接'**
   String get connectAction;
 
-  /// No description provided for @nextStep.
+  /// 进入设置流程下一步的按钮标签。
   ///
   /// In zh, this message translates to:
   /// **'下一步'**
   String get nextStep;
 
-  /// No description provided for @serverIp.
+  /// 集群连接表单中的服务端 IP 地址字段标签。IP 为技术缩写。
   ///
   /// In zh, this message translates to:
   /// **'IP'**
   String get serverIp;
 
-  /// No description provided for @serverPort.
+  /// 集群连接表单中的服务端端口字段标签。
   ///
   /// In zh, this message translates to:
   /// **'端口'**
   String get serverPort;
 
-  /// No description provided for @verificationLabel.
+  /// 集群连接表单中选择身份验证方式的字段标签。
   ///
   /// In zh, this message translates to:
   /// **'验证'**
   String get verificationLabel;
 
-  /// No description provided for @verificationNone.
+  /// 不使用身份验证的选项标签。
   ///
   /// In zh, this message translates to:
   /// **'无'**
   String get verificationNone;
 
-  /// No description provided for @verificationCredentials.
+  /// 使用用户名和密码进行身份验证的选项标签。
   ///
   /// In zh, this message translates to:
   /// **'用户名/密码'**
   String get verificationCredentials;
 
-  /// No description provided for @serverCertificate.
+  /// 集群连接表单中的服务端证书字段标签。
   ///
   /// In zh, this message translates to:
   /// **'服务端证书'**
   String get serverCertificate;
 
-  /// No description provided for @usernameLabel.
+  /// 身份验证所用的用户名输入字段标签。
   ///
   /// In zh, this message translates to:
   /// **'用户名'**
   String get usernameLabel;
 
-  /// No description provided for @passwordLabel.
+  /// 身份验证所用的密码输入字段标签。
   ///
   /// In zh, this message translates to:
   /// **'密码'**
   String get passwordLabel;
 
-  /// No description provided for @publicKey.
+  /// 身份验证配置中的公钥字段标签。
   ///
   /// In zh, this message translates to:
   /// **'公钥'**
   String get publicKey;
 
-  /// No description provided for @privateKey.
+  /// 身份验证配置中的私钥字段标签。
   ///
   /// In zh, this message translates to:
   /// **'私钥'**
   String get privateKey;
 
-  /// No description provided for @chooseLocalFile.
+  /// 从本地文件选择器导入证书或密钥的操作标签。
   ///
   /// In zh, this message translates to:
   /// **'选择本地文件'**
   String get chooseLocalFile;
 
-  /// No description provided for @scanQrCode.
+  /// 通过扫描二维码导入内容的操作标签。
   ///
   /// In zh, this message translates to:
   /// **'扫描二维码'**
   String get scanQrCode;
 
-  /// No description provided for @certificateFileSelected.
+  /// 已通过本地文件选取证书材料时的状态提示。
   ///
   /// In zh, this message translates to:
   /// **'已选择文件'**
   String get certificateFileSelected;
 
-  /// No description provided for @certificateQrSelected.
+  /// 已通过二维码获取证书材料时的状态提示。
   ///
   /// In zh, this message translates to:
   /// **'已获取二维码内容'**
   String get certificateQrSelected;
 
-  /// No description provided for @clearCertificate.
+  /// 清除当前选择的证书材料的操作标签。
   ///
   /// In zh, this message translates to:
   /// **'清除选择'**
   String get clearCertificate;
 
-  /// No description provided for @connectingStatus.
+  /// 正在尝试建立集群连接时的状态提示。
   ///
   /// In zh, this message translates to:
   /// **'正在尝试连接'**
   String get connectingStatus;
 
-  /// No description provided for @signingInStatus.
+  /// 正在尝试登录时的状态提示。
   ///
   /// In zh, this message translates to:
   /// **'正在尝试登录'**
   String get signingInStatus;
 
-  /// No description provided for @connectionSucceeded.
+  /// 成功建立集群连接后的状态提示。
   ///
   /// In zh, this message translates to:
   /// **'连接成功'**
   String get connectionSucceeded;
 
-  /// No description provided for @signInSucceeded.
+  /// 成功登录后的状态提示。
   ///
   /// In zh, this message translates to:
   /// **'登录成功'**
   String get signInSucceeded;
 
-  /// No description provided for @continueLocal.
+  /// 跳过连接或登录步骤并使用本地模式的操作标签。
   ///
   /// In zh, this message translates to:
-  /// **'跳过, 使用本地模式'**
+  /// **'跳过，使用本地模式'**
   String get continueLocal;
 
-  /// No description provided for @preferencesTitle.
+  /// 首次设置中的个性化设置页面标题。
   ///
   /// In zh, this message translates to:
   /// **'个性化设置'**
   String get preferencesTitle;
 
-  /// No description provided for @finishSetup.
+  /// 完成首次设置并进入应用的按钮标签。Everfold 是产品名称，保留原文。
   ///
   /// In zh, this message translates to:
   /// **'进入 Everfold'**
   String get finishSetup;
 
-  /// No description provided for @modelConnections.
+  /// 进入模型服务接入配置的入口标签。
   ///
   /// In zh, this message translates to:
   /// **'接入模型'**
   String get modelConnections;
 
-  /// No description provided for @newSession.
+  /// 创建新会话的操作标签。
   ///
   /// In zh, this message translates to:
   /// **'新建会话'**
   String get newSession;
 
-  /// No description provided for @sessionsTitle.
+  /// 会话列表的标题或导航名称。
   ///
   /// In zh, this message translates to:
   /// **'会话'**
   String get sessionsTitle;
 
-  /// No description provided for @cloudServices.
+  /// 集群管理入口的名称。此处指已配置的集群。
   ///
   /// In zh, this message translates to:
   /// **'集群'**
   String get cloudServices;
 
-  /// No description provided for @addCluster.
+  /// 添加集群配置的操作标签。
   ///
   /// In zh, this message translates to:
   /// **'添加集群'**
   String get addCluster;
 
-  /// No description provided for @clusterEmptyTitle.
+  /// 尚未添加任何集群时显示的空状态标题。
   ///
   /// In zh, this message translates to:
   /// **'尚未添加集群'**
   String get clusterEmptyTitle;
 
-  /// No description provided for @clusterEmptyBody.
+  /// 集群列表为空时介绍支持的集群类型及独立连接管理的说明。
   ///
   /// In zh, this message translates to:
-  /// **'添加局域网, 自部署或测试云集群, 分别管理各自的连接'**
+  /// **'添加局域网、自部署或测试云集群，分别管理各自的连接'**
   String get clusterEmptyBody;
 
-  /// No description provided for @clusterName.
+  /// 输入或编辑集群显示名称的字段标签。
   ///
   /// In zh, this message translates to:
   /// **'集群名称'**
   String get clusterName;
 
-  /// No description provided for @renameCluster.
+  /// 修改集群显示名称的操作标签。
   ///
   /// In zh, this message translates to:
   /// **'重命名集群'**
   String get renameCluster;
 
-  /// No description provided for @removeCluster.
+  /// 移除已保存集群配置的操作标签。
   ///
   /// In zh, this message translates to:
   /// **'移除集群'**
   String get removeCluster;
 
-  /// No description provided for @removeClusterTitle.
+  /// 确认移除所选集群的对话框标题。
   ///
   /// In zh, this message translates to:
-  /// **'移除此集群?'**
+  /// **'移除此集群？'**
   String get removeClusterTitle;
 
-  /// No description provided for @removeClusterBody.
+  /// 移除集群确认对话框的说明，强调不影响其他集群或会话。
   ///
   /// In zh, this message translates to:
-  /// **'只移除所选集群, 不影响其他集群或会话'**
+  /// **'只移除所选集群，不影响其他集群或会话'**
   String get removeClusterBody;
 
-  /// No description provided for @disconnectCluster.
+  /// 断开当前集群连接的操作标签。
   ///
   /// In zh, this message translates to:
   /// **'断开'**
   String get disconnectCluster;
 
-  /// No description provided for @clusterConnected.
+  /// 集群当前处于连接状态的标签。
   ///
   /// In zh, this message translates to:
   /// **'已连接'**
   String get clusterConnected;
 
-  /// No description provided for @clusterDisconnected.
+  /// 集群当前未连接的状态标签。
   ///
   /// In zh, this message translates to:
   /// **'未连接'**
   String get clusterDisconnected;
 
-  /// No description provided for @configureCluster.
+  /// 配置集群连接参数并建立连接的操作标签。
   ///
   /// In zh, this message translates to:
   /// **'配置并连接'**
   String get configureCluster;
 
-  /// No description provided for @promptHint.
+  /// 提示词输入框为空时显示的引导文本。
   ///
   /// In zh, this message translates to:
-  /// **'你想处理什么任务?'**
+  /// **'你想处理什么任务？'**
   String get promptHint;
 
-  /// No description provided for @sendPrompt.
+  /// 保存当前提示词的操作标签；当前行为是保存，不能译成已发送给模型。
   ///
   /// In zh, this message translates to:
   /// **'保存提示词'**
   String get sendPrompt;
 
-  /// No description provided for @stopRun.
+  /// 停止当前运行任务的操作标签。
   ///
   /// In zh, this message translates to:
   /// **'停止'**
   String get stopRun;
 
-  /// No description provided for @noModel.
+  /// 尚未选择模型时模型选择控件显示的文本。
   ///
   /// In zh, this message translates to:
   /// **'未选择模型'**
   String get noModel;
 
-  /// No description provided for @presetLabel.
+  /// 提示词或会话预设选择控件的标签。
   ///
   /// In zh, this message translates to:
   /// **'预设'**
   String get presetLabel;
 
-  /// No description provided for @standardPreset.
+  /// 默认预设的名称。
   ///
   /// In zh, this message translates to:
   /// **'默认'**
   String get standardPreset;
 
-  /// No description provided for @planPreset.
+  /// 用于规划任务的预设名称。
   ///
   /// In zh, this message translates to:
   /// **'规划'**
   String get planPreset;
 
-  /// No description provided for @noWorkspace.
+  /// 尚未选择工作区时工作区控件显示的文本。
   ///
   /// In zh, this message translates to:
   /// **'未选择工作区'**
   String get noWorkspace;
 
-  /// No description provided for @clearWorkspace.
+  /// 移除当前会话的工作区关联的操作标签，不表示删除本地目录。
   ///
   /// In zh, this message translates to:
   /// **'清除工作区'**
   String get clearWorkspace;
 
-  /// No description provided for @workspaceFailure.
+  /// 无法打开工作区目录选择器时显示的错误提示。
   ///
   /// In zh, this message translates to:
   /// **'无法打开工作区选择器'**
   String get workspaceFailure;
 
-  /// No description provided for @workspaceContext.
+  /// 会话工作区上下文面板的标题。
   ///
   /// In zh, this message translates to:
   /// **'工作区上下文'**
   String get workspaceContext;
 
-  /// No description provided for @workspaceDirectory.
+  /// 当前会话关联的本地目录字段标签。
   ///
   /// In zh, this message translates to:
   /// **'关联目录'**
   String get workspaceDirectory;
 
-  /// No description provided for @workspaceContextBody.
+  /// 解释目录关联仅属于当前会话，不会自动读取或发送文件，也不会因解除关联而删除文件。
   ///
   /// In zh, this message translates to:
-  /// **'此目录仅关联到当前会话. 不会自动读取或发送文件内容, 移除关联不会删除本地文件'**
+  /// **'此目录仅关联到当前会话。不会自动读取或发送文件内容，移除关联不会删除本地文件'**
   String get workspaceContextBody;
 
-  /// No description provided for @changeWorkspace.
+  /// 更换当前会话关联目录的操作标签。
   ///
   /// In zh, this message translates to:
   /// **'更换目录'**
   String get changeWorkspace;
 
-  /// No description provided for @copyWorkspacePath.
+  /// 将关联目录路径复制到剪贴板的操作标签。
   ///
   /// In zh, this message translates to:
   /// **'复制路径'**
   String get copyWorkspacePath;
 
-  /// No description provided for @closeAction.
+  /// 关闭当前面板或对话框的通用按钮标签。
   ///
   /// In zh, this message translates to:
   /// **'关闭'**
   String get closeAction;
 
-  /// No description provided for @renameSession.
+  /// 修改会话名称的操作标签。
   ///
   /// In zh, this message translates to:
   /// **'重命名'**
   String get renameSession;
 
-  /// No description provided for @deleteSession.
+  /// 删除会话的操作标签。
   ///
   /// In zh, this message translates to:
   /// **'删除'**
   String get deleteSession;
 
-  /// No description provided for @sessionTitle.
+  /// 输入或编辑会话名称的字段标签。
   ///
   /// In zh, this message translates to:
   /// **'会话名称'**
   String get sessionTitle;
 
-  /// No description provided for @deleteSessionTitle.
+  /// 确认删除会话的对话框标题。
   ///
   /// In zh, this message translates to:
-  /// **'删除会话?'**
+  /// **'删除会话？'**
   String get deleteSessionTitle;
 
-  /// No description provided for @deleteSessionBody.
+  /// 删除会话确认对话框的说明，告知会话及其提示词将被移除。
   ///
   /// In zh, this message translates to:
   /// **'此会话及其提示词将被移除'**
   String get deleteSessionBody;
 
-  /// No description provided for @messageUser.
+  /// 会话中用户消息的发送者标签，指当前用户。
   ///
   /// In zh, this message translates to:
   /// **'你'**
   String get messageUser;
 
-  /// No description provided for @messageAssistant.
+  /// 会话中人工智能助手消息的发送者标签。
   ///
   /// In zh, this message translates to:
   /// **'助手'**
   String get messageAssistant;
 
-  /// No description provided for @unsentPrompt.
+  /// 尚未接入模型时，标记已保存但未发送的提示词的状态说明。
   ///
   /// In zh, this message translates to:
-  /// **'未发送: 尚未接入模型'**
+  /// **'未发送：尚未接入模型'**
   String get unsentPrompt;
 
-  /// No description provided for @reasoningSummary.
+  /// 展示模型思考摘要的区域标题。
   ///
   /// In zh, this message translates to:
   /// **'思考摘要'**
   String get reasoningSummary;
 
-  /// No description provided for @toolCalls.
+  /// 展示模型工具调用记录的区域标题。
   ///
   /// In zh, this message translates to:
   /// **'工具调用'**
   String get toolCalls;
 
-  /// No description provided for @copyCode.
+  /// 将代码块内容复制到剪贴板的操作标签。
   ///
   /// In zh, this message translates to:
   /// **'复制代码'**
   String get copyCode;
 
-  /// No description provided for @copied.
+  /// 内容已成功复制到剪贴板时的反馈文本。
   ///
   /// In zh, this message translates to:
   /// **'已复制'**
   String get copied;
 
-  /// No description provided for @codeLabel.
+  /// 代码内容的通用标签。
   ///
   /// In zh, this message translates to:
   /// **'代码'**
   String get codeLabel;
 
-  /// No description provided for @longContent.
+  /// 查看完整内容时使用的标题或入口标签。
   ///
   /// In zh, this message translates to:
   /// **'完整内容'**
   String get longContent;
 
-  /// No description provided for @toolOutput.
+  /// 展示工具执行输出的区域标题。
   ///
   /// In zh, this message translates to:
   /// **'工具输出'**
   String get toolOutput;
 
-  /// No description provided for @toolRunning.
+  /// 工具调用正在执行的状态标签。
   ///
   /// In zh, this message translates to:
   /// **'运行中'**
   String get toolRunning;
 
-  /// No description provided for @toolCompleted.
+  /// 工具调用执行完成的状态标签。
   ///
   /// In zh, this message translates to:
   /// **'已完成'**
   String get toolCompleted;
 
-  /// No description provided for @toolFailed.
+  /// 工具调用执行失败的状态标签。
   ///
   /// In zh, this message translates to:
   /// **'失败'**
   String get toolFailed;
 
-  /// No description provided for @sessionMissing.
+  /// 无法找到目标会话时显示的提示。
   ///
   /// In zh, this message translates to:
   /// **'会话不存在'**
   String get sessionMissing;
 
-  /// No description provided for @newPromptTitle.
+  /// 新建提示词时引导用户描述任务的标题。
   ///
   /// In zh, this message translates to:
-  /// **'这次处理什么任务?'**
+  /// **'这次处理什么任务？'**
   String get newPromptTitle;
 }
 

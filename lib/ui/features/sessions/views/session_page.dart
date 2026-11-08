@@ -21,7 +21,7 @@ class SessionPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // 页面状态与输入控制器在布局切换时保持存活
-    final strings = AppLocalizations.of(context)!;
+    final strings = AppLocalizations.of(context);
     final session = ref.watch(sessionsControllerProvider).find(sessionId);
     final controller = ref.read(sessionsControllerProvider.notifier);
     final input = useTextEditingController(text: session?.draft ?? '');
@@ -147,7 +147,7 @@ class _EmptySessionBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final strings = AppLocalizations.of(context)!;
+    final strings = AppLocalizations.of(context);
     return LayoutBuilder(
       key: const ValueKey('session-welcome-area'),
       builder: (context, constraints) => SingleChildScrollView(
@@ -246,7 +246,7 @@ class _SessionComposer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final strings = AppLocalizations.of(context)!;
+    final strings = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(

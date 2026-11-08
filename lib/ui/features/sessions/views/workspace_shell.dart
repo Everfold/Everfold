@@ -28,7 +28,7 @@ class WorkspaceShell extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // 页面状态: 根据当前路由和会话数据确定标题与选中项
-    final strings = AppLocalizations.of(context)!;
+    final strings = AppLocalizations.of(context);
     final customWindow = ref.watch(desktopWindowProvider) != null;
     final sessions = ref.watch(sessionsControllerProvider).sessions;
     final controller = ref.read(sessionsControllerProvider.notifier);
@@ -157,7 +157,7 @@ class _WorkspaceNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final strings = AppLocalizations.of(context)!;
+    final strings = AppLocalizations.of(context);
     return LayoutBuilder(
       builder: (context, constraints) => NavigationDrawer(
         key: const ValueKey('workspace-navigation'),
@@ -296,7 +296,7 @@ class _RenameSessionDialog extends HookWidget {
   final String title;
   @override
   Widget build(BuildContext context) {
-    final strings = AppLocalizations.of(context)!;
+    final strings = AppLocalizations.of(context);
     final input = useTextEditingController(text: title);
     useListenable(input);
     return AlertDialog(

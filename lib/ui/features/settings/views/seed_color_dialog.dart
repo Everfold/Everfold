@@ -11,7 +11,7 @@ class SeedColorDialog extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final strings = AppLocalizations.of(context)!;
+    final strings = AppLocalizations.of(context);
     final controller = useTextEditingController(
       text: initialColor.toRadixString(16).substring(2).toUpperCase(),
     );

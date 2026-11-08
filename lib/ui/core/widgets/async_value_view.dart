@@ -21,7 +21,7 @@ class AsyncValueView<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final strings = AppLocalizations.of(context)!;
+    final strings = AppLocalizations.of(context);
     return value.when(
       skipLoadingOnRefresh: false,
       skipError: false,

@@ -228,7 +228,7 @@ class _CodeBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final strings = AppLocalizations.of(context)!;
+    final strings = AppLocalizations.of(context);
     return Card.outlined(
       child: Padding(
         padding: const EdgeInsets.all(12),

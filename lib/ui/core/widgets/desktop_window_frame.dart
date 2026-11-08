@@ -35,7 +35,7 @@ class DesktopWindowFrame extends HookConsumerWidget {
       }
       return null;
     }, [backend]);
-    final strings = AppLocalizations.of(context)!;
+    final strings = AppLocalizations.of(context);
     void command(VoidCallback action) {
       try {
         action();

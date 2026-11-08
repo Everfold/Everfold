@@ -16,7 +16,7 @@ class ClustersPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final strings = AppLocalizations.of(context)!;
+    final strings = AppLocalizations.of(context);
     final clusters = ref.watch(clustersControllerProvider);
     final controller = ref.read(clustersControllerProvider.notifier);
     // 交互入口集中在页面: 先等待弹窗确认, 再更新对应集群
@@ -118,7 +118,7 @@ class _ClusterEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final strings = AppLocalizations.of(context)!;
+    final strings = AppLocalizations.of(context);
     // 保留原 PageStorageKey, 连接状态变化时不会丢失该集群的展开状态
     return ExpansionTile(
       key: PageStorageKey('cluster-${cluster.id}'),
@@ -215,7 +215,7 @@ class _ClusterConnectionDialogState extends State<_ClusterConnectionDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final strings = AppLocalizations.of(context)!;
+    final strings = AppLocalizations.of(context);
     return ConnectionForm(
       initialConfiguration:
           widget.cluster?.configuration ?? const ClusterConfiguration(),
@@ -278,7 +278,7 @@ class _ClusterNameDialog extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final strings = AppLocalizations.of(context)!;
+    final strings = AppLocalizations.of(context);
     final input = useTextEditingController(text: name);
     final value = useValueListenable(input);
     return AlertDialog(

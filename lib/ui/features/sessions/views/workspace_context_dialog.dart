@@ -15,7 +15,7 @@ class WorkspaceContextDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final strings = AppLocalizations.of(context)!;
+    final strings = AppLocalizations.of(context);
     return AlertDialog(
       constraints: const BoxConstraints(maxWidth: 560),
       title: Text(strings.workspaceContext),

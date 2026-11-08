@@ -22,7 +22,7 @@ class SetupPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final strings = AppLocalizations.of(context)!;
+    final strings = AppLocalizations.of(context);
     final customWindow = ref.watch(desktopWindowProvider) != null;
     final controller = ref.read(appSettingsControllerProvider.notifier);
     // 保存和连接是两类锁定: 连接成功后仍需等待下一步提交完成状态
@@ -155,7 +155,7 @@ class _SetupIntroduction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final strings = AppLocalizations.of(context)!;
+    final strings = AppLocalizations.of(context);
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -201,7 +201,7 @@ class _SetupModeChoices extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final strings = AppLocalizations.of(context)!;
+    final strings = AppLocalizations.of(context);
     return RadioGroup<AppConnectionMode>(
       groupValue: selected,
       onChanged: (value) {
@@ -251,7 +251,7 @@ class _SetupActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final strings = AppLocalizations.of(context)!;
+    final strings = AppLocalizations.of(context);
     final intro = stage == AppSetupStage.introduction;
     return Padding(
       padding: const EdgeInsets.all(24),

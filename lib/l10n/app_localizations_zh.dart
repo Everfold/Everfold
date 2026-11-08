@@ -37,7 +37,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get closeWindow => '关闭窗口';
 
   @override
-  String get windowActionFailure => '无法操作窗口, 请重试';
+  String get windowActionFailure => '无法操作窗口，请重试';
 
   @override
   String get retry => '重试';
@@ -46,10 +46,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get configurationFailure => '网络服务尚未配置';
 
   @override
-  String get networkFailure => '无法连接网络, 请检查网络连接';
+  String get networkFailure => '无法连接网络，请检查网络连接';
 
   @override
-  String get timeoutFailure => '请求超时, 请稍后重试';
+  String get timeoutFailure => '请求超时，请稍后重试';
 
   @override
   String get cancelledFailure => '操作已取消';
@@ -61,25 +61,25 @@ class AppLocalizationsZh extends AppLocalizations {
   String get forbiddenFailure => '没有执行此操作的权限';
 
   @override
-  String get conflictFailure => '数据已发生变化, 请重新加载';
+  String get conflictFailure => '数据已发生变化，请重新加载';
 
   @override
   String get validationFailure => '输入内容不符合要求';
 
   @override
-  String get serverFailure => '集群暂时不可用, 请稍后重试';
+  String get serverFailure => '集群暂时不可用，请稍后重试';
 
   @override
-  String get invalidDataFailure => '数据格式不正确, 无法完成操作';
+  String get invalidDataFailure => '数据格式不正确，无法完成操作';
 
   @override
-  String get storageFailure => '无法访问本地存储, 请重试';
+  String get storageFailure => '无法访问本地存储，请重试';
 
   @override
-  String get unexpectedFailure => '操作未完成, 请重试';
+  String get unexpectedFailure => '操作未完成，请重试';
 
   @override
-  String get saveFailure => '无法保存设置, 请重试';
+  String get saveFailure => '无法保存设置，请重试';
 
   @override
   String get brightnessTitle => '明暗模式';
@@ -127,7 +127,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get featureSessions => '按会话组织任务';
 
   @override
-  String get featureSessionsBody => '让每一次提问, 回复与工具记录都有清晰的归属';
+  String get featureSessionsBody => '让每一次提问、回复与工具记录都有清晰的归属';
 
   @override
   String get featureModels => '自由选择模型';
@@ -139,7 +139,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get featureWorkspace => '围绕工作区协作';
 
   @override
-  String get featureWorkspaceBody => '将提示, 预设和工作区放在同一个工作流中';
+  String get featureWorkspaceBody => '将提示、预设和工作区放在同一个工作流中';
 
   @override
   String get startSetup => '初始化';
@@ -154,13 +154,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get localMode => '仅本地';
 
   @override
-  String get localModeBody => '不使用跨节点模式, 仅在本机使用';
+  String get localModeBody => '不使用跨节点模式，仅在本机使用';
 
   @override
   String get cloudMode => '连接集群';
 
   @override
-  String get cloudModeBody => '连接集群, 使用多端能力';
+  String get cloudModeBody => '连接集群，使用多端能力';
 
   @override
   String get continueAction => '继续';
@@ -250,7 +250,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get signInSucceeded => '登录成功';
 
   @override
-  String get continueLocal => '跳过, 使用本地模式';
+  String get continueLocal => '跳过，使用本地模式';
 
   @override
   String get preferencesTitle => '个性化设置';
@@ -277,7 +277,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get clusterEmptyTitle => '尚未添加集群';
 
   @override
-  String get clusterEmptyBody => '添加局域网, 自部署或测试云集群, 分别管理各自的连接';
+  String get clusterEmptyBody => '添加局域网、自部署或测试云集群，分别管理各自的连接';
 
   @override
   String get clusterName => '集群名称';
@@ -289,10 +289,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get removeCluster => '移除集群';
 
   @override
-  String get removeClusterTitle => '移除此集群?';
+  String get removeClusterTitle => '移除此集群？';
 
   @override
-  String get removeClusterBody => '只移除所选集群, 不影响其他集群或会话';
+  String get removeClusterBody => '只移除所选集群，不影响其他集群或会话';
 
   @override
   String get disconnectCluster => '断开';
@@ -307,7 +307,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get configureCluster => '配置并连接';
 
   @override
-  String get promptHint => '你想处理什么任务?';
+  String get promptHint => '你想处理什么任务？';
 
   @override
   String get sendPrompt => '保存提示词';
@@ -343,7 +343,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get workspaceDirectory => '关联目录';
 
   @override
-  String get workspaceContextBody => '此目录仅关联到当前会话. 不会自动读取或发送文件内容, 移除关联不会删除本地文件';
+  String get workspaceContextBody => '此目录仅关联到当前会话。不会自动读取或发送文件内容，移除关联不会删除本地文件';
 
   @override
   String get changeWorkspace => '更换目录';
@@ -364,7 +364,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get sessionTitle => '会话名称';
 
   @override
-  String get deleteSessionTitle => '删除会话?';
+  String get deleteSessionTitle => '删除会话？';
 
   @override
   String get deleteSessionBody => '此会话及其提示词将被移除';
@@ -376,7 +376,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get messageAssistant => '助手';
 
   @override
-  String get unsentPrompt => '未发送: 尚未接入模型';
+  String get unsentPrompt => '未发送：尚未接入模型';
 
   @override
   String get reasoningSummary => '思考摘要';
@@ -412,5 +412,5 @@ class AppLocalizationsZh extends AppLocalizations {
   String get sessionMissing => '会话不存在';
 
   @override
-  String get newPromptTitle => '这次处理什么任务?';
+  String get newPromptTitle => '这次处理什么任务？';
 }

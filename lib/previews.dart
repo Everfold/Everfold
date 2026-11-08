@@ -137,7 +137,7 @@ Widget workspaceContextPreview() => MaterialApp(
             builder: (_) =>
                 const WorkspaceContextDialog(path: '/workspace/everfold'),
           ),
-          child: Text(AppLocalizations.of(context)!.workspaceContext),
+          child: Text(AppLocalizations.of(context).workspaceContext),
         ),
       ),
     ),

@@ -52,7 +52,7 @@ class DesktopAppFrame extends HookConsumerWidget {
         router.routerDelegate.removeListener(changed);
       };
     }, [router]);
-    final strings = AppLocalizations.of(context)!;
+    final strings = AppLocalizations.of(context);
     final route = current.value.route;
     final path = route?.uri.path;
     final sessionTitle = ref.watch(

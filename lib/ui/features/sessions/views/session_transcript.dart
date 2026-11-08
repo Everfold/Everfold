@@ -44,7 +44,7 @@ class _MessageEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final strings = AppLocalizations.of(context)!;
+    final strings = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.only(bottom: 32),
       child: Column(
@@ -117,7 +117,7 @@ class _ToolEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final strings = AppLocalizations.of(context)!;
+    final strings = AppLocalizations.of(context);
     return ExpansionTile(
       leading: Icon(switch (tool.status) {
         ToolCallStatus.running => Icons.pending_outlined,

@@ -31,7 +31,7 @@ class SettingsContent extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final strings = AppLocalizations.of(context)!;
+    final strings = AppLocalizations.of(context);
     final settings = ref.watch(appSettingsControllerProvider).requireValue;
     final controller = ref.read(appSettingsControllerProvider.notifier);
     final busy = useState(false);
@@ -148,7 +148,7 @@ class _ColorPreferences extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final strings = AppLocalizations.of(context)!;
+    final strings = AppLocalizations.of(context);
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
