@@ -1,3 +1,4 @@
+import 'package:everfold/ui/core/widgets/sidebar_destination.dart';
 import 'package:everfold/app/app_scope.dart';
 import 'package:flutter/services.dart';
 import 'package:everfold/app/everfold_app.dart';
@@ -603,10 +604,10 @@ void main() {
     expect(tester.widget<Drawer>(drawer).width, isNull);
     expect(tester.widget<NavigationDrawer>(navigation).footer, isNotNull);
     for (final key in ['cloud-navigation', 'settings-navigation']) {
-      final entry = tester.widget<ListTile>(find.byKey(ValueKey(key)));
+      final entry = tester.widget<SidebarDestination>(
+        find.byKey(ValueKey(key)),
+      );
       expect(entry.selected, isFalse);
-      expect(entry.shape, isNull);
-      expect(entry.selectedTileColor, isNull);
     }
     expect(tester.getSize(find.byType(SessionPage)).width, greaterThan(920));
 
@@ -682,7 +683,7 @@ void main() {
         await tester.tap(find.byIcon(Icons.menu));
         await tester.pumpAndSettle();
       }
-      expect(tester.widget<ListTile>(settings).selected, isFalse);
+      expect(tester.widget<SidebarDestination>(settings).selected, isFalse);
       final footer = find.byKey(const ValueKey('workspace-navigation-footer'));
       final footerBounds = tester.getRect(footer);
       final cloudBounds = tester.getRect(cloud);

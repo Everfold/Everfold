@@ -6,6 +6,7 @@ import '../../../application/window/desktop_window_provider.dart';
 import '../../../l10n/app_localizations.dart';
 import '../layout/page_spacing.dart';
 import 'desktop_sidebar.dart';
+import 'sidebar_destination.dart';
 
 enum AppSection { settings, clusters }
 
@@ -43,55 +44,38 @@ class SectionShell extends ConsumerWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final wide = constraints.maxWidth >= 840;
-        final navigation = LayoutBuilder(
-          builder: (context, bounds) => NavigationDrawerTheme(
-            data: NavigationDrawerTheme.of(context).copyWith(
-              indicatorSize: Size(
-                (bounds.maxWidth - 24).clamp(0, double.infinity),
-                56,
+        final navigation = NavigationDrawer(
+          key: ValueKey('${section.name}-section-navigation'),
+          selectedIndex: null,
+          children: [
+            if (!wide)
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: FilledButton.tonalIcon(
+                  key: const ValueKey('return-to-workspace'),
+                  icon: const Icon(Icons.arrow_back),
+                  label: Text(
+                    strings.navigationReturnToWorkspace,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  onPressed: () {
+                    scaffoldKey.currentState?.closeDrawer();
+                    returnToWorkspace();
+                  },
+                ),
               ),
-            ),
-            child: NavigationDrawer(
-              key: ValueKey('${section.name}-section-navigation'),
-              selectedIndex: 0,
-              onDestinationSelected: (_) {
+            const Divider(),
+            SidebarDestination(
+              key: ValueKey('${section.name}-destination'),
+              selected: true,
+              leading: Icon(settings ? Icons.tune : Icons.hub_outlined),
+              label: destination,
+              onTap: () {
                 if (!wide) scaffoldKey.currentState?.closeDrawer();
               },
-              children: [
-                if (!wide)
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: FilledButton.tonalIcon(
-                      key: const ValueKey('return-to-workspace'),
-                      icon: const Icon(Icons.arrow_back),
-                      label: Text(
-                        strings.navigationReturnToWorkspace,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      onPressed: () {
-                        scaffoldKey.currentState?.closeDrawer();
-                        returnToWorkspace();
-                      },
-                    ),
-                  ),
-                const Divider(),
-                NavigationDrawerDestination(
-                  icon: Icon(settings ? Icons.tune : Icons.hub_outlined),
-                  label: Flexible(
-                    child: Tooltip(
-                      message: destination,
-                      child: Text(
-                        destination,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
             ),
-          ),
+          ],
         );
         return Scaffold(
           key: scaffoldKey,

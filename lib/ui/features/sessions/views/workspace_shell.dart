@@ -10,6 +10,7 @@ import '../../../../l10n/app_localizations.dart';
 import '../../../core/widgets/adaptive_dialog.dart';
 import '../../../core/widgets/back_dismissible_menu_anchor.dart';
 import '../../../core/widgets/desktop_sidebar.dart';
+import '../../../core/widgets/sidebar_destination.dart';
 
 /// 连接窗口顶栏中的菜单按钮与当前工作区抽屉, 生命周期跟随页面作用域
 final workspaceScaffoldKeyProvider = Provider<GlobalKey<ScaffoldState>>(
@@ -331,27 +332,19 @@ class _WorkspaceNavigation extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Divider(),
-                  // footer 不提供目的地索引上下文, 由标准 ListTile 显示选中状态
-                  ListTile(
+                  // 与会话和子页面共用导航样式, footer 独立管理路由。
+                  SidebarDestination(
                     key: const ValueKey('cloud-navigation'),
                     selected: location == '/cloud',
                     leading: const Icon(Icons.cloud_outlined),
-                    title: Text(
-                      strings.clusterTitle,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    label: strings.clusterTitle,
                     onTap: onOpenClusters,
                   ),
-                  ListTile(
+                  SidebarDestination(
                     key: const ValueKey('settings-navigation'),
                     selected: location == '/settings',
                     leading: const Icon(Icons.settings_outlined),
-                    title: Text(
-                      strings.settingsTitle,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    label: strings.settingsTitle,
                     onTap: onOpenSettings,
                   ),
                 ],
@@ -386,17 +379,15 @@ class _WorkspaceNavigation extends StatelessWidget {
             ),
             children: [
               for (final session in sessions)
-                ListTile(
+                SidebarDestination(
                   key: ValueKey('session-${session.id}'),
                   selected: location == '/sessions/${session.id}',
                   leading: constraints.maxWidth < 220
                       ? null
                       : const Icon(Icons.chat_bubble_outline),
-                  title: Text(
-                    session.title.isEmpty ? strings.sessionNew : session.title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                  label: session.title.isEmpty
+                      ? strings.sessionNew
+                      : session.title,
                   onTap: () => onOpenSession(session),
                   trailing: BackDismissibleMenuAnchor(
                     menuChildren: [

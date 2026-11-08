@@ -1,3 +1,5 @@
+import 'package:everfold/ui/core/widgets/sidebar_destination.dart';
+
 import 'dart:convert';
 
 import 'package:everfold/app/app_scope.dart';
@@ -322,13 +324,47 @@ void main() {
           final label = find.text(
             path == '/settings' ? 'General' : 'Connections',
           );
-          final indicator = find.byType(NavigationIndicator);
-          final bounds = tester.getRect(indicator);
+          final tile = find.descendant(
+            of: find.byType(SidebarDestination),
+            matching: find.byType(ListTile),
+          );
+          final bounds = tester.getRect(tile);
           expect(bounds.contains(tester.getRect(label).center), isTrue);
         }
         expect(tester.takeException(), isNull);
       }
     }
+  });
+
+  testWidgets('会话导航菜单独立操作, 窄侧栏和大字号下仍可切换', (tester) async {
+    await pumpApp(tester, size: const Size(840, 900), scale: 2);
+    final ref = container(tester);
+    await ref
+        .read(appSettingsControllerProvider.notifier)
+        .setSidebarWidthFraction(0.15);
+    final sessions = ref.read(sessionsControllerProvider.notifier);
+    sessions.setDraft(null, 'First task');
+    final first = sessions.submit(null)!;
+    sessions.setDraft(null, 'Second task');
+    final second = sessions.submit(null)!;
+    final router = ref.read(appRouterProvider);
+    router.go('/sessions/$first');
+    await tester.pumpAndSettle();
+    final secondEntry = find.byKey(ValueKey('session-$second'));
+    await tester.tap(find.byKey(ValueKey('session-menu-$second')));
+    await tester.pumpAndSettle();
+    expect(router.routerDelegate.state.uri.path, '/sessions/$first');
+    expect(find.text('Rename').hitTestable(), findsOneWidget);
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    final title = find.descendant(of: secondEntry, matching: find.byType(Text));
+    Focus.of(tester.element(title)).requestFocus();
+    await tester.pump();
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(router.routerDelegate.state.uri.path, '/sessions/$second');
+    expect(tester.widget<SidebarDestination>(secondEntry).selected, isTrue);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('分隔条支持键盘调宽和双击恢复默认, 保存失败保留原偏好', (tester) async {
