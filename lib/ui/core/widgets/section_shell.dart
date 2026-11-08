@@ -69,21 +69,6 @@ class SectionShell extends ConsumerWidget {
               ? null
               : AppBar(
                   title: Text(title, key: const ValueKey('section-page-title')),
-                  automaticallyImplyLeading: false,
-                  leading: IconButton(
-                    tooltip: strings.navigationReturnToWorkspace,
-                    onPressed: returnToWorkspace,
-                    icon: const Icon(Icons.arrow_back),
-                  ),
-                  actions: [
-                    if (!wide)
-                      IconButton(
-                        tooltip: MaterialLocalizations.of(context)
-                            .openAppDrawerTooltip,
-                        onPressed: () => scaffoldKey.currentState?.openDrawer(),
-                        icon: const Icon(Icons.menu),
-                      ),
-                  ],
                 ),
           drawer: wide ? null : navigation,
           body: SafeArea(

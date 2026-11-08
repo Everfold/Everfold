@@ -83,6 +83,15 @@ void main() {
           findsNothing,
         );
         if (width < 840) {
+          expect(
+            tester.getCenter(find.byIcon(Icons.menu)).dx,
+            lessThan(
+              tester
+                  .getCenter(find.byKey(const ValueKey('section-page-title')))
+                  .dx,
+            ),
+          );
+          expect(find.byIcon(Icons.arrow_back), findsNothing);
           await tester.tap(find.byIcon(Icons.menu));
           await tester.pumpAndSettle();
         }
