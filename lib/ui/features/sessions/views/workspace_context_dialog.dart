@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../l10n/app_localizations.dart';
+import '../../../core/widgets/adaptive_dialog.dart';
 import '../../../core/widgets/copy_text.dart';
 
 enum WorkspaceContextAction { replace, remove }
@@ -16,35 +17,28 @@ class WorkspaceContextDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final strings = AppLocalizations.of(context);
-    return AlertDialog(
-      constraints: const BoxConstraints(maxWidth: 560),
-      title: Text(strings.workspaceContext),
-      // 弹窗整体限制宽度, 内容单独滚动, 让长路径和操作区各自保有空间
+    return AdaptiveDialog(
+      title: strings.workspaceContext,
+      dismissLabel: strings.commonCloseAction,
       content: SizedBox(
         width: double.maxFinite,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                strings.workspaceDirectory,
-                style: Theme.of(context).textTheme.labelLarge,
-              ),
-              const SizedBox(height: 8),
-              SelectableText(path, key: const ValueKey('workspace-full-path')),
-              const SizedBox(height: 16),
-              Text(strings.workspaceContextBody),
-            ],
-          ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              strings.workspaceDirectory,
+              style: Theme.of(context).textTheme.labelLarge,
+            ),
+            const SizedBox(height: 8),
+            SelectableText(path, key: const ValueKey('workspace-full-path')),
+            const SizedBox(height: 16),
+            Text(strings.workspaceContextBody),
+          ],
         ),
       ),
       // 更换和移除只返回意图, 调用页面负责更新当前会话
       actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(strings.commonCloseAction),
-        ),
         TextButton.icon(
           key: const ValueKey('copy-workspace-path'),
           onPressed: () => copyText(context, path),

@@ -2,6 +2,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../l10n/app_localizations.dart';
+import '../../../core/widgets/adaptive_dialog.dart';
 
 /// 校验 RGB 输入后返回不透明 ARGB, 保存由设置页统一处理
 class SeedColorDialog extends HookWidget {
@@ -29,10 +30,9 @@ class SeedColorDialog extends HookWidget {
     }
 
     // 输入校验留在弹窗, 取消不返回颜色, 也不会触发设置保存
-    return AlertDialog(
-      constraints: const BoxConstraints(maxWidth: 560),
-      title: Text(strings.settingsEditColor),
-      scrollable: true,
+    return AdaptiveDialog(
+      title: strings.settingsEditColor,
+      dismissLabel: strings.commonCancel,
       content: Form(
         key: formKey,
         child: TextFormField(
@@ -52,13 +52,10 @@ class SeedColorDialog extends HookWidget {
               : strings.settingsInvalidColor,
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text(strings.commonCancel),
-        ),
-        TextButton(onPressed: submit, child: Text(strings.commonSave)),
-      ],
+      primaryAction: TextButton(
+        onPressed: submit,
+        child: Text(strings.commonSave),
+      ),
     );
   }
 }

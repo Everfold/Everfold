@@ -7,6 +7,7 @@ import '../../../../application/sessions/sessions_controller.dart';
 import '../../../../application/window/desktop_window_provider.dart';
 import '../../../../domain/sessions/agent_session.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../core/widgets/adaptive_dialog.dart';
 
 /// 连接窗口顶栏中的菜单按钮与当前工作区抽屉, 生命周期跟随页面作用域
 final workspaceScaffoldKeyProvider = Provider<GlobalKey<ScaffoldState>>(
@@ -299,10 +300,11 @@ class _RenameSessionDialog extends HookWidget {
     final strings = AppLocalizations.of(context);
     final input = useTextEditingController(text: title);
     useListenable(input);
-    return AlertDialog(
-      constraints: const BoxConstraints(maxWidth: 560),
-      title: Text(strings.sessionRename),
+    return AdaptiveDialog(
+      title: strings.sessionRename,
+      dismissLabel: strings.commonCancel,
       content: TextField(
+        key: const ValueKey('rename-session-input'),
         controller: input,
         autofocus: true,
         decoration: InputDecoration(labelText: strings.sessionName),
@@ -311,18 +313,12 @@ class _RenameSessionDialog extends HookWidget {
           if (value.trim().isNotEmpty) Navigator.pop(context, value);
         },
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(strings.commonCancel),
-        ),
-        TextButton(
-          onPressed: input.text.trim().isEmpty
-              ? null
-              : () => Navigator.pop(context, input.text),
-          child: Text(strings.commonSave),
-        ),
-      ],
+      primaryAction: TextButton(
+        onPressed: input.text.trim().isEmpty
+            ? null
+            : () => Navigator.pop(context, input.text),
+        child: Text(strings.commonSave),
+      ),
     );
   }
 }

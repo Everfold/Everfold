@@ -167,7 +167,18 @@ Widget transcriptPreview() => MaterialApp(
 
 @Preview(name: 'Workspace context · Mobile', size: Size(390, 844))
 @Preview(name: 'Workspace context · Desktop', size: Size(1280, 900))
+@Preview(
+  name: 'Workspace context · Short large text',
+  size: Size(320, 480),
+  textScaleFactor: 2,
+)
+@Preview(
+  name: 'Workspace context · Landscape large text',
+  size: Size(740, 360),
+  textScaleFactor: 2,
+)
 Widget workspaceContextPreview() => MaterialApp(
+  locale: const Locale('en'),
   localizationsDelegates: const [
     AppLocalizations.delegate,
     ...GlobalMaterialLocalizations.delegates,
