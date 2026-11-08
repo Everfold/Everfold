@@ -123,6 +123,8 @@ class SessionPage extends HookConsumerWidget {
 
     // 布局区块只接收当前值与回调, 输入控制器仍由页面持有
     final composer = _SessionComposer(
+      // 切换会话时重建编辑状态, 避免撤销/重做写入上一会话的内容。
+      key: ValueKey(sessionId),
       session: session,
       input: input,
       focus: focus,
@@ -229,6 +231,7 @@ class _EmptySessionBody extends StatelessWidget {
 // 输入区分为文本输入和自适应操作栏, 不自行读写应用状态
 class _SessionComposer extends StatelessWidget {
   const _SessionComposer({
+    super.key,
     required this.session,
     required this.input,
     required this.focus,

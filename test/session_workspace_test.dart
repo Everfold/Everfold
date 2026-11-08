@@ -123,6 +123,96 @@ void main() {
     });
   }
 
+  for (final platform in [TargetPlatform.linux, TargetPlatform.macOS]) {
+    for (final editDelay in [100, 600]) {
+      testWidgets('$platform 切换会话隔离撤销和重做, 包括 $editDelay ms 内的编辑', (
+        tester,
+      ) async {
+        await pumpApp(tester);
+        final container = ProviderScope.containerOf(
+          tester.element(find.byType(SessionPage)),
+        );
+        final router = container.read(appRouterProvider);
+        final sessions = container.read(sessionsControllerProvider.notifier);
+        sessions.setDraft(null, 'First');
+        final first = sessions.submit(null)!;
+        sessions.setDraft(null, 'Second');
+        final second = sessions.submit(null)!;
+        sessions.setDraft(first, 'First draft');
+        sessions.setDraft(second, 'Second draft');
+        sessions.setDraft(null, 'New session draft');
+        final input = find.byKey(const ValueKey('prompt-input'));
+
+        Future<void> shortcut({bool redo = false}) async {
+          final modifier = platform == TargetPlatform.macOS
+              ? LogicalKeyboardKey.metaLeft
+              : LogicalKeyboardKey.controlLeft;
+          await tester.sendKeyDownEvent(modifier);
+          if (redo) await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+          await tester.sendKeyEvent(LogicalKeyboardKey.keyZ);
+          if (redo) await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+          await tester.sendKeyUpEvent(modifier);
+          await tester.pumpAndSettle();
+        }
+
+        void checkDraft(String? id, String expected) {
+          expect(tester.widget<TextField>(input).controller!.text, expected);
+          expect(sessions.state.find(id)!.draft, expected);
+        }
+
+        Future<void> open(String? id) async {
+          router.go(id == null ? '/' : '/sessions/$id');
+          await tester.pumpAndSettle();
+          await tester.tap(input);
+          await tester.pump(const Duration(milliseconds: 600));
+        }
+
+        await open(first);
+        await tester.enterText(input, 'First private edit');
+        await tester.pump(const Duration(milliseconds: 600));
+        await shortcut();
+        checkDraft(first, 'First draft');
+        await shortcut(redo: true);
+        checkDraft(first, 'First private edit');
+        await tester.enterText(input, 'First pending edit');
+        await tester.pump(Duration(milliseconds: editDelay));
+
+        await open(second);
+        await shortcut();
+        checkDraft(second, 'Second draft');
+        await shortcut(redo: true);
+        checkDraft(second, 'Second draft');
+        expect(sessions.state.find(first)!.draft, 'First pending edit');
+
+        await tester.enterText(input, 'Second edit');
+        await tester.pump(const Duration(milliseconds: 600));
+        // 同一会话仅改变窗口宽度时, 仍保留正常的编辑历史。
+        tester.view.physicalSize = const Size(390, 900);
+        await tester.pumpAndSettle();
+        await shortcut();
+        checkDraft(second, 'Second draft');
+        await shortcut(redo: true);
+        checkDraft(second, 'Second edit');
+        await shortcut();
+        checkDraft(second, 'Second draft');
+
+        // 带着未重做的记录返回 A, 不能把 B 的内容重做到 A。
+        await open(first);
+        await shortcut(redo: true);
+        checkDraft(first, 'First pending edit');
+        await shortcut();
+        checkDraft(first, 'First pending edit');
+        await open(null);
+        await shortcut();
+        await shortcut(redo: true);
+        checkDraft(null, 'New session draft');
+        expect(sessions.state.find(first)!.draft, 'First pending edit');
+        expect(sessions.state.find(second)!.draft, 'Second draft');
+        expect(tester.takeException(), isNull);
+      }, variant: TargetPlatformVariant.only(platform));
+    }
+  }
+
   for (final locale in [const Locale('zh'), const Locale('en')]) {
     for (final (width, scale, expanded) in [
       (320.0, 1.0, false),
