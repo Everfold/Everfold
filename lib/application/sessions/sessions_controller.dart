@@ -1,6 +1,15 @@
+import 'package:characters/characters.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../domain/sessions/agent_session.dart';
+
+// 按用户可见字符截取, 避免截断 Emoji 或组合音标; 只用于自动命名。
+String _defaultSessionTitle(String prompt) {
+  final firstLine = prompt.split('\n').first.trim();
+  final characters = firstLine.characters;
+  if (characters.length <= 12) return firstLine;
+  return '${characters.take(12).toString().trimRight()}…';
+}
 
 /// 原生目录选择由 App 层装配, Application 不导入平台插件
 final selectWorkspaceProvider = Provider<Future<String?> Function()>((ref) {
@@ -75,7 +84,7 @@ final class SessionsController extends Notifier<SessionsState> {
     if (session == null || session.draft.trim().isEmpty) return null;
     final text = session.draft.trim();
     final next = session.copyWith(
-      title: session.title.isEmpty ? text.split('\n').first : session.title,
+      title: session.title.isEmpty ? _defaultSessionTitle(text) : session.title,
       draft: '',
       messages: [
         ...session.messages,
