@@ -1,3 +1,4 @@
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:everfold/app/app_scope.dart';
 import 'package:everfold/app/everfold_app.dart';
@@ -476,6 +477,80 @@ void main() {
       await tester.pumpAndSettle();
     }
   });
+
+  for (final size in [const Size(320, 480), const Size(740, 360)]) {
+    testWidgets('$size 英文双倍字号下移除集群说明可读完, 可取消或确认', (tester) async {
+      await pumpApp(tester, language: 'en');
+      final context = tester.element(find.byType(ClustersPage));
+      final strings = AppLocalizations.of(context);
+      final container = ProviderScope.containerOf(context);
+      final clusters = container.read(clustersControllerProvider.notifier);
+      clusters.addConnected('Cluster A', const ClusterConfiguration());
+      clusters.addConnected('Cluster B', const ClusterConfiguration());
+      await tester.pumpAndSettle();
+      await tap(tester, find.text('Cluster A'));
+
+      for (final cancel in [true, false]) {
+        await tap(tester, find.byKey(const ValueKey('cluster-remove-1')));
+        tester.view.physicalSize = size;
+        tester.platformDispatcher.textScaleFactorTestValue = 2;
+        await tester.pumpAndSettle();
+        final dialog = find.byType(AlertDialog);
+        final cancelButton = find.descendant(
+          of: dialog,
+          matching: find.widgetWithText(TextButton, strings.commonCancel),
+        );
+        final removeButton = find.descendant(
+          of: dialog,
+          matching: find.widgetWithText(TextButton, strings.clusterRemove),
+        );
+        expect(cancelButton.hitTestable(), findsOneWidget);
+        expect(removeButton.hitTestable(), findsOneWidget);
+        final body = find.text(strings.clusterRemoveBody);
+        final paragraph = tester.renderObject<RenderParagraph>(body);
+        expect(
+          paragraph.size.height,
+          greaterThanOrEqualTo(
+            paragraph.getMaxIntrinsicHeight(paragraph.size.width) - 0.1,
+          ),
+        );
+        await Scrollable.ensureVisible(tester.element(body), alignment: 1);
+        await tester.pumpAndSettle();
+        final lastCharacter = paragraph
+            .getBoxesForSelection(
+              TextSelection(
+                baseOffset: strings.clusterRemoveBody.length - 1,
+                extentOffset: strings.clusterRemoveBody.length,
+              ),
+            )
+            .single;
+        final endPoint = paragraph.localToGlobal(lastCharacter.toRect().center);
+        expect(
+          tester
+              .hitTestOnBinding(endPoint)
+              .path
+              .any((entry) => identical(entry.target, paragraph)),
+          isTrue,
+          reason: '说明的最后一个字符可以滚动到可见区域',
+        );
+        expect(cancelButton.hitTestable(), findsOneWidget);
+        expect(removeButton.hitTestable(), findsOneWidget);
+        expect(tester.takeException(), isNull);
+        await tester.tap(cancel ? cancelButton : removeButton);
+        await tester.pumpAndSettle();
+        expect(dialog, findsNothing);
+        expect(
+          container
+              .read(clustersControllerProvider)
+              .map((cluster) => cluster.name),
+          cancel ? ['Cluster A', 'Cluster B'] : ['Cluster B'],
+        );
+        tester.view.physicalSize = const Size(1280, 900);
+        tester.platformDispatcher.textScaleFactorTestValue = 1;
+        await tester.pumpAndSettle();
+      }
+    });
+  }
 
   testWidgets('集群与设置并列, 可添加多个并独立断开, 重命名, 移除', (tester) async {
     await pumpApp(tester);

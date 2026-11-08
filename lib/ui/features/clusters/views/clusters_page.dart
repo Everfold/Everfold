@@ -51,6 +51,7 @@ class ClustersPage extends ConsumerWidget {
         context: context,
         builder: (context) => AlertDialog(
           constraints: const BoxConstraints(maxWidth: 560),
+          scrollable: true,
           title: Text(strings.clusterRemoveTitle),
           content: Text(strings.clusterRemoveBody),
           actions: [
