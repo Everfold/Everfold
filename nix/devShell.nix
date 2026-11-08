@@ -17,7 +17,7 @@ pkgs.mkShell rec {
     (nativePkgConfig buildInputs)
 
     flutter
-    dart
+    flutter.dart
 
     rustToolchain
     cargo-binstall
