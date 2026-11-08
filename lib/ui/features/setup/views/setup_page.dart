@@ -9,7 +9,6 @@ import '../../../../domain/common/result.dart';
 import '../../../../domain/settings/app_settings.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../clusters/views/cluster_labels.dart';
-import '../../settings/views/settings_page.dart';
 import 'connection_form.dart';
 
 /// 组合首次启动的阶段内容, 保存反馈和底部操作区
@@ -60,7 +59,31 @@ class SetupPage extends HookConsumerWidget {
     };
     // 阶段内容只决定正文显示什么, 外层始终保留相同的页面骨架
     final content = <Widget>[
-      if (intro) const _SetupIntroduction(),
+      if (intro) ...[
+        DropdownMenu<AppLanguage>(
+          key: const ValueKey('setup-language'),
+          initialSelection: settings.language,
+          requestFocusOnTap: false,
+          label: Text(strings.languageTitle),
+          enabled: !busy.value,
+          dropdownMenuEntries: [
+            DropdownMenuEntry(
+              value: AppLanguage.system,
+              label: strings.followSystem,
+            ),
+            const DropdownMenuEntry(value: AppLanguage.chinese, label: '中文'),
+            const DropdownMenuEntry(
+              value: AppLanguage.english,
+              label: 'English',
+            ),
+          ],
+          onSelected: (value) {
+            if (value != null) run(() => controller.setLanguage(value));
+          },
+        ),
+        const SizedBox(height: 24),
+        const _SetupIntroduction(),
+      ],
       if (stage == AppSetupStage.mode)
         _SetupModeChoices(
           selected: selectedMode.value,
@@ -107,15 +130,10 @@ class SetupPage extends HookConsumerWidget {
             children: [
               // 只有正文滚动, 进度, 错误和底部操作保持在可视区域
               Expanded(
-                child: stage == AppSetupStage.preferences
-                    ? const SettingsContent(
-                        showModelEntry: false,
-                        languageFirst: true,
-                      )
-                    : ListView(
-                        padding: const EdgeInsets.all(24),
-                        children: content,
-                      ),
+                child: ListView(
+                  padding: const EdgeInsets.all(24),
+                  children: content,
+                ),
               ),
               if (busy.value) const LinearProgressIndicator(),
               if (failed.value)
@@ -138,7 +156,7 @@ class SetupPage extends HookConsumerWidget {
                   AppSetupStage.mode => () => controller.chooseConnectionMode(
                     selectedMode.value,
                   ),
-                  _ => controller.continuePreferencesSetup,
+                  _ => controller.startSetup,
                 }),
               ),
             ],
@@ -210,18 +228,18 @@ class _SetupModeChoices extends StatelessWidget {
       child: Column(
         children: [
           RadioListTile<AppConnectionMode>(
-            key: const ValueKey('mode-local'),
-            value: AppConnectionMode.local,
+            key: const ValueKey('mode-offline'),
+            value: AppConnectionMode.offline,
             enabled: enabled,
-            title: Text(strings.localMode),
-            subtitle: Text(strings.localModeBody),
+            title: Text(strings.offlineMode),
+            subtitle: Text(strings.offlineModeBody),
           ),
           RadioListTile<AppConnectionMode>(
-            key: const ValueKey('mode-cloud'),
-            value: AppConnectionMode.cloud,
+            key: const ValueKey('mode-cluster'),
+            value: AppConnectionMode.cluster,
             enabled: enabled,
-            title: Text(strings.cloudMode),
-            subtitle: Text(strings.cloudModeBody),
+            title: Text(strings.clusterMode),
+            subtitle: Text(strings.clusterModeBody),
           ),
         ],
       ),
@@ -275,7 +293,7 @@ class _SetupActions extends StatelessWidget {
             TextButton(
               // 连接开始后连同返回一起冻结, 成功后只允许表单中的下一步
               onPressed: navigationLocked ? null : onSkip,
-              child: Text(strings.continueLocal),
+              child: Text(strings.continueOffline),
             )
           else
             FilledButton(
@@ -284,7 +302,7 @@ class _SetupActions extends StatelessWidget {
                 intro
                     ? strings.startSetup
                     : stage == AppSetupStage.mode &&
-                          selectedMode == AppConnectionMode.local
+                          selectedMode == AppConnectionMode.offline
                     ? strings.finishSetup
                     : strings.continueAction,
               ),

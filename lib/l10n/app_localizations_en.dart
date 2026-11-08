@@ -139,8 +139,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get featureModels => 'Choose your models';
 
   @override
-  String get featureModelsBody =>
-      'Local mode can also connect to third-party model services';
+  String get featureModelsBody => 'Choose the right model for each task';
 
   @override
   String get featureWorkspace => 'Collaborate around your workspace';
@@ -150,25 +149,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Keep prompts, presets, and workspaces in one workflow';
 
   @override
-  String get startSetup => 'Set up';
+  String get startSetup => 'Get started';
 
   @override
   String get skipSetup => 'Skip';
 
   @override
-  String get setupModeTitle => 'Choose a mode';
-
-  @override
-  String get localMode => 'Local only';
-
-  @override
-  String get localModeBody => 'Use only this device, without cross-node mode';
-
-  @override
-  String get cloudMode => 'Connect to cluster';
-
-  @override
-  String get cloudModeBody => 'Connect to a cluster to work across devices';
+  String get setupModeTitle => 'Choose how to work';
 
   @override
   String get continueAction => 'Continue';
@@ -256,9 +243,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get signInSucceeded => 'Signed in';
-
-  @override
-  String get continueLocal => 'Skip and use local mode';
 
   @override
   String get preferencesTitle => 'Personalize';
@@ -425,4 +409,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get newPromptTitle => 'What are we working on?';
+
+  @override
+  String get offlineMode => 'Offline';
+
+  @override
+  String get offlineModeBody =>
+      'Work on this device without connecting to a cluster';
+
+  @override
+  String get clusterMode => 'Cluster';
+
+  @override
+  String get clusterModeBody =>
+      'Connect across devices, with this device also available as a worker node';
+
+  @override
+  String get continueOffline => 'Skip, work offline';
 }

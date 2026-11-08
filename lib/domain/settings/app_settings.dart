@@ -8,10 +8,10 @@ enum AppAppearance { system, light, dark }
 enum AppColorMode { standard, system, custom }
 
 /// 首次初始化进度, 与路由和 UI 控件无关
-enum AppSetupStage { introduction, mode, login, preferences, complete }
+enum AppSetupStage { introduction, mode, login, complete }
 
-/// 本地模式不依赖产品云服务, 不限制第三方模型 API
-enum AppConnectionMode { local, cloud }
+/// 连接方式与工作节点选择独立, 集群也可使用本机节点
+enum AppConnectionMode { offline, cluster }
 
 /// 不依赖 Flutter 的不可变应用设置
 final class AppSettings {
@@ -21,7 +21,7 @@ final class AppSettings {
     this.colorMode = AppColorMode.standard,
     this.seedColor = 0xff6750a4,
     this.setupStage = AppSetupStage.introduction,
-    this.connectionMode = AppConnectionMode.local,
+    this.connectionMode = AppConnectionMode.offline,
   });
 
   final AppLanguage language;

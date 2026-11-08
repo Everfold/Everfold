@@ -55,33 +55,24 @@ final class AppSettingsController extends AsyncNotifier<AppSettings> {
     );
   }
 
-  /// 从介绍进入语言与外观设置, 不重置已有偏好
+  /// 从介绍进入使用方式选择, 不重置已有偏好
   Future<Result<void>> startSetup() => _update((s) {
     if (s.setupStage != AppSetupStage.introduction) {
       throw const AppFailure(FailureKind.validation);
     }
-    return s.copyWith(setupStage: AppSetupStage.preferences);
+    return s.copyWith(setupStage: AppSetupStage.mode);
   });
 
   /// 按引导顺序返回上一阶段, 保留语言, 外观与连接模式
   Future<Result<void>> backSetup() => _update(
     (s) => s.copyWith(
       setupStage: switch (s.setupStage) {
-        AppSetupStage.preferences => AppSetupStage.introduction,
-        AppSetupStage.mode => AppSetupStage.preferences,
+        AppSetupStage.mode => AppSetupStage.introduction,
         AppSetupStage.login => AppSetupStage.mode,
         _ => throw const AppFailure(FailureKind.validation),
       },
     ),
   );
-
-  /// 完成偏好步骤后进入模式选择, 默认值也可直接继续
-  Future<Result<void>> continuePreferencesSetup() => _update((s) {
-    if (s.setupStage != AppSetupStage.preferences) {
-      throw const AppFailure(FailureKind.validation);
-    }
-    return s.copyWith(setupStage: AppSetupStage.mode);
-  });
 
   Future<Result<void>> chooseConnectionMode(AppConnectionMode mode) =>
       _update((s) {
@@ -90,7 +81,7 @@ final class AppSettingsController extends AsyncNotifier<AppSettings> {
         }
         return s.copyWith(
           connectionMode: mode,
-          setupStage: mode == AppConnectionMode.local
+          setupStage: mode == AppConnectionMode.offline
               ? AppSetupStage.complete
               : AppSetupStage.login,
         );
@@ -98,7 +89,7 @@ final class AppSettingsController extends AsyncNotifier<AppSettings> {
 
   // 仅完成初始化, 不创建登录状态或保存任何凭据
   Future<Result<void>> continueConnectionSetup() => _update((s) {
-    if (s.connectionMode != AppConnectionMode.cloud ||
+    if (s.connectionMode != AppConnectionMode.cluster ||
         s.setupStage != AppSetupStage.login) {
       throw const AppFailure(FailureKind.validation);
     }
@@ -107,7 +98,7 @@ final class AppSettingsController extends AsyncNotifier<AppSettings> {
 
   Future<Result<void>> skipSetup() => _update(
     (s) => s.copyWith(
-      connectionMode: AppConnectionMode.local,
+      connectionMode: AppConnectionMode.offline,
       setupStage: AppSetupStage.complete,
     ),
   );

@@ -52,7 +52,7 @@ void main() {
     );
     expect(
       tester
-          .widget<TextButton>(find.widgetWithText(TextButton, '跳过, 使用本地模式'))
+          .widget<TextButton>(find.widgetWithText(TextButton, '跳过，离线使用'))
           .onPressed,
       isNull,
     );
@@ -61,7 +61,7 @@ void main() {
   testWidgets('首次介绍可跳过, 重启后不再显示', (tester) async {
     final store = MemoryPreferencesStore();
     await pumpApp(tester, store);
-    expect(find.text('初始化'), findsOneWidget);
+    expect(find.text('开始使用'), findsOneWidget);
     await tap(tester, '跳过');
     expect(find.byType(SessionPage), findsOneWidget);
     await tester.pumpWidget(const SizedBox());
@@ -69,90 +69,47 @@ void main() {
     await pumpApp(tester, store);
     expect(find.byType(SessionPage), findsOneWidget);
   });
-  testWidgets('本地初始化先设置语言与外观, 再选择模式并完成', (tester) async {
+  testWidgets('窄屏双倍字号欢迎页可选择语言并完成离线引导', (tester) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(320, 900);
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
     final store = MemoryPreferencesStore();
     await pumpApp(tester, store);
-    await tap(tester, '初始化');
-    expect(find.text('个性化设置'), findsOneWidget);
-    expect(find.text('选择使用模式'), findsNothing);
-    expect(find.byKey(const ValueKey('connect-model')), findsNothing);
-    expect(
-      tester.getTopLeft(find.text('语言')).dy,
-      lessThan(tester.getTopLeft(find.text('明暗模式')).dy),
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const ValueKey('setup-language')),
+        matching: find.byType(TextField),
+      ),
     );
-    await tap(tester, '深色');
-    expect(
-      Theme.of(tester.element(find.byType(Scaffold))).brightness,
-      Brightness.dark,
-    );
-    await tap(tester, '继续');
-    expect(find.text('选择使用模式'), findsOneWidget);
-    await tap(tester, '进入 Everfold');
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('English').last);
+    await tester.pumpAndSettle();
+    await tap(tester, 'Get started');
+    expect(find.text('Choose how to work'), findsOneWidget);
+    expect(find.text('Personalize'), findsNothing);
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.text('Get started'), findsOneWidget);
+    await tap(tester, 'Get started');
+    await tap(tester, 'Open Everfold');
     expect(find.byType(SessionPage), findsOneWidget);
     final saved = AppSettingsDto.fromJson(
       jsonDecode((await store.readString('everfold.app_settings.v1'))!),
     ).settings;
-    expect(saved.appearance, AppAppearance.dark);
-    expect(saved.connectionMode, AppConnectionMode.local);
+    expect(saved.language, AppLanguage.english);
+    expect(saved.appearance, AppAppearance.system);
+    expect(saved.connectionMode, AppConnectionMode.offline);
     expect(saved.setupStage, AppSetupStage.complete);
-  });
-
-  testWidgets('首步选择的语言与外观立即应用到模式选择, 返回时仍保留', (tester) async {
-    await pumpApp(tester, MemoryPreferencesStore());
-    await tap(tester, '初始化');
-    await tap(tester, '深色');
-    await tap(tester, 'English');
-    expect(find.text('Personalize'), findsOneWidget);
-    await tap(tester, 'Continue');
-    expect(find.text('Choose a mode'), findsOneWidget);
-    expect(find.text('Connect to cluster'), findsOneWidget);
-    expect(
-      Theme.of(tester.element(find.byType(Scaffold))).brightness,
-      Brightness.dark,
-    );
-    await tester.binding.handlePopRoute();
-    await tester.pumpAndSettle();
-    expect(find.text('Personalize'), findsOneWidget);
-    await tap(tester, 'Continue');
-    await tap(tester, 'Open Everfold');
-    expect(find.byType(SessionPage), findsOneWidget);
-    expect(tester.takeException(), isNull);
-  });
-  testWidgets('系统默认语言与主题无需修改即可完成初始化', (tester) async {
-    final store = MemoryPreferencesStore();
-    await pumpApp(tester, store);
-    await tap(tester, '初始化');
-    await tap(tester, '继续');
-    await tap(tester, '进入 Everfold');
-    final container = ProviderScope.containerOf(
-      tester.element(find.byType(SessionPage)),
-    );
-    expect(
-      container.read(appSettingsControllerProvider).requireValue,
-      const AppSettings(setupStage: AppSetupStage.complete),
-    );
-  });
-
-  testWidgets('从偏好返回欢迎后跳过, 保留已选外观', (tester) async {
-    await pumpApp(tester, MemoryPreferencesStore());
-    await tap(tester, '初始化');
-    await tap(tester, '深色');
-    await tester.tap(find.byIcon(Icons.arrow_back));
-    await tester.pumpAndSettle();
-    expect(find.text('初始化'), findsOneWidget);
-    await tap(tester, '跳过');
-    expect(find.byType(SessionPage), findsOneWidget);
-    expect(
-      Theme.of(tester.element(find.byType(Scaffold))).brightness,
-      Brightness.dark,
-    );
   });
 
   for (final stage in AppSetupStage.values) {
     testWidgets('$stage 重启恢复对应步骤, 保留语言和外观, 不重置完成状态', (tester) async {
       final expected = AppSettings(
         setupStage: stage,
-        connectionMode: AppConnectionMode.cloud,
+        connectionMode: AppConnectionMode.cluster,
         language: AppLanguage.english,
         appearance: AppAppearance.dark,
         colorMode: AppColorMode.custom,
@@ -176,8 +133,7 @@ void main() {
         );
         final title = switch (stage) {
           AppSetupStage.introduction => 'Everfold',
-          AppSetupStage.preferences => 'Personalize',
-          AppSetupStage.mode => 'Choose a mode',
+          AppSetupStage.mode => 'Choose how to work',
           AppSetupStage.login => 'Connect to cluster',
           AppSetupStage.complete => 'What are we working on?',
         };
@@ -193,22 +149,15 @@ void main() {
     });
   }
 
-  testWidgets('偏好继续与本地完成保存失败时不越过当前步骤', (tester) async {
+  testWidgets('旧偏好步骤恢复到方式选择, 保存失败可重试', (tester) async {
     final store = TestPreferencesStore(
-      value: '{"language":"zh","appearance":"dark","setupStage":"preferences"}',
+      value: '{"language":"zh","appearance":"dark","setupStage":"preferences","connectionMode":"local"}',
     );
     await pumpApp(tester, store);
-    store.failWrite = true;
-    await tap(tester, '继续');
-    expect(find.text('个性化设置'), findsOneWidget);
-    expect(find.text('无法保存设置, 请重试'), findsOneWidget);
-    expect(find.text('选择使用模式'), findsNothing);
-    store.failWrite = false;
-    await tap(tester, '继续');
-    expect(find.text('选择使用模式'), findsOneWidget);
+    expect(find.text('选择使用方式'), findsOneWidget);
+    expect(find.text('个性化设置'), findsNothing);
     store.failWrite = true;
     await tap(tester, '进入 Everfold');
-    expect(find.text('选择使用模式'), findsOneWidget);
     expect(find.byType(SessionPage), findsNothing);
     store.failWrite = false;
     await tap(tester, '进入 Everfold');
@@ -220,7 +169,7 @@ void main() {
   });
 
   for (final width in [320.0, 1280.0]) {
-    testWidgets('宽度 $width 双倍字号下可完成语言, 主题与模式选择', (tester) async {
+    testWidgets('宽度 $width 双倍字号下旧引导可恢复并完成方式选择', (tester) async {
       tester.view.devicePixelRatio = 1;
       tester.view.physicalSize = Size(width, 900);
       tester.platformDispatcher.textScaleFactorTestValue = 2;
@@ -236,22 +185,18 @@ void main() {
           },
         ),
       );
-      await tap(tester, 'English');
-      await tap(tester, 'Dark');
-      await tap(tester, 'Continue');
-      expect(find.text('Choose a mode'), findsOneWidget);
-      await tap(tester, 'Open Everfold');
+      expect(find.text('选择使用方式'), findsOneWidget);
+      await tap(tester, '进入 Everfold');
       expect(find.byType(SessionPage), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
   }
 
-  testWidgets('重启不恢复连接成功状态, 仍可跳过使用本地模式', (tester) async {
+  testWidgets('重启不恢复连接成功状态, 仍可跳过离线使用', (tester) async {
     final store = MemoryPreferencesStore();
     await pumpApp(tester, store);
-    await tap(tester, '初始化');
-    await tap(tester, '继续');
-    await tester.tap(find.byKey(const ValueKey('mode-cloud')));
+    await tap(tester, '开始使用');
+    await tester.tap(find.byKey(const ValueKey('mode-cluster')));
     await tester.pumpAndSettle();
     await tap(tester, '继续');
     expect(find.text('连接'), findsOneWidget);
@@ -269,7 +214,7 @@ void main() {
     );
     expect(
       tester
-          .widget<TextButton>(find.widgetWithText(TextButton, '跳过, 使用本地模式'))
+          .widget<TextButton>(find.widgetWithText(TextButton, '跳过，离线使用'))
           .onPressed,
       isNull,
     );
@@ -281,11 +226,11 @@ void main() {
     await pumpApp(tester, store);
     expect(find.text('连接'), findsOneWidget);
     expect(find.text('下一步'), findsNothing);
-    await tap(tester, '跳过, 使用本地模式');
+    await tap(tester, '跳过，离线使用');
     expect(find.byType(SessionPage), findsOneWidget);
   });
   for (final provider in ['局域网', '自部署', '测试云']) {
-    testWidgets('$provider 连接成功后直接完成初始化, 不保存输入', (tester) async {
+    testWidgets('$provider 连接成功后直接完成引导, 不保存输入', (tester) async {
       final store = MemoryPreferencesStore(
         initialValues: {
           'everfold.app_settings.v1':
@@ -334,7 +279,7 @@ void main() {
       expect(saved, isNot(contains('connection-user')));
       final settings = AppSettingsDto.fromJson(jsonDecode(saved)).settings;
       expect(settings.setupStage, AppSetupStage.complete);
-      expect(settings.connectionMode, AppConnectionMode.cloud);
+      expect(settings.connectionMode, AppConnectionMode.cluster);
       final container = ProviderScope.containerOf(
         tester.element(find.byType(SessionPage)),
       );
@@ -352,7 +297,7 @@ void main() {
     await tester.pumpAndSettle();
     store.failWrite = true;
     await tap(tester, '下一步');
-    expect(find.text('无法保存设置, 请重试'), findsOneWidget);
+    expect(find.text('无法保存设置，请重试'), findsOneWidget);
     expect(find.text('下一步'), findsOneWidget);
     expectConnectionNavigationFrozen(tester);
     store.failWrite = false;
@@ -363,7 +308,7 @@ void main() {
     );
     expect(container.read(clustersControllerProvider), hasLength(1));
   });
-  testWidgets('连接前逐步返回模式与偏好设置, 重进连接页可重新配置', (tester) async {
+  testWidgets('连接前逐步返回方式选择与欢迎页, 重进连接页可重新配置', (tester) async {
     final store = MemoryPreferencesStore(
       initialValues: {
         'everfold.app_settings.v1':
@@ -373,21 +318,11 @@ void main() {
     await pumpApp(tester, store);
     await tester.tap(find.byIcon(Icons.arrow_back));
     await tester.pumpAndSettle();
-    expect(find.text('选择使用模式'), findsOneWidget);
+    expect(find.text('选择使用方式'), findsOneWidget);
     await tester.binding.handlePopRoute();
     await tester.pumpAndSettle();
-    expect(find.text('个性化设置'), findsOneWidget);
-    expect(
-      tester
-          .widget<IconButton>(
-            find.byWidgetPredicate(
-              (widget) => widget is IconButton && widget.tooltip == '返回',
-            ),
-          )
-          .onPressed,
-      isNotNull,
-    );
-    await tap(tester, '继续');
+    expect(find.text('开始使用'), findsOneWidget);
+    await tap(tester, '开始使用');
     await tap(tester, '继续');
     expect(
       tester
@@ -399,7 +334,7 @@ void main() {
     );
     expect(
       tester
-          .widget<TextButton>(find.widgetWithText(TextButton, '跳过, 使用本地模式'))
+          .widget<TextButton>(find.widgetWithText(TextButton, '跳过，离线使用'))
           .onPressed,
       isNotNull,
     );
@@ -410,8 +345,8 @@ void main() {
     final store = TestPreferencesStore()..failWrite = true;
     await pumpApp(tester, store);
     await tap(tester, '跳过');
-    expect(find.text('无法保存设置, 请重试'), findsOneWidget);
-    expect(find.text('初始化'), findsOneWidget);
+    expect(find.text('无法保存设置，请重试'), findsOneWidget);
+    expect(find.text('开始使用'), findsOneWidget);
     expect(find.byType(SessionPage), findsNothing);
     store.failWrite = false;
     await tap(tester, '跳过');

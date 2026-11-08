@@ -42,13 +42,13 @@ void main() {
   test('生成的英文文案使用当前工作台与集群术语, 不保留旧云登录表述', () async {
     final english = await AppLocalizations.delegate.load(const Locale('en'));
     expect(english.welcomeTagline, 'Your boundless AI workspace');
-    expect(english.cloudMode, 'Connect to cluster');
-    expect(english.loginTitle, english.cloudMode);
+    expect(english.clusterMode, 'Cluster');
+    expect(english.loginTitle, 'Connect to cluster');
     expect(english.cloudServices, 'Clusters');
     expect(english.identityProvider, 'Provider');
     expect(
-      english.localModeBody,
-      'Use only this device, without cross-node mode',
+      english.offlineModeBody,
+      'Work on this device without connecting to a cluster',
     );
     expect(english.toolCalls, 'Tool calls');
   });

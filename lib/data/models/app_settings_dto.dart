@@ -36,14 +36,14 @@ final class AppSettingsDto {
       'introduction' => AppSetupStage.introduction,
       'mode' => AppSetupStage.mode,
       'login' => AppSetupStage.login,
-      'preferences' => AppSetupStage.preferences,
+      'preferences' => AppSetupStage.mode,
       'complete' => AppSetupStage.complete,
       _ => throw const FormatException('Invalid setup stage'),
     };
     final connectionMode = switch (map['connectionMode']) {
-      null when !map.containsKey('connectionMode') => AppConnectionMode.local,
-      'local' => AppConnectionMode.local,
-      'cloud' => AppConnectionMode.cloud,
+      null when !map.containsKey('connectionMode') => AppConnectionMode.offline,
+      'local' || 'offline' => AppConnectionMode.offline,
+      'cloud' || 'cluster' => AppConnectionMode.cluster,
       _ => throw const FormatException('Invalid connection mode'),
     };
     return AppSettingsDto(

@@ -22,15 +22,15 @@ import 'ui/features/sessions/views/workspace_context_dialog.dart';
 @Preview(name: 'Setup · Desktop', size: Size(1280, 900))
 Widget setupPreview() => _preview();
 
-/// 引导的语言与外观预览, 使用独立内存偏好
-@Preview(name: 'Setup preferences · Mobile', size: Size(390, 844))
-@Preview(name: 'Setup preferences · Desktop', size: Size(1280, 900))
+/// 欢迎页的语言选择预览, 使用独立内存偏好
+@Preview(name: 'Setup language · Mobile', size: Size(390, 844))
+@Preview(name: 'Setup language · Desktop', size: Size(1280, 900))
 @Preview(
-  name: 'Setup preferences · Compact large text',
+  name: 'Setup language · Compact large text',
   size: Size(320, 900),
   textScaleFactor: 2,
 )
-Widget setupPreferencesPreview() => _preview(stage: AppSetupStage.preferences);
+Widget setupLanguagePreview() => _preview(stage: AppSetupStage.introduction);
 
 /// 已初始化的会话工作区预览
 @Preview(name: 'Workspace · Mobile', size: Size(390, 844))
@@ -156,7 +156,7 @@ Widget _preview({
     initialValues: {
       'everfold.app_settings.v1': jsonEncode({
         'language':
-            stage == AppSetupStage.login || stage == AppSetupStage.preferences
+            stage == AppSetupStage.login || stage == AppSetupStage.introduction
             ? 'zh'
             : 'system',
         'setupStage': stage.name,

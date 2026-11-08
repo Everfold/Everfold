@@ -133,7 +133,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get featureModels => '自由选择模型';
 
   @override
-  String get featureModelsBody => '本地模式也可以接入第三方模型服务';
+  String get featureModelsBody => '按任务选择合适的模型';
 
   @override
   String get featureWorkspace => '围绕工作区协作';
@@ -142,25 +142,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get featureWorkspaceBody => '将提示、预设和工作区放在同一个工作流中';
 
   @override
-  String get startSetup => '初始化';
+  String get startSetup => '开始使用';
 
   @override
   String get skipSetup => '跳过';
 
   @override
-  String get setupModeTitle => '选择使用模式';
-
-  @override
-  String get localMode => '仅本地';
-
-  @override
-  String get localModeBody => '不使用跨节点模式，仅在本机使用';
-
-  @override
-  String get cloudMode => '连接集群';
-
-  @override
-  String get cloudModeBody => '连接集群，使用多端能力';
+  String get setupModeTitle => '选择使用方式';
 
   @override
   String get continueAction => '继续';
@@ -248,9 +236,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get signInSucceeded => '登录成功';
-
-  @override
-  String get continueLocal => '跳过，使用本地模式';
 
   @override
   String get preferencesTitle => '个性化设置';
@@ -413,4 +398,19 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get newPromptTitle => '这次处理什么任务？';
+
+  @override
+  String get offlineMode => '离线';
+
+  @override
+  String get offlineModeBody => '不连接集群，在此设备上工作';
+
+  @override
+  String get clusterMode => '集群';
+
+  @override
+  String get clusterModeBody => '连接集群使用多端能力，也可选择本机作为工作节点';
+
+  @override
+  String get continueOffline => '跳过，离线使用';
 }

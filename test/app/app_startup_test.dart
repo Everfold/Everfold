@@ -46,7 +46,7 @@ void main() {
     final store = TestPreferencesStore()..failRead = true;
     await pumpApp(tester, store);
     await tester.pumpAndSettle();
-    expect(find.text('无法访问本地存储, 请重试'), findsOneWidget);
+    expect(find.text('无法访问本地存储，请重试'), findsOneWidget);
     expect(find.textContaining('private'), findsNothing);
     expect(store.reads, 1);
     store.failRead = false;
@@ -78,7 +78,7 @@ void main() {
     expect(container.read(appRouterProvider), same(router));
     await controller.setLanguage(AppLanguage.system);
     await tester.pumpAndSettle();
-    expect(find.text('这次处理什么任务?'), findsOneWidget);
+    expect(find.text('这次处理什么任务？'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }

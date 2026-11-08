@@ -344,10 +344,10 @@ abstract class AppLocalizations {
   /// **'自由选择模型'**
   String get featureModels;
 
-  /// 说明本地模式也支持连接第三方模型服务。
+  /// 按任务选择合适的模型。
   ///
   /// In zh, this message translates to:
-  /// **'本地模式也可以接入第三方模型服务'**
+  /// **'按任务选择合适的模型'**
   String get featureModelsBody;
 
   /// 欢迎页面介绍工作区协作能力的功能标题。
@@ -362,10 +362,10 @@ abstract class AppLocalizations {
   /// **'将提示、预设和工作区放在同一个工作流中'**
   String get featureWorkspaceBody;
 
-  /// 欢迎页面开始首次设置的按钮标签。
+  /// 开始使用。
   ///
   /// In zh, this message translates to:
-  /// **'初始化'**
+  /// **'开始使用'**
   String get startSetup;
 
   /// 跳过首次设置的操作标签。
@@ -374,35 +374,11 @@ abstract class AppLocalizations {
   /// **'跳过'**
   String get skipSetup;
 
-  /// 首次设置中选择本地模式或集群模式的页面标题。
+  /// 选择使用方式。
   ///
   /// In zh, this message translates to:
-  /// **'选择使用模式'**
+  /// **'选择使用方式'**
   String get setupModeTitle;
-
-  /// 仅在当前设备使用应用的模式名称。
-  ///
-  /// In zh, this message translates to:
-  /// **'仅本地'**
-  String get localMode;
-
-  /// 说明仅本地模式不使用跨节点能力。
-  ///
-  /// In zh, this message translates to:
-  /// **'不使用跨节点模式，仅在本机使用'**
-  String get localModeBody;
-
-  /// 连接集群以使用多端能力的模式名称。
-  ///
-  /// In zh, this message translates to:
-  /// **'连接集群'**
-  String get cloudMode;
-
-  /// 说明连接集群模式支持跨设备使用。
-  ///
-  /// In zh, this message translates to:
-  /// **'连接集群，使用多端能力'**
-  String get cloudModeBody;
 
   /// 继续当前流程的通用按钮标签。
   ///
@@ -577,12 +553,6 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'登录成功'**
   String get signInSucceeded;
-
-  /// 跳过连接或登录步骤并使用本地模式的操作标签。
-  ///
-  /// In zh, this message translates to:
-  /// **'跳过，使用本地模式'**
-  String get continueLocal;
 
   /// 首次设置中的个性化设置页面标题。
   ///
@@ -907,6 +877,36 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'这次处理什么任务？'**
   String get newPromptTitle;
+
+  /// 离线。
+  ///
+  /// In zh, this message translates to:
+  /// **'离线'**
+  String get offlineMode;
+
+  /// 不连接集群，在此设备上工作。
+  ///
+  /// In zh, this message translates to:
+  /// **'不连接集群，在此设备上工作'**
+  String get offlineModeBody;
+
+  /// 集群。
+  ///
+  /// In zh, this message translates to:
+  /// **'集群'**
+  String get clusterMode;
+
+  /// 连接集群使用多端能力，也可选择本机作为工作节点。
+  ///
+  /// In zh, this message translates to:
+  /// **'连接集群使用多端能力，也可选择本机作为工作节点'**
+  String get clusterModeBody;
+
+  /// 跳过，离线使用。
+  ///
+  /// In zh, this message translates to:
+  /// **'跳过，离线使用'**
+  String get continueOffline;
 }
 
 class _AppLocalizationsDelegate

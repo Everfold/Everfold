@@ -28,8 +28,31 @@ void main() {
       'colorMode': 'standard',
       'seedColor': const AppSettings().seedColor,
       'setupStage': 'introduction',
-      'connectionMode': 'local',
+      'connectionMode': 'offline',
     });
+  });
+
+  test('旧连接方式兼容读取, 新名称可往返保存', () {
+    for (final entry in {
+      'local': AppConnectionMode.offline,
+      'cloud': AppConnectionMode.cluster,
+    }.entries) {
+      final settings = AppSettingsDto.fromJson({
+        'language': 'zh',
+        'connectionMode': entry.key,
+        'setupStage': 'preferences',
+      }).settings;
+      expect(settings.connectionMode, entry.value);
+      expect(settings.setupStage, AppSetupStage.mode);
+      expect(
+        AppSettingsDto(settings).toJson()['connectionMode'],
+        entry.value.name,
+      );
+      expect(
+        AppSettingsDto.fromJson(AppSettingsDto(settings).toJson()).settings,
+        settings,
+      );
+    }
   });
 
   test('明暗与语言全部组合可持久化往返', () {

@@ -90,7 +90,7 @@ void main() {
     final window = TestDesktopWindow();
     await pumpApp(tester, window: window, store: store);
     await tester.pumpAndSettle();
-    expect(find.text('无法访问本地存储, 请重试'), findsOneWidget);
+    expect(find.text('无法访问本地存储，请重试'), findsOneWidget);
     await tester.tap(control('minimize'));
     expect(window.minimizes, 1);
     store.failRead = false;
@@ -99,14 +99,13 @@ void main() {
     window.failCommands = true;
     await tester.tap(control('close'));
     await tester.pump();
-    expect(find.text('无法操作窗口, 请重试'), findsOneWidget);
+    expect(find.text('无法操作窗口，请重试'), findsOneWidget);
     expect(find.textContaining('private'), findsNothing);
     expect(tester.takeException(), isNull);
   });
 
   for (final stage in [
     AppSetupStage.introduction,
-    AppSetupStage.preferences,
     AppSetupStage.mode,
     AppSetupStage.login,
   ]) {

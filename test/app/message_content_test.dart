@@ -103,7 +103,7 @@ void main() {
     await pumpContent(tester, const MessageMarkdown(data: '```\ncopy me\n```'));
     await tester.tap(find.byTooltip('复制代码'));
     await tester.pumpAndSettle();
-    expect(find.text('操作未完成, 请重试'), findsOneWidget);
+    expect(find.text('操作未完成，请重试'), findsOneWidget);
     expect(find.textContaining('private clipboard detail'), findsNothing);
     expect(tester.takeException(), isNull);
   });

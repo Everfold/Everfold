@@ -154,14 +154,14 @@ void main() {
       container.read(appSettingsControllerProvider).requireValue.appearance,
       AppAppearance.system,
     );
-    expect(find.text('无法保存设置, 请重试'), findsOneWidget);
+    expect(find.text('无法保存设置，请重试'), findsOneWidget);
     await select(tester, 'language-english');
     expect(
       container.read(appSettingsControllerProvider).requireValue.language,
       AppLanguage.chinese,
     );
     expect(store.writes, 2);
-    expect(find.text('无法保存设置, 请重试'), findsOneWidget);
+    expect(find.text('无法保存设置，请重试'), findsOneWidget);
     store.failWrite = false;
     await select(tester, 'language-english');
     expect(find.text('Settings'), findsOneWidget);

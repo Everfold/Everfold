@@ -193,7 +193,7 @@ void main() {
     final before = container.read(appSettingsControllerProvider).requireValue;
     await openSettings(tester);
     await tap(tester, find.byKey(ValueKey('seed-${Colors.red.toARGB32()}')));
-    expect(find.text('无法保存设置, 请重试'), findsOneWidget);
+    expect(find.text('无法保存设置，请重试'), findsOneWidget);
     expect(container.read(appSettingsControllerProvider).requireValue, before);
     await tap(tester, find.byTooltip('编辑颜色'));
     await tester.tap(find.text('取消'));

@@ -583,7 +583,7 @@ void main() {
     await tester.ensureVisible(send);
     await tester.tap(send);
     await tester.pumpAndSettle();
-    expect(find.text('未发送: 尚未接入模型'), findsOneWidget);
+    expect(find.text('未发送：尚未接入模型'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -624,7 +624,7 @@ void main() {
       await pumpApp(tester, size: Size(width, 900), scale: 2);
       expect(find.text('Everfold'), findsNothing);
       expect(find.byKey(const ValueKey('stop-run')), findsNothing);
-      final title = find.text('这次处理什么任务?');
+      final title = find.text('这次处理什么任务？');
       expect(title, findsOneWidget);
       expect(
         tester.widget<Text>(title).style,
@@ -647,7 +647,7 @@ void main() {
       await tester.ensureVisible(save);
       await tester.tap(save);
       await tester.pumpAndSettle();
-      expect(find.text('未发送: 尚未接入模型'), findsOneWidget);
+      expect(find.text('未发送：尚未接入模型'), findsOneWidget);
       expect(
         tester
             .widget<IconButton>(find.byKey(const ValueKey('stop-run')))
@@ -782,7 +782,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('send-prompt')));
     await tester.pumpAndSettle();
-    expect(find.text('未发送: 尚未接入模型'), findsOneWidget);
+    expect(find.text('未发送：尚未接入模型'), findsOneWidget);
     expect(
       tester
           .widget<IconButton>(find.byKey(const ValueKey('stop-run')))
@@ -1021,7 +1021,7 @@ void main() {
     await tester.tap(find.widgetWithText(TextButton, '删除'));
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('session-1')), findsNothing);
-    expect(find.text('这次处理什么任务?'), findsOneWidget);
+    expect(find.text('这次处理什么任务？'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
   testWidgets('设置接入模型没有后续动作', (tester) async {
@@ -1055,7 +1055,7 @@ void main() {
       await tester.ensureVisible(send);
       await tester.tap(send);
       await tester.pumpAndSettle();
-      expect(find.text('未发送: 尚未接入模型'), findsOneWidget);
+      expect(find.text('未发送：尚未接入模型'), findsOneWidget);
       tester.view.viewInsets = const FakeViewPadding(bottom: 360);
       addTearDown(tester.view.resetViewInsets);
       await tester.enterText(input, List.filled(10, '输入下一项任务').join('\n'));
