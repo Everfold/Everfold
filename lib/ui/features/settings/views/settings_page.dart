@@ -7,6 +7,7 @@ import '../../../../domain/common/result.dart';
 import '../../../../domain/settings/app_settings.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../core/layout/page_spacing.dart';
+import '../../../core/widgets/operation_feedback.dart';
 import 'seed_color_dialog.dart';
 
 /// 明暗, 配色与语言选择只在保存成功后生效
@@ -30,19 +31,27 @@ class SettingsContent extends HookConsumerWidget {
     final settings = ref.watch(appSettingsControllerProvider).requireValue;
     final controller = ref.read(appSettingsControllerProvider.notifier);
     final busy = useState(false);
-    final error = useState(false);
 
     Future<void> save(Future<Result<void>> Function() command) async {
       if (busy.value) return;
       busy.value = true;
-      error.value = false;
+      clearOperationFeedback(context);
+      var failed = false;
       try {
         final result = await command();
-        if (context.mounted) error.value = result is Failure<void>;
+        failed = result is Failure<void>;
       } catch (_) {
-        if (context.mounted) error.value = true;
+        failed = true;
       } finally {
-        if (context.mounted) busy.value = false;
+        if (context.mounted) {
+          busy.value = false;
+          if (failed) {
+            showOperationFeedback(
+              context,
+              AppLocalizations.of(context).settingsSaveFailure,
+            );
+          }
+        }
       }
     }
 
@@ -113,14 +122,6 @@ class SettingsContent extends HookConsumerWidget {
         ),
         // 保存状态固定在可视区域, 不随设置列表滚走
         if (busy.value) const LinearProgressIndicator(),
-        if (error.value)
-          Padding(
-            padding: pagePaddingOf(context),
-            child: Semantics(
-              liveRegion: true,
-              child: Text(strings.settingsSaveFailure),
-            ),
-          ),
       ],
     );
   }

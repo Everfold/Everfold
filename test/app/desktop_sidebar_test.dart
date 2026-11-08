@@ -355,6 +355,14 @@ void main() {
     await tester.pumpAndSettle();
     expect(router.routerDelegate.state.uri.path, '/sessions/$first');
     expect(find.text('Rename').hitTestable(), findsOneWidget);
+    final rename = find.widgetWithText(MenuItemButton, 'Rename');
+    final menuBounds = tester.getRect(rename);
+    expect(menuBounds.right, greaterThan(tester.getRect(sidebar).right));
+    // 菜单伸出侧栏的部分也必须能命中, 而非只绘制在边界之外。
+    await tester.tapAt(Offset(menuBounds.right - 8, menuBounds.center.dy));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('rename-session-input')), findsOneWidget);
+
     await tester.sendKeyEvent(LogicalKeyboardKey.escape);
     await tester.pumpAndSettle();
     final title = find.descendant(of: secondEntry, matching: find.byType(Text));

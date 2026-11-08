@@ -7,6 +7,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../../application/window/desktop_window_provider.dart';
 import '../../../domain/window/desktop_window.dart';
 import '../../../l10n/app_localizations.dart';
+import 'operation_feedback.dart';
 
 /// 在路由内容之外保留窗口控制, 弹窗不会覆盖标题栏
 class DesktopWindowFrame extends HookConsumerWidget {
@@ -40,8 +41,7 @@ class DesktopWindowFrame extends HookConsumerWidget {
       try {
         action();
       } catch (_) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(strings.windowActionFailure)));
+        showOperationFeedback(context, strings.windowActionFailure);
       }
     }
 

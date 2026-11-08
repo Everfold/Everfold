@@ -6,6 +6,7 @@ import '../../../application/settings/app_settings_controller.dart';
 import '../../../domain/common/result.dart';
 import '../../../domain/settings/app_settings.dart';
 import '../../../l10n/app_localizations.dart';
+import 'operation_feedback.dart';
 
 class DesktopSidebar extends ConsumerStatefulWidget {
   const DesktopSidebar({
@@ -44,10 +45,9 @@ class _DesktopSidebarState extends ConsumerState<DesktopSidebar> {
       _dragWidth = null;
     });
     if (!succeeded) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context).settingsSaveFailure),
-        ),
+      showOperationFeedback(
+        context,
+        AppLocalizations.of(context).settingsSaveFailure,
       );
     }
   }
