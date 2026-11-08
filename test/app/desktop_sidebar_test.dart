@@ -157,6 +157,37 @@ void main() {
     }
   });
 
+  testWidgets('折叠会话按高度截断, 保留当前会话和完整首字符', (tester) async {
+    await pumpApp(tester, size: const Size(1280, 400));
+    final ref = container(tester);
+    final sessions = ref.read(sessionsControllerProvider.notifier);
+    sessions.setDraft(null, '👨‍👩‍👧‍👦 family');
+    final current = sessions.submit(null)!;
+    for (var i = 0; i < 20; i++) {
+      sessions.setDraft(null, '任务 $i');
+      sessions.submit(null);
+    }
+    ref.read(appRouterProvider).go('/sessions/$current');
+    await tester.pumpAndSettle();
+    await tester.tap(toggle);
+    await tester.pumpAndSettle();
+    expect(find.byIcon(Icons.forum_outlined), findsNothing);
+    expect(
+      find.byKey(ValueKey('collapsed-session-$current')).hitTestable(),
+      findsOneWidget,
+    );
+    expect(find.text('👨‍👩‍👧‍👦'), findsOneWidget);
+    final entries = find.byWidgetPredicate(
+      (w) => w is IconButton && w.key.toString().contains('collapsed-session-'),
+    );
+    expect(entries.evaluate().length, 3);
+    expect(
+      find.byKey(const ValueKey('settings-navigation')).hitTestable(),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('折叠侧栏保留会话分组的展开状态', (tester) async {
     await pumpApp(tester);
     final sessions = container(tester)
@@ -198,11 +229,7 @@ void main() {
     await tester.pumpAndSettle();
     await pumpApp(tester, store: store);
     expect(tester.getSize(sidebar).width, 80);
-    await tester.tap(
-      find.byWidgetPredicate(
-        (widget) => widget is Tooltip && widget.message == 'Sessions',
-      ),
-    );
+    await tester.tap(toggle);
     await tester.pumpAndSettle();
     expect(tester.getSize(sidebar).width, width);
     expect(find.byKey(const ValueKey('workspace-navigation')), findsOneWidget);
@@ -334,7 +361,7 @@ void main() {
       router.go(path);
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull, reason: path);
-      expect(find.byType(NavigationRail), findsOneWidget);
+      if (path != '/') expect(find.byType(NavigationRail), findsOneWidget);
     }
   });
 }

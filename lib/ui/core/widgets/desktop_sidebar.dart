@@ -14,9 +14,11 @@ class DesktopSidebar extends ConsumerStatefulWidget {
     super.key,
     required this.availableWidth,
     required this.builder,
+    this.header,
   });
 
   final double availableWidth;
+  final Widget? header;
   final Widget Function(bool collapsed, VoidCallback? expand) builder;
 
   @override
@@ -92,26 +94,30 @@ class _DesktopSidebarState extends ConsumerState<DesktopSidebar> {
                       primary: false,
                       child: Padding(
                         padding: const EdgeInsets.all(8),
-                        child: Align(
-                          alignment: collapsed
-                              ? Alignment.center
-                              : AlignmentDirectional.centerEnd,
-                          child: IconButton(
-                            key: const ValueKey('sidebar-toggle'),
-                            tooltip: collapsed
-                                ? strings.navigationExpandSidebar
-                                : strings.navigationCollapseSidebar,
-                            onPressed: _saving
-                                ? null
-                                : () => _save(
-                                    () => controller.setSidebarCollapsed(
-                                      !collapsed,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            if (!collapsed && widget.header != null)
+                              Expanded(child: widget.header!),
+                            if (!collapsed && widget.header == null)
+                              const Spacer(),
+                            IconButton(
+                              key: const ValueKey('sidebar-toggle'),
+                              tooltip: collapsed
+                                  ? strings.navigationExpandSidebar
+                                  : strings.navigationCollapseSidebar,
+                              onPressed: _saving
+                                  ? null
+                                  : () => _save(
+                                      () => controller.setSidebarCollapsed(
+                                        !collapsed,
+                                      ),
                                     ),
-                                  ),
-                            icon: Icon(
-                              collapsed ? Icons.menu : Icons.menu_open,
+                              icon: Icon(
+                                collapsed ? Icons.menu : Icons.menu_open,
+                              ),
                             ),
-                          ),
+                          ],
                         ),
                       ),
                     ),

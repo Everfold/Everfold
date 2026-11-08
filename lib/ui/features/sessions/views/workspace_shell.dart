@@ -95,6 +95,7 @@ class WorkspaceShell extends ConsumerWidget {
 
         // 同一导航内容用于桌面侧栏和窄屏抽屉, 避免两套入口顺序不一致
         final sidebar = _WorkspaceNavigation(
+          showNewSession: !wide,
           location: location,
           sessions: sessions,
           onNewSession: () => navigate('/'),
@@ -124,9 +125,32 @@ class WorkspaceShell extends ConsumerWidget {
                 if (wide)
                   DesktopSidebar(
                     availableWidth: constraints.maxWidth,
+                    header: LayoutBuilder(
+                      builder: (context, constraints) =>
+                          constraints.maxWidth < 160
+                          ? IconButton.filledTonal(
+                              key: const ValueKey('new-session'),
+                              tooltip: strings.sessionNew,
+                              onPressed: () => navigate('/'),
+                              icon: const Icon(Icons.add),
+                            )
+                          : FilledButton.tonalIcon(
+                              key: const ValueKey('new-session'),
+                              onPressed: () => navigate('/'),
+                              icon: const Icon(Icons.add),
+                              label: Text(
+                                strings.sessionNew,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                    ),
                     builder: (collapsed, expand) => collapsed
                         ? _WorkspaceRail(
-                            onExpand: expand,
+                            sessions: sessions,
+                            location: location,
+                            onOpenSession: (session) =>
+                                navigate('/sessions/${session.id}'),
                             onNewSession: () => navigate('/'),
                             onOpenClusters: () =>
                                 navigate('/cloud', push: true),
@@ -154,72 +178,122 @@ class WorkspaceShell extends ConsumerWidget {
 // 导航区只接收显示数据和操作回调, 不负责修改会话状态
 class _WorkspaceRail extends StatelessWidget {
   const _WorkspaceRail({
-    required this.onExpand,
+    required this.sessions,
+    required this.location,
+    required this.onOpenSession,
     required this.onNewSession,
     required this.onOpenClusters,
     required this.onOpenSettings,
   });
-
-  final VoidCallback? onExpand;
-  final VoidCallback onNewSession;
-  final VoidCallback onOpenClusters;
-  final VoidCallback onOpenSettings;
+  final List<AgentSession> sessions;
+  final String location;
+  final ValueChanged<AgentSession> onOpenSession;
+  final VoidCallback onNewSession, onOpenClusters, onOpenSettings;
 
   @override
   Widget build(BuildContext context) {
     final strings = AppLocalizations.of(context);
-    return DesktopNavigationRail(
-      key: const ValueKey('workspace-navigation-rail'),
-      groupAlignment: 1,
-      leading: IconButton.filledTonal(
-        key: const ValueKey('new-session'),
-        tooltip: strings.sessionNew,
-        onPressed: onNewSession,
-        icon: const Icon(Icons.add),
-      ),
-      onDestinationSelected: (index) => switch (index) {
-        0 => onExpand?.call(),
-        1 => onOpenClusters(),
-        _ => onOpenSettings(),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const extent = 56.0;
+        final capacity = ((constraints.maxHeight - extent * 3) / extent)
+            .floor()
+            .clamp(0, sessions.length);
+        final visible = sessions.take(capacity).toList();
+        final current = sessions
+            .where((s) => location == '/sessions/${s.id}')
+            .firstOrNull;
+        if (capacity > 0 && current != null && !visible.contains(current)) {
+          visible[capacity - 1] = current;
+        }
+        Widget slot(Widget child) => SizedBox(
+          height: extent,
+          child: Center(child: child),
+        );
+        return SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  children: [
+                    slot(
+                      IconButton.filledTonal(
+                        key: const ValueKey('new-session'),
+                        tooltip: strings.sessionNew,
+                        onPressed: onNewSession,
+                        icon: const Icon(Icons.add),
+                      ),
+                    ),
+                    for (final session in visible)
+                      slot(
+                        IconButton.filledTonal(
+                          key: ValueKey('collapsed-session-${session.id}'),
+                          tooltip: session.title.isEmpty
+                              ? strings.sessionNew
+                              : session.title,
+                          isSelected: session == current,
+                          style: IconButton.styleFrom(
+                            backgroundColor: session == current
+                                ? Theme.of(context).colorScheme.primaryContainer
+                                : null,
+                          ),
+                          onPressed: () => onOpenSession(session),
+                          icon: SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: FittedBox(
+                              child: Text(
+                                session.messages
+                                        .where(
+                                          (m) => m.role == MessageRole.user,
+                                        )
+                                        .firstOrNull
+                                        ?.content
+                                        .trim()
+                                        .characters
+                                        .firstOrNull ??
+                                    '?',
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+                Column(
+                  children: [
+                    slot(
+                      IconButton(
+                        key: const ValueKey('cloud-navigation'),
+                        tooltip: strings.clusterTitle,
+                        onPressed: onOpenClusters,
+                        icon: const Icon(Icons.cloud_outlined),
+                      ),
+                    ),
+                    slot(
+                      IconButton(
+                        key: const ValueKey('settings-navigation'),
+                        tooltip: strings.settingsTitle,
+                        onPressed: onOpenSettings,
+                        icon: const Icon(Icons.settings_outlined),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
       },
-      destinations: [
-        NavigationRailDestination(
-          icon: Tooltip(
-            message: strings.sessionTitle,
-            excludeFromSemantics: true,
-            child: const Icon(Icons.forum_outlined),
-          ),
-          label: Text(strings.sessionTitle),
-        ),
-        NavigationRailDestination(
-          icon: Tooltip(
-            message: strings.clusterTitle,
-            excludeFromSemantics: true,
-            child: const Icon(
-              Icons.cloud_outlined,
-              key: ValueKey('cloud-navigation'),
-            ),
-          ),
-          label: Text(strings.clusterTitle),
-        ),
-        NavigationRailDestination(
-          icon: Tooltip(
-            message: strings.settingsTitle,
-            excludeFromSemantics: true,
-            child: const Icon(
-              Icons.settings_outlined,
-              key: ValueKey('settings-navigation'),
-            ),
-          ),
-          label: Text(strings.settingsTitle),
-        ),
-      ],
     );
   }
 }
 
 class _WorkspaceNavigation extends StatelessWidget {
   const _WorkspaceNavigation({
+    this.showNewSession = true,
     required this.location,
     required this.sessions,
     required this.onNewSession,
@@ -229,6 +303,7 @@ class _WorkspaceNavigation extends StatelessWidget {
     required this.onEditSession,
   });
 
+  final bool showNewSession;
   final String location;
   final List<AgentSession> sessions;
   final VoidCallback onNewSession;
@@ -277,15 +352,16 @@ class _WorkspaceNavigation extends StatelessWidget {
           ),
         ),
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: FilledButton.tonalIcon(
-              key: const ValueKey('new-session'),
-              onPressed: onNewSession,
-              icon: const Icon(Icons.add),
-              label: Text(strings.sessionNew),
+          if (showNewSession)
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: FilledButton.tonalIcon(
+                key: const ValueKey('new-session'),
+                onPressed: onNewSession,
+                icon: const Icon(Icons.add),
+                label: Text(strings.sessionNew),
+              ),
             ),
-          ),
           const Divider(key: ValueKey('session-list-divider')),
           // 只折叠列表的显示, 会话与草稿仍由页面外的 Application 状态持有
           ExpansionTile(
