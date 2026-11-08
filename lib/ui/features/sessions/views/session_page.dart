@@ -1,4 +1,5 @@
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
@@ -158,11 +159,27 @@ class _EmptySessionBody extends StatelessWidget {
           child: Center(
             child: Padding(
               padding: const EdgeInsets.all(16),
-              child: Text(
-                strings.sessionNewPromptTitle,
-                key: const ValueKey('session-task-title'),
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headlineMedium,
+              child: Column(
+                key: const ValueKey('session-welcome-content'),
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Opacity(
+                    opacity: 0.5,
+                    child: SvgPicture.asset(
+                      'assets/icons/icon.svg',
+                      width: 64,
+                      height: 64,
+                      excludeFromSemantics: true,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    strings.sessionNewPromptTitle,
+                    key: const ValueKey('session-task-title'),
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                ],
               ),
             ),
           ),

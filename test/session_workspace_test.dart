@@ -237,7 +237,7 @@ void main() {
   });
 
   for (final width in [320.0, 390.0, 840.0, 1280.0]) {
-    testWidgets('宽度 $width 双倍字号下提示居中, 输入区贴底且键盘不丢失草稿', (tester) async {
+    testWidgets('宽度 $width 双倍字号下 Logo 与提示整体居中, 输入区贴底且键盘不丢失草稿', (tester) async {
       await pumpApp(tester, size: Size(width, 900), scale: 2);
       final page = find.byType(SessionPage);
       final welcome = find.byKey(const ValueKey('session-welcome-area'));
@@ -250,7 +250,9 @@ void main() {
         closeTo(tester.getCenter(welcome).dx, 0.1),
       );
       expect(
-        tester.getCenter(title).dy,
+        tester
+            .getCenter(find.byKey(const ValueKey('session-welcome-content')))
+            .dy,
         closeTo(tester.getCenter(welcome).dy, 0.1),
       );
       expect(tester.widget<Text>(title).textAlign, TextAlign.center);
