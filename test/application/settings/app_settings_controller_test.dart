@@ -65,21 +65,27 @@ void main() {
   test('侧栏宽度和折叠按顺序保存, 不覆盖其他偏好, 拒绝非法宽度', () async {
     await container.read(appSettingsControllerProvider.future);
     final controller = container.read(appSettingsControllerProvider.notifier);
-    for (final width in [255.0, 481.0, double.nan, double.infinity]) {
-      expect(await controller.setSidebarWidth(width), isA<Failure<void>>());
+    for (final width in [0.14, 0.51, double.nan, double.infinity]) {
+      expect(
+        await controller.setSidebarWidthFraction(width),
+        isA<Failure<void>>(),
+      );
     }
     expect(store.writes, 0);
     await Future.wait([
-      controller.setSidebarWidth(440),
+      controller.setSidebarWidthFraction(0.34375),
       controller.setSidebarCollapsed(true),
       controller.setAppearance(AppAppearance.dark),
     ]);
     final saved = (await LocalAppSettingsRepository(store).load()).getOrThrow();
-    expect(saved.sidebarWidth, 440);
+    expect(saved.sidebarWidthFraction, 0.34375);
     expect(saved.sidebarCollapsed, isTrue);
     expect(saved.appearance, AppAppearance.dark);
     store.failWrite = true;
-    expect(await controller.setSidebarWidth(320), isA<Failure<void>>());
+    expect(
+      await controller.setSidebarWidthFraction(0.25),
+      isA<Failure<void>>(),
+    );
     expect(container.read(appSettingsControllerProvider).requireValue, saved);
   });
 

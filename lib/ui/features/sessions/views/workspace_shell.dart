@@ -379,7 +379,9 @@ class _WorkspaceNavigation extends StatelessWidget {
                 ListTile(
                   key: ValueKey('session-${session.id}'),
                   selected: location == '/sessions/${session.id}',
-                  leading: const Icon(Icons.chat_bubble_outline),
+                  leading: constraints.maxWidth < 220
+                      ? null
+                      : const Icon(Icons.chat_bubble_outline),
                   title: Text(
                     session.title.isEmpty ? strings.sessionNew : session.title,
                     maxLines: 1,

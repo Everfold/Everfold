@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
@@ -61,17 +59,20 @@ class _DesktopSidebarState extends ConsumerState<DesktopSidebar> {
     final strings = AppLocalizations.of(context);
     final colors = Theme.of(context).colorScheme;
     final collapsed = settings.sidebarCollapsed;
-    // 窗口缩小时只收紧显示宽度, 不覆盖用户保存的偏好。
-    final maxWidth = math.min(
-      AppSettings.maxSidebarWidth,
-      widget.availableWidth - 400,
+    final minWidth =
+        widget.availableWidth * AppSettings.minSidebarWidthFraction;
+    final maxWidth =
+        widget.availableWidth * AppSettings.maxSidebarWidthFraction;
+    double clamp(double width) => width.clamp(minWidth, maxWidth).toDouble();
+    final width = clamp(
+      _dragWidth ?? settings.sidebarWidthFraction * widget.availableWidth,
     );
-    double clamp(double width) =>
-        width.clamp(AppSettings.minSidebarWidth, maxWidth).toDouble();
-    final width = clamp(_dragWidth ?? settings.sidebarWidth);
     final rtl = Directionality.of(context) == TextDirection.rtl;
-    void resize(double value) =>
-        _save(() => controller.setSidebarWidth(clamp(value)));
+    void resize(double value) => _save(
+      () => controller.setSidebarWidthFraction(
+        clamp(value) / widget.availableWidth,
+      ),
+    );
     void expand() => _save(() => controller.setSidebarCollapsed(false));
 
     return SizedBox(
@@ -148,7 +149,7 @@ class _DesktopSidebarState extends ConsumerState<DesktopSidebar> {
                   const SingleActivator(LogicalKeyboardKey.arrowRight): () =>
                       resize(width + (rtl ? -16 : 16)),
                   const SingleActivator(LogicalKeyboardKey.home): () =>
-                      resize(AppSettings.minSidebarWidth),
+                      resize(minWidth),
                   const SingleActivator(LogicalKeyboardKey.end): () =>
                       resize(maxWidth),
                 },
@@ -167,7 +168,7 @@ class _DesktopSidebarState extends ConsumerState<DesktopSidebar> {
                     onIncrease: _saving || width >= maxWidth
                         ? null
                         : () => resize(width + 16),
-                    onDecrease: _saving || width <= AppSettings.minSidebarWidth
+                    onDecrease: _saving || width <= minWidth
                         ? null
                         : () => resize(width - 16),
                     child: Tooltip(
@@ -195,7 +196,10 @@ class _DesktopSidebarState extends ConsumerState<DesktopSidebar> {
                             setState(() => _dragWidth = null),
                         onDoubleTap: _saving
                             ? null
-                            : () => resize(const AppSettings().sidebarWidth),
+                            : () => resize(
+                                const AppSettings().sidebarWidthFraction *
+                                    widget.availableWidth,
+                              ),
                         child: Align(
                           alignment: AlignmentDirectional.centerEnd,
                           child: Container(

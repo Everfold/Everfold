@@ -43,37 +43,51 @@ class SectionShell extends ConsumerWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final wide = constraints.maxWidth >= 840;
-        final navigation = NavigationDrawer(
-          key: ValueKey('${section.name}-section-navigation'),
-          selectedIndex: 0,
-          onDestinationSelected: (_) {
-            if (!wide) scaffoldKey.currentState?.closeDrawer();
-          },
-          children: [
-            ListTile(
-              key: const ValueKey('return-to-workspace'),
-              leading: const Icon(Icons.arrow_back),
-              title: Text(strings.navigationReturnToWorkspace),
-              onTap: () {
-                if (!wide) scaffoldKey.currentState?.closeDrawer();
-                returnToWorkspace();
-              },
+        final navigation = LayoutBuilder(
+          builder: (context, bounds) => NavigationDrawerTheme(
+            data: NavigationDrawerTheme.of(context).copyWith(
+              indicatorSize: Size(
+                (bounds.maxWidth - 24).clamp(0, double.infinity),
+                56,
+              ),
             ),
-            const Divider(),
-            NavigationDrawerDestination(
-              icon: Icon(settings ? Icons.tune : Icons.hub_outlined),
-              label: Flexible(
-                child: Tooltip(
-                  message: destination,
-                  child: Text(
-                    destination,
+            child: NavigationDrawer(
+              key: ValueKey('${section.name}-section-navigation'),
+              selectedIndex: 0,
+              onDestinationSelected: (_) {
+                if (!wide) scaffoldKey.currentState?.closeDrawer();
+              },
+              children: [
+                ListTile(
+                  key: const ValueKey('return-to-workspace'),
+                  leading: const Icon(Icons.arrow_back),
+                  title: Text(
+                    strings.navigationReturnToWorkspace,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
+                  onTap: () {
+                    if (!wide) scaffoldKey.currentState?.closeDrawer();
+                    returnToWorkspace();
+                  },
                 ),
-              ),
+                const Divider(),
+                NavigationDrawerDestination(
+                  icon: Icon(settings ? Icons.tune : Icons.hub_outlined),
+                  label: Flexible(
+                    child: Tooltip(
+                      message: destination,
+                      child: Text(
+                        destination,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         );
         return Scaffold(
           key: scaffoldKey,

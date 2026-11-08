@@ -22,19 +22,19 @@ final class AppSettings {
     this.seedColor = 0xff6750a4,
     this.setupStage = AppSetupStage.introduction,
     this.connectionMode = AppConnectionMode.offline,
-    this.sidebarWidth = 360,
+    this.sidebarWidthFraction = 0.28125,
     this.sidebarCollapsed = false,
   });
 
-  static const minSidebarWidth = 256.0;
-  static const maxSidebarWidth = 480.0;
+  static const minSidebarWidthFraction = 0.15;
+  static const maxSidebarWidthFraction = 0.5;
 
   final AppLanguage language;
   final AppAppearance appearance;
   final AppColorMode colorMode;
   final AppSetupStage setupStage;
   final AppConnectionMode connectionMode;
-  final double sidebarWidth;
+  final double sidebarWidthFraction;
   final bool sidebarCollapsed;
 
   /// 不透明 ARGB 种子色, 领域层不依赖 Flutter Color
@@ -47,7 +47,7 @@ final class AppSettings {
     int? seedColor,
     AppSetupStage? setupStage,
     AppConnectionMode? connectionMode,
-    double? sidebarWidth,
+    double? sidebarWidthFraction,
     bool? sidebarCollapsed,
   }) => AppSettings(
     language: language ?? this.language,
@@ -56,7 +56,7 @@ final class AppSettings {
     seedColor: seedColor ?? this.seedColor,
     setupStage: setupStage ?? this.setupStage,
     connectionMode: connectionMode ?? this.connectionMode,
-    sidebarWidth: sidebarWidth ?? this.sidebarWidth,
+    sidebarWidthFraction: sidebarWidthFraction ?? this.sidebarWidthFraction,
     sidebarCollapsed: sidebarCollapsed ?? this.sidebarCollapsed,
   );
 
@@ -69,7 +69,7 @@ final class AppSettings {
       other.seedColor == seedColor &&
       other.setupStage == setupStage &&
       other.connectionMode == connectionMode &&
-      other.sidebarWidth == sidebarWidth &&
+      other.sidebarWidthFraction == sidebarWidthFraction &&
       other.sidebarCollapsed == sidebarCollapsed;
 
   @override
@@ -80,7 +80,7 @@ final class AppSettings {
     seedColor,
     setupStage,
     connectionMode,
-    sidebarWidth,
+    sidebarWidthFraction,
     sidebarCollapsed,
   );
 }

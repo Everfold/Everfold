@@ -87,15 +87,15 @@ final class AppSettingsController extends AsyncNotifier<AppSettings> {
         );
       });
 
-  Future<Result<void>> setSidebarWidth(double width) {
+  Future<Result<void>> setSidebarWidthFraction(double width) {
     if (!width.isFinite ||
-        width < AppSettings.minSidebarWidth ||
-        width > AppSettings.maxSidebarWidth) {
+        width < AppSettings.minSidebarWidthFraction ||
+        width > AppSettings.maxSidebarWidthFraction) {
       return Future.value(
         const Failure<void>(AppFailure(FailureKind.validation)),
       );
     }
-    return _update((current) => current.copyWith(sidebarWidth: width));
+    return _update((current) => current.copyWith(sidebarWidthFraction: width));
   }
 
   Future<Result<void>> setSidebarCollapsed(bool collapsed) =>

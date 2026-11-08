@@ -77,7 +77,7 @@ Widget collapsedWorkspacePreview() => _preview(
   stage: AppSetupStage.complete,
   language: 'en',
   sidebarCollapsed: true,
-  sidebarWidth: 440,
+  sidebarWidthFraction: 0.34375,
 );
 
 @Preview(name: 'Settings · Collapsed sidebar', size: Size(1280, 900))
@@ -233,7 +233,7 @@ Widget _preview({
   String? path,
   String? language,
   AppAppearance appearance = AppAppearance.system,
-  double sidebarWidth = 360,
+  double sidebarWidthFraction = 0.28125,
   bool sidebarCollapsed = false,
 }) => AppScope(
   config: AppConfig(),
@@ -249,7 +249,7 @@ Widget _preview({
                 : 'system'),
         'setupStage': stage.name,
         'appearance': appearance.name,
-        'sidebarWidth': sidebarWidth,
+        'sidebarWidthFraction': sidebarWidthFraction,
         'sidebarCollapsed': sidebarCollapsed,
         'connectionMode': stage == AppSetupStage.login ? 'cloud' : 'local',
       }),

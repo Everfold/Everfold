@@ -29,7 +29,7 @@ void main() {
       'seedColor': const AppSettings().seedColor,
       'setupStage': 'introduction',
       'connectionMode': 'offline',
-      'sidebarWidth': 360.0,
+      'sidebarWidthFraction': 0.28125,
       'sidebarCollapsed': false,
     });
   });
@@ -104,12 +104,24 @@ void main() {
     }
   });
 
+  test('旧像素宽度迁移到比例, 保存仅写入新格式', () {
+    final settings = AppSettingsDto.fromJson({
+      'language': 'en',
+      'sidebarWidth': 448,
+    }).settings;
+    expect(settings.sidebarWidthFraction, 0.35);
+    expect(
+      AppSettingsDto(settings).toJson().containsKey('sidebarWidth'),
+      isFalse,
+    );
+  });
+
   test('侧栏偏好兼容旧数据并独立保存, 拒绝非法宽度和折叠状态', () {
     final defaults = AppSettingsDto.fromJson({'language': 'en'}).settings;
-    expect(defaults.sidebarWidth, 360);
+    expect(defaults.sidebarWidthFraction, 0.28125);
     expect(defaults.sidebarCollapsed, isFalse);
     final settings = defaults.copyWith(
-      sidebarWidth: 432.5,
+      sidebarWidthFraction: 0.337890625,
       sidebarCollapsed: true,
     );
     final restored = AppSettingsDto.fromJson(AppSettingsDto(settings).toJson())
@@ -117,23 +129,28 @@ void main() {
     expect(restored, settings);
     expect(restored.hashCode, settings.hashCode);
     expect(
-      settings.copyWith(appearance: AppAppearance.dark).sidebarWidth,
-      432.5,
+      settings.copyWith(appearance: AppAppearance.dark).sidebarWidthFraction,
+      0.337890625,
     );
-    expect(settings.copyWith(sidebarCollapsed: false).sidebarWidth, 432.5);
-    expect(settings.copyWith(sidebarWidth: 360), isNot(settings));
+    expect(
+      settings.copyWith(sidebarCollapsed: false).sidebarWidthFraction,
+      0.337890625,
+    );
+    expect(settings.copyWith(sidebarWidthFraction: 0.28125), isNot(settings));
     for (final value in [
       null,
       '360',
       0,
-      255,
-      481,
+      0.14,
+      0.51,
       double.nan,
       double.infinity,
     ]) {
       expect(
-        () =>
-            AppSettingsDto.fromJson({'language': 'en', 'sidebarWidth': value}),
+        () => AppSettingsDto.fromJson({
+          'language': 'en',
+          'sidebarWidthFraction': value,
+        }),
         throwsFormatException,
       );
     }

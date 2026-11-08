@@ -91,8 +91,10 @@ void main() {
     await tester.pumpAndSettle();
     expect(store.writes, 1);
     expect(
-      AppSettingsDto.fromJson(jsonDecode(store.value!)).settings.sidebarWidth,
-      draggedWidth,
+      AppSettingsDto.fromJson(jsonDecode(store.value!))
+          .settings
+          .sidebarWidthFraction,
+      draggedWidth / 1280,
     );
     expect(field.controller!.text, 'Keep my draft');
     expect(field.focusNode!.hasFocus, isTrue);
@@ -125,7 +127,7 @@ void main() {
     await tester.pumpAndSettle();
     for (final workspace in [null, '/projects/${'long-project-name-' * 20}']) {
       sessions.setWorkspace(id, workspace);
-      for (final (windowWidth, sidebarWidth, scale) in [
+      for (final (windowWidth, sidebarWidthFraction, scale) in [
         (840.0, 256.0, 1.0),
         (1024.0, 256.0, 1.0),
         (1280.0, 480.0, 1.0),
@@ -136,7 +138,7 @@ void main() {
         tester.platformDispatcher.textScaleFactorTestValue = scale;
         await ref
             .read(appSettingsControllerProvider.notifier)
-            .setSidebarWidth(sidebarWidth);
+            .setSidebarWidthFraction(sidebarWidthFraction / windowWidth);
         await tester.pumpAndSettle();
         final send = find.byKey(const ValueKey('send-prompt'));
         for (final key in [
@@ -236,28 +238,30 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('宽度有上下限, 缩小窗口不覆盖偏好, 窄屏保留完整抽屉', (tester) async {
+  testWidgets('宽度按比例随窗口变化, 窄屏保留完整抽屉', (tester) async {
     final store = await pumpApp(tester);
     await tester.drag(handle, const Offset(900, 0));
     await tester.pumpAndSettle();
-    expect(tester.getSize(sidebar).width, 480);
+    expect(tester.getSize(sidebar).width, 640);
     tester.view.physicalSize = const Size(840, 900);
     await tester.pumpAndSettle();
-    expect(tester.getSize(sidebar).width, 440);
+    expect(tester.getSize(sidebar).width, 420);
     expect(
       tester.getSize(find.byType(SessionPage)).width,
-      greaterThanOrEqualTo(400),
+      greaterThanOrEqualTo(420),
     );
     expect(
-      AppSettingsDto.fromJson(jsonDecode(store.value!)).settings.sidebarWidth,
-      480,
+      AppSettingsDto.fromJson(jsonDecode(store.value!))
+          .settings
+          .sidebarWidthFraction,
+      0.5,
     );
     tester.view.physicalSize = const Size(1280, 900);
     await tester.pumpAndSettle();
-    expect(tester.getSize(sidebar).width, 480);
+    expect(tester.getSize(sidebar).width, 640);
     await tester.drag(handle, const Offset(-900, 0));
     await tester.pumpAndSettle();
-    expect(tester.getSize(sidebar).width, 256);
+    expect(tester.getSize(sidebar).width, 192);
     await tester.tap(toggle);
     await tester.pumpAndSettle();
     tester.view.physicalSize = const Size(390, 900);
@@ -277,8 +281,32 @@ void main() {
     expect(tester.getSize(sidebar).width, 80);
     await tester.tap(toggle);
     await tester.pumpAndSettle();
-    expect(tester.getSize(sidebar).width, 256);
+    expect(tester.getSize(sidebar).width, 192);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('15% 到 50% 宽度下导航文字保持在选中背景内', (tester) async {
+    await pumpApp(tester, size: const Size(840, 900));
+    final ref = container(tester);
+    for (final fraction in [0.15, 0.5]) {
+      await ref
+          .read(appSettingsControllerProvider.notifier)
+          .setSidebarWidthFraction(fraction);
+      for (final path in ['/', '/settings', '/cloud']) {
+        ref.read(appRouterProvider).go(path);
+        await tester.pumpAndSettle();
+        expect(tester.getSize(sidebar).width, closeTo(840 * fraction, 0.01));
+        if (path != '/') {
+          final label = find.text(
+            path == '/settings' ? 'General' : 'Connections',
+          );
+          final indicator = find.byType(NavigationIndicator);
+          final bounds = tester.getRect(indicator);
+          expect(bounds.contains(tester.getRect(label).center), isTrue);
+        }
+        expect(tester.takeException(), isNull);
+      }
+    }
   });
 
   testWidgets('分隔条支持键盘调宽和双击恢复默认, 保存失败保留原偏好', (tester) async {
@@ -287,8 +315,8 @@ void main() {
     await tester.pump();
     for (final (key, width) in [
       (LogicalKeyboardKey.arrowRight, 376.0),
-      (LogicalKeyboardKey.home, 256.0),
-      (LogicalKeyboardKey.end, 480.0),
+      (LogicalKeyboardKey.home, 192.0),
+      (LogicalKeyboardKey.end, 640.0),
     ]) {
       await tester.sendKeyEvent(key);
       await tester.pumpAndSettle();
@@ -308,8 +336,8 @@ void main() {
       container(tester)
           .read(appSettingsControllerProvider)
           .requireValue
-          .sidebarWidth,
-      360,
+          .sidebarWidthFraction,
+      0.28125,
     );
     store.failWrite = false;
     await tester.tap(toggle);
@@ -328,7 +356,7 @@ void main() {
           value: jsonEncode({
             'language': 'en',
             'setupStage': 'complete',
-            'sidebarWidth': 256,
+            'sidebarWidthFraction': 0.15,
             'sidebarCollapsed': collapsed,
           }),
         ),

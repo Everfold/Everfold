@@ -46,13 +46,15 @@ final class AppSettingsDto {
       'cloud' || 'cluster' => AppConnectionMode.cluster,
       _ => throw const FormatException('Invalid connection mode'),
     };
-    final sidebarWidth = switch (map['sidebarWidth']) {
-      null when !map.containsKey('sidebarWidth') =>
-        const AppSettings().sidebarWidth,
+    final sidebarWidthFraction = switch (map['sidebarWidthFraction']) {
+      null when !map.containsKey('sidebarWidthFraction') =>
+        map['sidebarWidth'] is num && (map['sidebarWidth'] as num).isFinite
+            ? ((map['sidebarWidth'] as num) / 1280).clamp(0.15, 0.5).toDouble()
+            : const AppSettings().sidebarWidthFraction,
       num value
           when value.isFinite &&
-              value >= AppSettings.minSidebarWidth &&
-              value <= AppSettings.maxSidebarWidth =>
+              value >= AppSettings.minSidebarWidthFraction &&
+              value <= AppSettings.maxSidebarWidthFraction =>
         value.toDouble(),
       _ => throw const FormatException('Invalid sidebar width'),
     };
@@ -69,7 +71,7 @@ final class AppSettingsDto {
         seedColor: seedColor,
         setupStage: setupStage,
         connectionMode: connectionMode,
-        sidebarWidth: sidebarWidth,
+        sidebarWidthFraction: sidebarWidthFraction,
         sidebarCollapsed: sidebarCollapsed,
       ),
     );
@@ -83,7 +85,7 @@ final class AppSettingsDto {
     'seedColor': settings.seedColor,
     'setupStage': settings.setupStage.name,
     'connectionMode': settings.connectionMode.name,
-    'sidebarWidth': settings.sidebarWidth,
+    'sidebarWidthFraction': settings.sidebarWidthFraction,
     'sidebarCollapsed': settings.sidebarCollapsed,
     'language': switch (settings.language) {
       AppLanguage.system => 'system',
