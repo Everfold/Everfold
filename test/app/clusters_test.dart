@@ -343,6 +343,53 @@ void main() {
     expect(find.byType(AlertDialog), findsNothing);
   });
 
+  for (final width in [390.0, 1280.0]) {
+    testWidgets('$width 下拉菜单先响应 Esc, 关闭或选择后 Esc 取消连接并恢复焦点', (tester) async {
+      await pumpApp(tester, width: width);
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(ClustersPage)),
+      );
+      final addButton = find.byKey(const ValueKey('add-cluster'));
+      for (final menuKey in ['login-provider', 'login-verification']) {
+        for (final selectEntry in [false, true]) {
+          Focus.of(tester.element(find.text('添加集群'))).requestFocus();
+          await tester.pump();
+          await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+          await tester.pumpAndSettle();
+          final name = find.byKey(const ValueKey('cluster-name-input'));
+          await tester.enterText(name, '未提交配置');
+          if (menuKey == 'login-verification') {
+            await tap(tester, find.byKey(const ValueKey('login-provider')));
+            await tap(tester, find.text('自部署').last);
+          }
+          await tap(tester, find.byKey(ValueKey(menuKey)));
+          final entry = find.text(menuKey == 'login-provider' ? '测试云' : 'mTLS');
+          expect(entry.hitTestable(), findsOneWidget);
+          if (selectEntry) {
+            await tap(tester, entry.last);
+          } else {
+            await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+            await tester.pumpAndSettle();
+            expect(entry.hitTestable(), findsNothing);
+          }
+          expect(connectionForm, findsOneWidget);
+          expect(tester.widget<TextField>(name).controller!.text, '未提交配置');
+          await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+          await tester.pumpAndSettle();
+          expect(
+            connectionForm,
+            findsNothing,
+            reason: '$menuKey, selectEntry: $selectEntry',
+          );
+          expect(container.read(clustersControllerProvider), isEmpty);
+          expect(addButton.hitTestable(), findsOneWidget);
+          expect(Focus.of(tester.element(find.text('添加集群'))).hasFocus, isTrue);
+          expect(tester.takeException(), isNull);
+        }
+      }
+    }, variant: TargetPlatformVariant.all());
+  }
+
   testWidgets('集群重命名支持回车提交并拒绝空名称', (tester) async {
     await pumpApp(tester);
     await add(tester, '测试集群');

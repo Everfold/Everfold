@@ -270,58 +270,106 @@ class _ClusterConnectionDialogState extends State<_ClusterConnectionDialog> {
               ],
             ),
           );
-          return CallbackShortcuts(
-            bindings: {
-              const SingleActivator(LogicalKeyboardKey.escape): cancel,
-            },
-            child: PopScope(
-              canPop: !locked,
-              child: fullscreen
-                  ? Dialog.fullscreen(
-                      key: const ValueKey('cluster-connection-fullscreen'),
-                      child: Scaffold(
-                        appBar: AppBar(
-                          leading: IconButton(
-                            key: const ValueKey('cluster-connection-cancel'),
-                            tooltip: strings.commonCancel,
-                            onPressed: locked ? null : cancel,
-                            icon: const Icon(Icons.close),
-                          ),
-                          title: Text(title),
-                          actions: [
-                            Padding(
-                              padding: const EdgeInsetsDirectional.only(
-                                end: 16,
+          return Actions(
+            dispatcher: _ConnectionDialogDispatcher(cancel),
+            actions: const {},
+            child: CallbackShortcuts(
+              bindings: {
+                const SingleActivator(LogicalKeyboardKey.escape): cancel,
+              },
+              // 选择菜单项后即使字段释放焦点, Esc 仍在弹窗的快捷键范围内。
+              child: FocusScope(
+                autofocus: true,
+                child: PopScope(
+                  canPop: !locked,
+                  child: fullscreen
+                      ? Dialog.fullscreen(
+                          key: const ValueKey('cluster-connection-fullscreen'),
+                          child: Scaffold(
+                            appBar: AppBar(
+                              leading: IconButton(
+                                key: const ValueKey(
+                                  'cluster-connection-cancel',
+                                ),
+                                tooltip: strings.commonCancel,
+                                onPressed: locked ? null : cancel,
+                                icon: const Icon(Icons.close),
                               ),
-                              child: action,
+                              title: Text(title),
+                              actions: [
+                                Padding(
+                                  padding: const EdgeInsetsDirectional.only(
+                                    end: 16,
+                                  ),
+                                  child: action,
+                                ),
+                              ],
                             ),
+                            body: SafeArea(child: content),
+                          ),
+                        )
+                      : AlertDialog(
+                          constraints: const BoxConstraints(maxWidth: 560),
+                          title: Text(title),
+                          content: SizedBox(
+                            width: double.maxFinite,
+                            child: content,
+                          ),
+                          actions: [
+                            TextButton(
+                              key: const ValueKey('cluster-connection-cancel'),
+                              onPressed: locked ? null : cancel,
+                              child: Text(strings.commonCancel),
+                            ),
+                            action,
                           ],
                         ),
-                        body: SafeArea(child: content),
-                      ),
-                    )
-                  : AlertDialog(
-                      constraints: const BoxConstraints(maxWidth: 560),
-                      title: Text(title),
-                      content: SizedBox(
-                        width: double.maxFinite,
-                        child: content,
-                      ),
-                      actions: [
-                        TextButton(
-                          key: const ValueKey('cluster-connection-cancel'),
-                          onPressed: locked ? null : cancel,
-                          child: Text(strings.commonCancel),
-                        ),
-                        action,
-                      ],
-                    ),
+                ),
+              ),
             ),
           );
         },
       );
     },
   );
+}
+
+// DropdownMenu 关闭后仍会消费 DismissIntent, 将后续 Esc 交还弹窗处理。
+class _ConnectionDialogDispatcher extends ActionDispatcher {
+  const _ConnectionDialogDispatcher(this.cancel);
+
+  final VoidCallback cancel;
+
+  bool _dismissesClosedMenu(Action<Intent> action, Intent intent) =>
+      intent is DismissIntent &&
+      action is DismissMenuAction &&
+      action.isEnabled(intent) &&
+      !action.controller.isOpen;
+
+  @override
+  Object? invokeAction(
+    Action<Intent> action,
+    Intent intent, [
+    BuildContext? context,
+  ]) {
+    if (_dismissesClosedMenu(action, intent)) {
+      cancel();
+      return null;
+    }
+    return super.invokeAction(action, intent, context);
+  }
+
+  @override
+  (bool, Object?) invokeActionIfEnabled(
+    Action<Intent> action,
+    Intent intent, [
+    BuildContext? context,
+  ]) {
+    if (_dismissesClosedMenu(action, intent)) {
+      return (true, invokeAction(action, intent, context));
+    }
+    return super.invokeActionIfEnabled(action, intent, context);
+  }
 }
 
 class _ClusterNameDialog extends HookWidget {
