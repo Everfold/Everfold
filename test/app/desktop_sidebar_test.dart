@@ -309,6 +309,16 @@ void main() {
         await tester.pumpAndSettle();
         expect(tester.getSize(sidebar).width, closeTo(840 * fraction, 0.01));
         if (path != '/') {
+          final back = find.byKey(const ValueKey('return-to-workspace'));
+          expect(back, findsOneWidget);
+          expect(
+            tester.getCenter(back).dy,
+            closeTo(tester.getCenter(toggle).dy, 0.1),
+          );
+          expect(
+            tester.getRect(back).right,
+            lessThanOrEqualTo(tester.getRect(toggle).left),
+          );
           final label = find.text(
             path == '/settings' ? 'General' : 'Connections',
           );

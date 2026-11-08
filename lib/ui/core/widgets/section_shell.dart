@@ -58,19 +58,20 @@ class SectionShell extends ConsumerWidget {
                 if (!wide) scaffoldKey.currentState?.closeDrawer();
               },
               children: [
-                ListTile(
-                  key: const ValueKey('return-to-workspace'),
-                  leading: const Icon(Icons.arrow_back),
-                  title: Text(
-                    strings.navigationReturnToWorkspace,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                if (!wide)
+                  ListTile(
+                    key: const ValueKey('return-to-workspace'),
+                    leading: const Icon(Icons.arrow_back),
+                    title: Text(
+                      strings.navigationReturnToWorkspace,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    onTap: () {
+                      if (!wide) scaffoldKey.currentState?.closeDrawer();
+                      returnToWorkspace();
+                    },
                   ),
-                  onTap: () {
-                    if (!wide) scaffoldKey.currentState?.closeDrawer();
-                    returnToWorkspace();
-                  },
-                ),
                 const Divider(),
                 NavigationDrawerDestination(
                   icon: Icon(settings ? Icons.tune : Icons.hub_outlined),
@@ -103,6 +104,25 @@ class SectionShell extends ConsumerWidget {
                 if (wide)
                   DesktopSidebar(
                     availableWidth: constraints.maxWidth,
+                    header: LayoutBuilder(
+                      builder: (context, bounds) => bounds.maxWidth < 160
+                          ? IconButton(
+                              key: const ValueKey('return-to-workspace'),
+                              tooltip: strings.navigationReturnToWorkspace,
+                              onPressed: returnToWorkspace,
+                              icon: const Icon(Icons.arrow_back),
+                            )
+                          : TextButton.icon(
+                              key: const ValueKey('return-to-workspace'),
+                              onPressed: returnToWorkspace,
+                              icon: const Icon(Icons.arrow_back),
+                              label: Text(
+                                strings.navigationReturnToWorkspace,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                    ),
                     builder: (collapsed, _) => collapsed
                         ? DesktopNavigationRail(
                             key: ValueKey('${section.name}-section-rail'),
