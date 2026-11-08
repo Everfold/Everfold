@@ -68,7 +68,7 @@ WorkspaceShell
 
 当前的 840dp 是工作区宽窄切换断点, 操作栏的 600dp 紧凑布局阈值随按钮字号调整, 输入区最多占可用高度的 65% 是现有布局策略. 这些都是产品排版选择, 不是所有 Material 页面必须使用的数值. 普通弹窗的 560dp 上限来自 M3 建议, 约束的是整个弹窗, 不是其中的文本区域
 
-工作区详情, 会话重命名和颜色编辑使用 [AdaptiveDialog](../lib/ui/core/widgets/adaptive_dialog.dart). 扣除键盘后的可用高度不大于 480dp × 按钮字号倍率时切换全屏: 关闭与保存固定在 AppBar, 正文与详情操作共同滚动. 其余尺寸保留最大 560dp 的 AlertDialog. 稳定的滚动区 GlobalKey 保留外壳切换时的输入, 焦点, 光标选择和滚动位置; 两种布局均支持 Esc 取消.
+工作区详情, 会话与集群重命名和颜色编辑使用 [AdaptiveDialog](../lib/ui/core/widgets/adaptive_dialog.dart). 扣除键盘后的可用高度不大于 480dp × 按钮字号倍率时切换全屏: 关闭与保存固定在 AppBar, 正文与详情操作共同滚动. 其余尺寸保留最大 560dp 的 AlertDialog. 稳定的滚动区 GlobalKey 保留外壳切换时的输入, 焦点, 光标选择和滚动位置; 两种布局均支持 Esc 取消.
 
 ## 状态和回调为什么留在页面
 

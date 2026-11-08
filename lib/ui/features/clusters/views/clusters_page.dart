@@ -7,6 +7,7 @@ import '../../../../application/clusters/clusters_controller.dart';
 import '../../../../domain/clusters/cluster_connection.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../core/layout/page_spacing.dart';
+import '../../../core/widgets/adaptive_dialog.dart';
 import '../../setup/views/connection_form.dart';
 import 'cluster_labels.dart';
 
@@ -381,9 +382,9 @@ class _ClusterNameDialog extends HookWidget {
     final strings = AppLocalizations.of(context);
     final input = useTextEditingController(text: name);
     final value = useValueListenable(input);
-    return AlertDialog(
-      constraints: const BoxConstraints(maxWidth: 560),
-      title: Text(strings.clusterRename),
+    return AdaptiveDialog(
+      title: strings.clusterRename,
+      dismissLabel: strings.commonCancel,
       content: TextField(
         key: const ValueKey('rename-cluster-input'),
         controller: input,
@@ -394,18 +395,12 @@ class _ClusterNameDialog extends HookWidget {
           if (name.trim().isNotEmpty) Navigator.pop(context, name.trim());
         },
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(strings.commonCancel),
-        ),
-        FilledButton(
-          onPressed: value.text.trim().isEmpty
-              ? null
-              : () => Navigator.pop(context, input.text.trim()),
-          child: Text(strings.commonSave),
-        ),
-      ],
+      primaryAction: FilledButton(
+        onPressed: value.text.trim().isEmpty
+            ? null
+            : () => Navigator.pop(context, input.text.trim()),
+        child: Text(strings.commonSave),
+      ),
     );
   }
 }

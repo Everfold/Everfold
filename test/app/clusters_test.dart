@@ -407,6 +407,76 @@ void main() {
     expect(find.text('新名称'), findsOneWidget);
   });
 
+  testWidgets('集群重命名在横屏键盘下保留编辑状态并支持取消与保存', (tester) async {
+    await pumpApp(tester, language: 'en');
+    addTearDown(tester.view.resetViewInsets);
+    final container = ProviderScope.containerOf(
+      tester.element(find.byType(ClustersPage)),
+    );
+    final clusters = container.read(clustersControllerProvider.notifier);
+    clusters.addConnected('Example cluster', const ClusterConfiguration());
+    await tester.pumpAndSettle();
+    await tap(tester, find.text('Example cluster'));
+    for (final cancel in [true, false]) {
+      await tap(tester, find.byKey(const ValueKey('cluster-rename-1')));
+      final input = find.byKey(const ValueKey('rename-cluster-input'));
+      final editable = find.descendant(
+        of: input,
+        matching: find.byType(EditableText),
+      );
+      await tester.enterText(input, '  Renamed cluster  ');
+      final controller = tester.widget<TextField>(input).controller!;
+      final focus = tester.widget<EditableText>(editable).focusNode;
+      controller.selection = const TextSelection.collapsed(offset: 5);
+
+      tester.view.physicalSize = const Size(740, 360);
+      tester.view.viewInsets = const FakeViewPadding(bottom: 180);
+      tester.platformDispatcher.textScaleFactorTestValue = 2;
+      await tester.pumpAndSettle();
+      expect(tester.widget<TextField>(input).controller, same(controller));
+      expect(controller.text, '  Renamed cluster  ');
+      expect(controller.selection.baseOffset, 5);
+      expect(focus.hasFocus, isTrue);
+      await tester.ensureVisible(editable);
+      await tester.pumpAndSettle();
+      expect(editable.hitTestable(), findsOneWidget);
+      expect(tester.getSize(editable).height, greaterThan(0));
+      expect(find.text('Save').hitTestable(), findsOneWidget);
+      expect(find.byTooltip('Cancel').hitTestable(), findsOneWidget);
+      expect(tester.takeException(), isNull);
+
+      await tester.enterText(input, '   ');
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<FilledButton>(find.widgetWithText(FilledButton, 'Save'))
+            .onPressed,
+        isNull,
+      );
+      await tester.testTextInput.receiveAction(TextInputAction.done);
+      await tester.pumpAndSettle();
+      expect(input, findsOneWidget);
+      await tester.enterText(input, '  Renamed cluster  ');
+      await tester.pumpAndSettle();
+      if (cancel) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      } else {
+        await tester.tap(find.text('Save'));
+      }
+      await tester.pumpAndSettle();
+      expect(input, findsNothing);
+      expect(
+        container.read(clustersControllerProvider).single.name,
+        cancel ? 'Example cluster' : 'Renamed cluster',
+      );
+      expect(tester.takeException(), isNull);
+      tester.view.physicalSize = const Size(1280, 900);
+      tester.view.resetViewInsets();
+      tester.platformDispatcher.textScaleFactorTestValue = 1;
+      await tester.pumpAndSettle();
+    }
+  });
+
   testWidgets('集群与设置并列, 可添加多个并独立断开, 重命名, 移除', (tester) async {
     await pumpApp(tester);
     expect(find.text('尚未添加集群'), findsOneWidget);
