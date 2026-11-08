@@ -295,7 +295,7 @@ class _ComposerToolbar extends StatelessWidget {
         runSpacing: 4,
         crossAxisAlignment: WrapCrossAlignment.center,
         children: [
-          MenuAnchor(
+          _ComposerMenuAnchor(
             menuChildren: [
               for (final preset in SessionPreset.values)
                 RadioMenuButton<SessionPreset>(
@@ -377,7 +377,7 @@ class _ComposerToolbar extends StatelessWidget {
         spacing: 4,
         children: [
           Flexible(
-            child: MenuAnchor(
+            child: _ComposerMenuAnchor(
               menuChildren: [
                 // 模型接入仅预留入口, 不打开配置界面或模拟接入成功。
                 MenuItemButton(
@@ -445,4 +445,36 @@ class _ComposerToolbar extends StatelessWidget {
       );
     },
   );
+}
+
+// 菜单浮层先响应系统返回, 关闭后恢复页面原有的返回行为。
+class _ComposerMenuAnchor extends HookWidget {
+  const _ComposerMenuAnchor({
+    required this.menuChildren,
+    required this.builder,
+  });
+
+  final List<Widget> menuChildren;
+  final MenuAnchorChildBuilder builder;
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = useMemoized(MenuController.new);
+    final open = useState(false);
+    return PopScope<Object?>(
+      canPop: !open.value,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) controller.close();
+      },
+      child: MenuAnchor(
+        controller: controller,
+        onOpen: () => open.value = true,
+        onClose: () {
+          if (context.mounted) open.value = false;
+        },
+        menuChildren: menuChildren,
+        builder: builder,
+      ),
+    );
+  }
 }

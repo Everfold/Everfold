@@ -760,6 +760,77 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  for (final width in [390.0, 1280.0]) {
+    for (final menu in ['preset-selector', 'model-selector']) {
+      testWidgets('$width $menu 返回优先关闭菜单, 其他关闭方式恢复页面返回', (tester) async {
+        await pumpApp(tester, size: Size(width, 900));
+        final calls = <String>[];
+        tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          SystemChannels.platform,
+          (call) async {
+            calls.add(call.method);
+            return null;
+          },
+        );
+        addTearDown(
+          () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+            SystemChannels.platform,
+            null,
+          ),
+        );
+        final input = find.byKey(const ValueKey('prompt-input'));
+        await tester.enterText(input, '保留草稿');
+        await tester.pumpAndSettle();
+        final container = ProviderScope.containerOf(
+          tester.element(find.byType(SessionPage)),
+        );
+        final router = container.read(appRouterProvider);
+        final entries = menu == 'preset-selector'
+            ? find.byType(RadioMenuButton<SessionPreset>)
+            : find.byType(MenuItemButton);
+        for (final dismiss in ['back', 'escape', 'outside', 'select']) {
+          calls.clear();
+          await tester.tap(find.byKey(ValueKey(menu)));
+          await tester.pumpAndSettle();
+          expect(entries, findsWidgets);
+          switch (dismiss) {
+            case 'back':
+              await tester.binding.handlePopRoute();
+            case 'escape':
+              await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+            case 'outside':
+              await tester.tapAt(Offset(width - 20, 100));
+            case 'select':
+              await tester.tap(entries.last);
+          }
+          await tester.pumpAndSettle();
+          expect(entries, findsNothing);
+          expect(calls, isNot(contains('SystemNavigator.pop')));
+          expect(router.routerDelegate.state.uri.path, '/');
+          expect(tester.widget<TextField>(input).controller!.text, '保留草稿');
+          await tester.binding.handlePopRoute();
+          await tester.pumpAndSettle();
+          expect(
+            calls.where((call) => call == 'SystemNavigator.pop'),
+            hasLength(1),
+          );
+          expect(tester.takeException(), isNull);
+        }
+        // 菜单仍打开时切换路由, 不留下返回拦截或卸载后的状态更新。
+        await tester.tap(find.byKey(ValueKey(menu)));
+        await tester.pumpAndSettle();
+        router.go('/settings');
+        await tester.pumpAndSettle();
+        expect(entries, findsNothing);
+        calls.clear();
+        await tester.binding.handlePopRoute();
+        await tester.pumpAndSettle();
+        expect(calls, contains('SystemNavigator.pop'));
+        expect(tester.takeException(), isNull);
+      });
+    }
+  }
+
   testWidgets('预设使用标准单选菜单, 可选中并用 Escape 关闭', (tester) async {
     await pumpApp(tester);
     final container = ProviderScope.containerOf(
