@@ -1065,6 +1065,111 @@ void main() {
     });
   }
 
+  for (final width in [390.0, 1280.0]) {
+    testWidgets('$width 主动提交显示最新消息, 普通更新不打断历史浏览', (tester) async {
+      await pumpApp(tester, size: Size(width, 900));
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(SessionPage)),
+      );
+      final router = container.read(appRouterProvider);
+      final sessions = container.read(sessionsControllerProvider.notifier);
+      sessions.setDraft(null, 'Task 0');
+      final id = sessions.submit(null)!;
+      for (var index = 1; index < 30; index++) {
+        sessions.setDraft(
+          id,
+          'Task $index\n${List.filled(index % 6 + 1, 'Details').join('\n')}',
+        );
+        sessions.submit(id);
+      }
+      router.go('/sessions/$id');
+      await tester.pumpAndSettle();
+      final transcript = find.byType(SessionTranscript);
+      final scrollable = find
+          .descendant(of: transcript, matching: find.byType(Scrollable))
+          .first;
+      final position = tester.state<ScrollableState>(scrollable).position;
+      final input = find.byKey(const ValueKey('prompt-input'));
+      // 从历史中主动提交也应显示新消息, 覆盖懒加载的可变高度消息。
+      await tester.enterText(input, 'Latest prompt');
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('send-prompt')));
+      await tester.pumpAndSettle();
+      expect(find.text('Latest prompt').hitTestable(), findsOneWidget);
+      expect(position.extentAfter, lessThanOrEqualTo(1));
+      // 正在底部时追加内容, 继续显示末尾。
+      sessions.setDraft(id, 'Updated at bottom');
+      sessions.submit(id);
+      await tester.pumpAndSettle();
+      expect(find.text('Updated at bottom').hitTestable(), findsOneWidget);
+      expect(position.extentAfter, lessThanOrEqualTo(1));
+      tester.view.viewInsets = const FakeViewPadding(bottom: 300);
+      addTearDown(tester.view.resetViewInsets);
+      await tester.pumpAndSettle();
+      expect(find.text('Updated at bottom').hitTestable(), findsOneWidget);
+      // 主动向上浏览后, 追加内容和编辑草稿不改变阅读位置。
+      await tester.drag(transcript, const Offset(0, 500));
+      await tester.pumpAndSettle();
+      final readingOffset = position.pixels;
+      expect(position.extentAfter, greaterThan(100));
+      sessions.setDraft(id, 'Arrived while reading');
+      sessions.submit(id);
+      await tester.pumpAndSettle();
+      expect(position.pixels, closeTo(readingOffset, 0.1));
+      await tester.enterText(input, 'Keep reading');
+      await tester.pumpAndSettle();
+      expect(position.pixels, closeTo(readingOffset, 0.1));
+      tester.view.resetViewInsets();
+      await tester.pumpAndSettle();
+      final restoredOffset = position.pixels;
+      router.push('/settings');
+      await tester.pumpAndSettle();
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(
+        tester.state<ScrollableState>(scrollable).position.pixels,
+        closeTo(restoredOffset, 0.1),
+      );
+      sessions.setDraft(null, 'Other task');
+      final otherId = sessions.submit(null)!;
+      for (var index = 0; index < 15; index++) {
+        sessions.setDraft(otherId, 'Other message $index');
+        sessions.submit(otherId);
+      }
+      router.go('/sessions/$otherId');
+      await tester.pumpAndSettle();
+      expect(tester.state<ScrollableState>(scrollable).position.pixels, 0);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  testWidgets('320 宽双倍字号下首次提交长消息, 键盘展开后末尾仍可见', (tester) async {
+    await pumpApp(tester, size: const Size(320, 900), scale: 2);
+    final prompt = List.generate(18, (index) => 'Line $index').join('\n');
+    await tester.enterText(find.byKey(const ValueKey('prompt-input')), prompt);
+    await tester.pumpAndSettle();
+    final send = find.byKey(const ValueKey('send-prompt'));
+    await tester.ensureVisible(send);
+    await tester.pumpAndSettle();
+    await tester.tap(send);
+    await tester.pumpAndSettle();
+    final scrollable = find
+        .descendant(
+          of: find.byType(SessionTranscript),
+          matching: find.byType(Scrollable),
+        )
+        .first;
+    final position = tester.state<ScrollableState>(scrollable).position;
+    expect(position.extentAfter, lessThanOrEqualTo(1));
+    expect(find.text('未发送：尚未接入模型').hitTestable(), findsOneWidget);
+    tester.view.viewInsets = const FakeViewPadding(bottom: 300);
+    addTearDown(tester.view.resetViewInsets);
+    await tester.pumpAndSettle();
+    expect(position.extentAfter, lessThanOrEqualTo(1));
+    expect(find.text('未发送：尚未接入模型').hitTestable(), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('提交成为未发送会话, 草稿和会话切换保留, 已有会话停止不可用', (tester) async {
     await pumpApp(tester);
     expect(find.byType(NavigationBar), findsNothing);

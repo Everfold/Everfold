@@ -30,6 +30,8 @@ class SessionPage extends HookConsumerWidget {
     final scroll = useScrollController();
     final focus = useFocusNode();
     final pickingWorkspace = useState(false);
+    final revealLatest = useValueNotifier(focusComposer ? 1 : 0, [sessionId]);
+    final revealLatestRequest = useValueListenable(revealLatest);
     // 切换会话时同步对应草稿, 不把上一个会话的输入带到新会话
     useEffect(() {
       final draft = session?.draft ?? '';
@@ -53,6 +55,7 @@ class SessionPage extends HookConsumerWidget {
         // 新页面接收一次自动聚焦请求, 不再聚焦即将卸载的输入框。
         context.go('/sessions/$id', extra: true);
       } else {
+        if (id != null) revealLatest.value++;
         focus.requestFocus();
       }
     }
@@ -116,6 +119,7 @@ class SessionPage extends HookConsumerWidget {
                 key: ValueKey(sessionId),
                 messages: session.messages,
                 storageId: session.id,
+                revealLatestRequest: revealLatestRequest,
               )
             : _EmptySessionBody(scroll: scroll),
         composer: composer,

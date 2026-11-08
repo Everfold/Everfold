@@ -1,3 +1,4 @@
+import 'package:flutter/rendering.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../domain/sessions/agent_session.dart';
@@ -5,26 +6,104 @@ import '../../../../l10n/app_localizations.dart';
 import '../widgets/message_content.dart';
 
 /// 仅渲染实际传入的回复, 摘要与工具事件, 不构造模型输出
-class SessionTranscript extends StatelessWidget {
+class SessionTranscript extends StatefulWidget {
   const SessionTranscript({
     super.key,
     required this.messages,
     this.storageId = '',
+    this.revealLatestRequest = 0,
   });
   final List<SessionMessage> messages;
   final String storageId;
+  // 主动提交时递增, 与普通消息更新区分, 仅作用于当前会话。
+  final int revealLatestRequest;
+
+  @override
+  State<SessionTranscript> createState() => _SessionTranscriptState();
+}
+
+class _SessionTranscriptState extends State<SessionTranscript> {
+  final _scroll = ScrollController();
+  bool _followingLatest = false;
+  bool _revealScheduled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.revealLatestRequest > 0) {
+      _followingLatest = true;
+      _scheduleReveal();
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant SessionTranscript oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final requested =
+        widget.revealLatestRequest != oldWidget.revealLatestRequest;
+    final latestChanged =
+        widget.messages.length != oldWidget.messages.length ||
+        (widget.messages.isNotEmpty &&
+            oldWidget.messages.isNotEmpty &&
+            widget.messages.last != oldWidget.messages.last);
+    final atEnd =
+        _scroll.hasClients &&
+        _scroll.position.extentAfter <= 1 &&
+        !_scroll.position.isScrollingNotifier.value;
+    if (requested || (latestChanged && atEnd)) {
+      _followingLatest = true;
+      _scheduleReveal();
+    }
+  }
+
+  void _scheduleReveal() {
+    if (_revealScheduled) return;
+    _revealScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _revealScheduled = false;
+      if (!mounted || !_followingLatest || !_scroll.hasClients) return;
+      final position = _scroll.position;
+      if (position.viewportDimension > 0 && position.extentAfter > 1) {
+        _scroll.jumpTo(position.maxScrollExtent);
+        // 懒加载的消息高度可能仍是估算值, 下一帧按实际布局继续定位。
+        _scheduleReveal();
+      }
+    });
+    WidgetsBinding.instance.ensureVisualUpdate();
+  }
+
+  @override
+  void dispose() {
+    _scroll.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    // 列表只负责按需创建消息, 会话存储键隔离各自的滚动位置
-    return ListView.builder(
-      key: PageStorageKey('transcript-$storageId'),
-      padding: const EdgeInsets.all(16),
-      itemCount: messages.length,
-      itemBuilder: (context, index) => _MessageEntry(
-        message: messages[index],
-        index: index,
-        storageId: storageId,
+    return NotificationListener<UserScrollNotification>(
+      onNotification: (notification) {
+        if (notification.depth == 0 &&
+            notification.direction != ScrollDirection.idle) {
+          _followingLatest = false;
+        }
+        return false;
+      },
+      child: NotificationListener<ScrollMetricsNotification>(
+        onNotification: (notification) {
+          if (notification.depth == 0 && _followingLatest) _scheduleReveal();
+          return false;
+        },
+        child: ListView.builder(
+          key: PageStorageKey('transcript-${widget.storageId}'),
+          controller: _scroll,
+          padding: const EdgeInsets.all(16),
+          itemCount: widget.messages.length,
+          itemBuilder: (context, index) => _MessageEntry(
+            message: widget.messages[index],
+            index: index,
+            storageId: widget.storageId,
+          ),
+        ),
       ),
     );
   }
