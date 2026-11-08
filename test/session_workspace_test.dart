@@ -1180,6 +1180,9 @@ void main() {
       final position = tester.state<ScrollableState>(scrollable).position;
       final input = find.byKey(const ValueKey('prompt-input'));
       // 从历史中主动提交也应显示新消息, 覆盖懒加载的可变高度消息。
+      await tester.drag(transcript, const Offset(0, 500));
+      await tester.pumpAndSettle();
+      expect(position.extentAfter, greaterThan(100));
       await tester.enterText(input, 'Latest prompt');
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('send-prompt')));
@@ -1210,14 +1213,13 @@ void main() {
       expect(position.pixels, closeTo(readingOffset, 0.1));
       tester.view.resetViewInsets();
       await tester.pumpAndSettle();
-      final restoredOffset = position.pixels;
       router.push('/settings');
       await tester.pumpAndSettle();
       router.pop();
       await tester.pumpAndSettle();
       expect(
-        tester.state<ScrollableState>(scrollable).position.pixels,
-        closeTo(restoredOffset, 0.1),
+        tester.state<ScrollableState>(scrollable).position.extentAfter,
+        lessThanOrEqualTo(1),
       );
       sessions.setDraft(null, 'Other task');
       final otherId = sessions.submit(null)!;
@@ -1227,7 +1229,10 @@ void main() {
       }
       router.go('/sessions/$otherId');
       await tester.pumpAndSettle();
-      expect(tester.state<ScrollableState>(scrollable).position.pixels, 0);
+      expect(
+        tester.state<ScrollableState>(scrollable).position.extentAfter,
+        lessThanOrEqualTo(1),
+      );
       expect(tester.takeException(), isNull);
     });
   }
@@ -1262,6 +1267,116 @@ void main() {
       await tester.tap(find.byKey(const ValueKey('send-prompt')));
       await tester.pumpAndSettle();
       expect(find.text('Next prompt').hitTestable(), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  for (final width in [390.0, 1280.0]) {
+    testWidgets('$width 每次进入会话显示底部, 菜单弹窗与重建保持阅读位置', (tester) async {
+      await pumpApp(tester, size: Size(width, 900));
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(SessionPage)),
+      );
+      final sessions = container.read(sessionsControllerProvider.notifier);
+      final router = container.read(appRouterProvider);
+      String seed(String title) {
+        sessions.setDraft(null, title);
+        final id = sessions.submit(null)!;
+        for (var i = 0; i < 24; i++) {
+          sessions.setDraft(
+            id,
+            '$title $i\n${List.filled(i % 5 + 1, 'More details').join('\n')}',
+          );
+          sessions.submit(id);
+        }
+        sessions.setDraft(id, '$title last');
+        sessions.submit(id);
+        sessions.setWorkspace(id, '/projects/$id');
+        return id;
+      }
+
+      final first = seed('First');
+      final second = seed('Second');
+      final transcript = find.byType(SessionTranscript);
+      final scrollable = find
+          .descendant(of: transcript, matching: find.byType(Scrollable))
+          .first;
+      ScrollPosition position() =>
+          tester.state<ScrollableState>(scrollable).position;
+      void checkBottom(String title) {
+        expect(position().extentAfter, lessThanOrEqualTo(1));
+        expect(find.text('$title last').hitTestable(), findsOneWidget);
+      }
+
+      Future<void> readHistory() async {
+        await tester.drag(transcript, const Offset(0, 450));
+        await tester.pumpAndSettle();
+        expect(position().extentAfter, greaterThan(100));
+      }
+
+      Future<void> openNavigation() async {
+        if (width < 840) {
+          await tester.tap(find.byIcon(Icons.menu));
+          await tester.pumpAndSettle();
+        }
+      }
+
+      Future<void> navigate(String key) async {
+        await openNavigation();
+        await tester.tap(find.byKey(ValueKey(key)));
+        await tester.pumpAndSettle();
+      }
+
+      // 直接进入, 切换已有会话, 经过新建页返回, 都重新定位到底部。
+      router.go('/sessions/$first');
+      await tester.pumpAndSettle();
+      checkBottom('First');
+      await readHistory();
+      await navigate('session-$second');
+      checkBottom('Second');
+      await readHistory();
+      await navigate('session-$first');
+      checkBottom('First');
+      await readHistory();
+      await navigate('new-session');
+      await navigate('session-$first');
+      checkBottom('First');
+      // 返回设置或集群之前的会话也算重新进入, 草稿不受影响。
+      sessions.setDraft(first, 'Keep draft');
+      await tester.pumpAndSettle();
+      for (final entry in ['settings-navigation', 'cloud-navigation']) {
+        await readHistory();
+        await navigate(entry);
+        await openNavigation();
+        await tester.tap(find.byKey(const ValueKey('return-to-workspace')));
+        await tester.pumpAndSettle();
+        checkBottom('First');
+        expect(sessions.state.find(first)!.draft, 'Keep draft');
+      }
+      // 在当前页关闭菜单, 弹窗或仅重建布局, 不重置历史阅读位置。
+      await readHistory();
+      final readingOffset = position().pixels;
+      await openNavigation();
+      await tester.tap(find.byKey(ValueKey('session-menu-$first')));
+      await tester.pumpAndSettle();
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      if (width < 840) {
+        await tester.binding.handlePopRoute();
+        await tester.pumpAndSettle();
+      }
+      expect(position().pixels, closeTo(readingOffset, 0.1));
+      await tester.tap(find.byKey(const ValueKey('workspace-selector')));
+      await tester.pumpAndSettle();
+      expect(find.byType(Dialog), findsOneWidget);
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(position().pixels, closeTo(readingOffset, 0.1));
+      sessions.setDraft(first, 'Edited draft');
+      sessions.rename(first, 'Renamed');
+      tester.view.physicalSize = Size(width, 850);
+      await tester.pumpAndSettle();
+      expect(position().pixels, closeTo(readingOffset, 0.1));
       expect(tester.takeException(), isNull);
     });
   }

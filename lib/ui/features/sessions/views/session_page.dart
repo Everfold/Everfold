@@ -31,8 +31,34 @@ class SessionPage extends HookConsumerWidget {
     final scroll = useScrollController();
     final focus = useFocusNode();
     final pickingWorkspace = useState(false);
-    final revealLatest = useValueNotifier(focusComposer ? 1 : 0, [sessionId]);
+    final revealLatest = useValueNotifier(1, [sessionId]);
     final revealLatestRequest = useValueListenable(revealLatest);
+    final router = GoRouter.of(context);
+    useEffect(() {
+      if (sessionId == null) return null;
+      bool isCurrent() =>
+          router.routerDelegate.currentConfiguration.isNotEmpty &&
+          router.routerDelegate.state.uri.path == '/sessions/$sessionId';
+      var current = isCurrent();
+      var disposed = false;
+      void changed() {
+        final next = isCurrent();
+        if (next && !current) {
+          // 从设置等页面返回时原会话仍挂载, 在导航构建完成后重新定位。
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!disposed && current) revealLatest.value++;
+          });
+          WidgetsBinding.instance.ensureVisualUpdate();
+        }
+        current = next;
+      }
+
+      router.routerDelegate.addListener(changed);
+      return () {
+        disposed = true;
+        router.routerDelegate.removeListener(changed);
+      };
+    }, [router, sessionId, revealLatest]);
     // 切换会话时同步对应草稿, 不把上一个会话的输入带到新会话
     useEffect(() {
       final draft = session?.draft ?? '';
