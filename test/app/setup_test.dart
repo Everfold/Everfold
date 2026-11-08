@@ -100,6 +100,43 @@ void main() {
     expect(saved.setupStage, AppSetupStage.complete);
   });
 
+  for (final size in [
+    const Size(320, 480),
+    const Size(600, 480),
+    const Size(840, 480),
+  ]) {
+    testWidgets('$size 深色双倍字号下欢迎到集群引导的操作可达', (tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = size;
+      tester.platformDispatcher.textScaleFactorTestValue = 2;
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await pumpApp(
+        tester,
+        MemoryPreferencesStore(
+          initialValues: {
+            'everfold.app_settings.v1': '{"language":"zh","appearance":"dark"}',
+          },
+        ),
+      );
+      await tap(tester, '开始使用');
+      final clusterMode = find.byKey(const ValueKey('mode-cluster'));
+      await tester.ensureVisible(clusterMode);
+      await tester.tap(clusterMode);
+      await tester.pumpAndSettle();
+      await tap(tester, '继续');
+      final connect = find.byKey(const ValueKey('connection-connect'));
+      await tester.ensureVisible(connect);
+      await tester.tap(connect);
+      await tester.pump(const Duration(seconds: 1));
+      await tester.pumpAndSettle();
+      await tap(tester, '下一步');
+      expect(find.byType(SessionPage), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
   for (final stage in AppSetupStage.values) {
     testWidgets('$stage 重启恢复对应步骤, 保留语言和外观, 不重置完成状态', (tester) async {
       final expected = AppSettings(

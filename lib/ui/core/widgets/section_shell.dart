@@ -27,6 +27,9 @@ class SectionShell extends ConsumerWidget {
     final scaffoldKey = ref.watch(sectionScaffoldKeyProvider(section));
     final settings = section == AppSection.settings;
     final title = settings ? strings.settingsTitle : strings.clusterTitle;
+    final destination = settings
+        ? strings.settingsGeneral
+        : strings.clusterConnections;
     void returnToWorkspace() {
       final router = GoRouter.of(context);
       if (router.canPop()) {
@@ -58,8 +61,15 @@ class SectionShell extends ConsumerWidget {
             const Divider(),
             NavigationDrawerDestination(
               icon: Icon(settings ? Icons.tune : Icons.hub_outlined),
-              label: Text(
-                settings ? strings.settingsGeneral : strings.clusterConnections,
+              label: Flexible(
+                child: Tooltip(
+                  message: destination,
+                  child: Text(
+                    destination,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
               ),
             ),
           ],

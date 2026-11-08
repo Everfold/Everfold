@@ -7,13 +7,12 @@ import 'package:talker/talker.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'application/settings/app_settings_controller.dart';
-import 'ui/features/settings/views/settings_page.dart';
+import 'app/router/app_router.dart';
 import 'app/app_scope.dart';
 import 'app/everfold_app.dart';
 import 'core/config/app_config.dart';
 import 'data/services/storage/preferences_store.dart';
 import 'l10n/app_localizations.dart';
-import 'ui/features/clusters/views/clusters_page.dart';
 import 'domain/sessions/agent_session.dart';
 import 'domain/settings/app_settings.dart';
 import 'domain/window/desktop_window.dart';
@@ -29,6 +28,13 @@ import 'ui/features/sessions/views/workspace_context_dialog.dart';
   textScaleFactor: 2,
 )
 Widget setupPreview() => _preview();
+
+@Preview(
+  name: 'Setup · Dark short large text',
+  size: Size(320, 480),
+  textScaleFactor: 2,
+)
+Widget darkSetupPreview() => _preview(appearance: AppAppearance.dark);
 
 /// 已初始化的会话工作区预览
 @Preview(name: 'Workspace · Mobile', size: Size(390, 844))
@@ -71,6 +77,11 @@ Widget darkDesktopWindowPreview() => _preview(
 
 @Preview(name: 'Connection · Mobile', size: Size(390, 844))
 @Preview(name: 'Connection · Desktop', size: Size(1280, 900))
+@Preview(
+  name: 'Connection · Medium short large text',
+  size: Size(600, 480),
+  textScaleFactor: 2,
+)
 Widget connectionPreview() => _preview(stage: AppSetupStage.login);
 
 @Preview(name: 'Settings · Mobile', size: Size(390, 844))
@@ -80,45 +91,40 @@ Widget connectionPreview() => _preview(stage: AppSetupStage.login);
   size: Size(320, 900),
   textScaleFactor: 2,
 )
-Widget settingsPreview() => AppScope(
-  config: AppConfig(),
-  talker: Talker(settings: TalkerSettings(enabled: false)),
-  preferencesStore: MemoryPreferencesStore(),
-  child: MaterialApp(
-    localizationsDelegates: const [
-      AppLocalizations.delegate,
-      ...GlobalMaterialLocalizations.delegates,
-    ],
-    supportedLocales: AppLocalizations.supportedLocales,
-    home: Scaffold(
-      body: Consumer(
-        builder: (context, ref, _) => ref
-            .watch(appSettingsControllerProvider)
-            .when(
-              data: (_) => const SettingsPage(),
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (_, _) =>
-                  Text(AppLocalizations.of(context).settingsSaveFailure),
-            ),
-      ),
-    ),
-  ),
+@Preview(name: 'Settings · Medium', size: Size(720, 900))
+@Preview(name: 'Settings · Before sidebar', size: Size(839, 900))
+@Preview(name: 'Settings · Sidebar', size: Size(840, 900))
+Widget settingsPreview() =>
+    _preview(stage: AppSetupStage.complete, path: '/settings');
+
+@Preview(
+  name: 'Settings · Dark short large text',
+  size: Size(1280, 480),
+  textScaleFactor: 2,
+)
+Widget darkSettingsPreview() => _preview(
+  stage: AppSetupStage.complete,
+  path: '/settings',
+  appearance: AppAppearance.dark,
 );
 
 @Preview(name: 'Clusters · Mobile', size: Size(390, 844))
 @Preview(name: 'Clusters · Desktop', size: Size(1280, 900))
-Widget clustersPreview() => AppScope(
-  config: AppConfig(),
-  talker: Talker(settings: TalkerSettings(enabled: false)),
-  preferencesStore: MemoryPreferencesStore(),
-  child: MaterialApp(
-    localizationsDelegates: const [
-      AppLocalizations.delegate,
-      ...GlobalMaterialLocalizations.delegates,
-    ],
-    supportedLocales: AppLocalizations.supportedLocales,
-    home: const Scaffold(body: ClustersPage()),
-  ),
+@Preview(name: 'Clusters · Before dialog breakpoint', size: Size(599, 900))
+@Preview(name: 'Clusters · Dialog breakpoint', size: Size(600, 900))
+@Preview(
+  name: 'Clusters · Compact large text',
+  size: Size(320, 900),
+  textScaleFactor: 2,
+)
+Widget clustersPreview() =>
+    _preview(stage: AppSetupStage.complete, path: '/cloud');
+
+@Preview(name: 'Clusters · Dark', size: Size(390, 844))
+Widget darkClustersPreview() => _preview(
+  stage: AppSetupStage.complete,
+  path: '/cloud',
+  appearance: AppAppearance.dark,
 );
 
 @Preview(name: 'Transcript · Mobile', size: Size(390, 844))
@@ -177,6 +183,7 @@ Widget workspaceContextPreview() => MaterialApp(
 Widget _preview({
   AppSetupStage stage = AppSetupStage.introduction,
   DesktopWindow? window,
+  String? path,
   AppAppearance appearance = AppAppearance.system,
 }) => AppScope(
   config: AppConfig(),
@@ -195,8 +202,37 @@ Widget _preview({
       }),
     },
   ),
-  child: const EverfoldApp(),
+  child: path == null ? const EverfoldApp() : _PreviewDestination(path: path),
 );
+
+// 使用正式路由展示页面外壳, 首次加载后定位一次, 后续交互不重置导航。
+class _PreviewDestination extends ConsumerStatefulWidget {
+  const _PreviewDestination({required this.path});
+  final String path;
+
+  @override
+  ConsumerState<_PreviewDestination> createState() =>
+      _PreviewDestinationState();
+}
+
+class _PreviewDestinationState extends ConsumerState<_PreviewDestination> {
+  bool _opened = false;
+
+  @override
+  void initState() {
+    super.initState();
+    ref.listenManual(appSettingsControllerProvider, (_, settings) {
+      if (_opened || !settings.hasValue) return;
+      _opened = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) ref.read(appRouterProvider).go(widget.path);
+      });
+    }, fireImmediately: true);
+  }
+
+  @override
+  Widget build(BuildContext context) => const EverfoldApp();
+}
 
 // 仅用于 Widget Previewer, 窗口按钮不调用原生服务
 final class _PreviewDesktopWindow implements DesktopWindow {
