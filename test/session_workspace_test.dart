@@ -316,8 +316,15 @@ void main() {
       );
       expect(tester.getSemantics(preset).tooltip, 'Preset: Default');
       expect(tester.getSemantics(workspace).tooltip, 'No workspace selected');
-      expect(tester.getSemantics(model).label, 'No model selected');
-      expect(find.text('Model'), findsOneWidget);
+      expect(tester.getSemantics(model).tooltip, 'No model selected');
+      expect(find.text('Model'), findsNothing);
+      expect(
+        find.descendant(
+          of: model,
+          matching: find.byIcon(Icons.smart_toy_outlined),
+        ),
+        findsOneWidget,
+      );
       await tester.tap(preset);
       await tester.pumpAndSettle();
       await tester.tap(

@@ -336,14 +336,22 @@ class _WorkspaceNavigation extends StatelessWidget {
                     key: const ValueKey('cloud-navigation'),
                     selected: location == '/cloud',
                     leading: const Icon(Icons.cloud_outlined),
-                    title: Text(strings.clusterTitle),
+                    title: Text(
+                      strings.clusterTitle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                     onTap: onOpenClusters,
                   ),
                   ListTile(
                     key: const ValueKey('settings-navigation'),
                     selected: location == '/settings',
                     leading: const Icon(Icons.settings_outlined),
-                    title: Text(strings.settingsTitle),
+                    title: Text(
+                      strings.settingsTitle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                     onTap: onOpenSettings,
                   ),
                 ],
@@ -372,6 +380,8 @@ class _WorkspaceNavigation extends StatelessWidget {
             collapsedShape: const Border(),
             title: Text(
               strings.sessionTitle,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.labelLarge,
             ),
             children: [

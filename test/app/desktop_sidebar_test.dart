@@ -141,6 +141,18 @@ void main() {
             .setSidebarWidthFraction(sidebarWidthFraction / windowWidth);
         await tester.pumpAndSettle();
         final send = find.byKey(const ValueKey('send-prompt'));
+        final model = find.byKey(const ValueKey('model-selector'));
+        final compact = windowWidth - sidebarWidthFraction - 32 < 600 * scale;
+        expect(
+          tester.widget(model),
+          compact ? isA<IconButton>() : isA<TextButton>(),
+        );
+        if (compact) {
+          expect(
+            find.descendant(of: model, matching: find.byType(Text)),
+            findsNothing,
+          );
+        }
         for (final key in [
           'preset-selector',
           'workspace-selector',

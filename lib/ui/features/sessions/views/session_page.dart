@@ -438,33 +438,37 @@ class _ComposerToolbar extends StatelessWidget {
                   child: Text(strings.modelConnect),
                 ),
               ],
-              builder: (context, menu, _) => Tooltip(
-                message: strings.sessionNoModel,
-                excludeFromSemantics: true,
-                child: TextButton(
-                  key: const ValueKey('model-selector'),
-                  onPressed: () => menu.isOpen ? menu.close() : menu.open(),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (!compact) ...[
-                        const Icon(Icons.smart_toy_outlined),
-                        const SizedBox(width: 8),
-                      ],
-                      Flexible(
-                        child: Text(
-                          compact
-                              ? strings.sessionModelLabel
-                              : strings.sessionNoModel,
-                          semanticsLabel: strings.sessionNoModel,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+              builder: (context, menu, _) => compact
+                  ? IconButton(
+                      key: const ValueKey('model-selector'),
+                      tooltip: strings.sessionNoModel,
+                      onPressed: () => menu.isOpen ? menu.close() : menu.open(),
+                      icon: const Icon(Icons.smart_toy_outlined),
+                    )
+                  : Tooltip(
+                      message: strings.sessionNoModel,
+                      excludeFromSemantics: true,
+                      child: TextButton(
+                        key: const ValueKey('model-selector'),
+                        onPressed: () =>
+                            menu.isOpen ? menu.close() : menu.open(),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.smart_toy_outlined),
+                            const SizedBox(width: 8),
+                            Flexible(
+                              child: Text(
+                                strings.sessionNoModel,
+                                semanticsLabel: strings.sessionNoModel,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
+                    ),
             ),
           ),
           if (showStop)
