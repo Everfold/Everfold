@@ -9,7 +9,14 @@ class BackDismissibleMenuAnchor extends StatefulWidget {
   });
 
   final List<Widget> menuChildren;
-  final MenuAnchorChildBuilder builder;
+
+  /// 将提供的焦点节点绑定到触发按钮, 让菜单正确交接和恢复焦点。
+  final Widget Function(
+    BuildContext context,
+    MenuController controller,
+    FocusNode focusNode,
+  )
+  builder;
 
   @override
   State<BackDismissibleMenuAnchor> createState() =>
@@ -18,6 +25,8 @@ class BackDismissibleMenuAnchor extends StatefulWidget {
 
 class _BackDismissibleMenuAnchorState extends State<BackDismissibleMenuAnchor> {
   final _controller = MenuController();
+  // 未绑定按钮时, 菜单的自动焦点迁移会让祖先会话行残留焦点高亮。
+  final _buttonFocus = FocusNode();
   // 弹层沿用锚点的继承环境; 隔离菜单滚动位置, 避免读写父级分组的展开状态。
   final _menuStorage = PageStorageBucket();
   LocalHistoryEntry? _history;
@@ -46,6 +55,7 @@ class _BackDismissibleMenuAnchorState extends State<BackDismissibleMenuAnchor> {
   @override
   void dispose() {
     _closed();
+    _buttonFocus.dispose();
     super.dispose();
   }
 
@@ -54,10 +64,12 @@ class _BackDismissibleMenuAnchorState extends State<BackDismissibleMenuAnchor> {
     bucket: _menuStorage,
     child: MenuAnchor(
       controller: _controller,
+      childFocusNode: _buttonFocus,
       onOpen: _opened,
       onClose: _closed,
       menuChildren: widget.menuChildren,
-      builder: widget.builder,
+      builder: (context, controller, _) =>
+          widget.builder(context, controller, _buttonFocus),
     ),
   );
 }

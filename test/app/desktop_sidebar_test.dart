@@ -1,6 +1,5 @@
-import 'package:everfold/ui/core/widgets/sidebar_destination.dart';
-
 import 'dart:convert';
+import 'dart:ui' as ui;
 
 import 'package:everfold/app/app_scope.dart';
 import 'package:everfold/app/everfold_app.dart';
@@ -9,8 +8,10 @@ import 'package:everfold/application/settings/app_settings_controller.dart';
 import 'package:everfold/application/sessions/sessions_controller.dart';
 import 'package:everfold/core/config/app_config.dart';
 import 'package:everfold/data/models/app_settings_dto.dart';
+import 'package:everfold/ui/core/widgets/sidebar_destination.dart';
 import 'package:everfold/ui/features/sessions/views/session_page.dart';
 import 'package:everfold/ui/features/sessions/views/session_transcript.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -201,6 +202,126 @@ void main() {
       find.byKey(const ValueKey('settings-navigation')).hitTestable(),
       findsOneWidget,
     );
+    expect(tester.takeException(), isNull);
+  });
+
+  for (final close in ['new', 'toggle', 'escape', 'rename']) {
+    testWidgets(
+      '会话菜单 $close 关闭并新建后不残留灰色背景',
+      (tester) async {
+        await pumpApp(tester);
+        final ref = container(tester);
+        final sessions = ref.read(sessionsControllerProvider.notifier);
+        sessions.setDraft(null, 'Existing task');
+        final id = sessions.submit(null)!;
+        await tester.pumpAndSettle();
+        final entry = find.byKey(ValueKey('session-$id'));
+        final title = find
+            .descendant(of: entry, matching: find.byType(Text))
+            .first;
+        final menu = find.byKey(ValueKey('session-menu-$id'));
+        final newButton = find.byKey(const ValueKey('new-session'));
+        final mouse = await tester.createGesture(
+          kind: ui.PointerDeviceKind.mouse,
+        );
+        await mouse.addPointer(location: const Offset(1100, 50));
+        addTearDown(mouse.removePointer);
+        Future<void> click(Finder target) async {
+          final point = tester.getCenter(target);
+          await mouse.moveTo(point);
+          await mouse.down(point);
+          await tester.pump(const Duration(milliseconds: 20));
+          await mouse.up();
+          await tester.pumpAndSettle();
+        }
+
+        Future<List<int>> background() async {
+          final boundary = tester.renderObject<RenderRepaintBoundary>(
+            find
+                .ancestor(of: entry, matching: find.byType(RepaintBoundary))
+                .first,
+          );
+          // 采样胶囊内部无文字和图标处。只检查 selected 无法发现残留的焦点墨水。
+          final point = boundary.globalToLocal(
+            tester.getTopLeft(entry) + const Offset(20, 28),
+          );
+          final image = (await tester.runAsync(() => boundary.toImage()))!;
+          final bytes = (await tester.runAsync(
+            () => image.toByteData(format: ui.ImageByteFormat.rawRgba),
+          ))!;
+          final offset =
+              (point.dy.floor() * image.width + point.dx.floor()) * 4;
+          final result = bytes.buffer.asUint8List(offset, 4).toList();
+          image.dispose();
+          return result;
+        }
+
+        final before = await background();
+        for (var i = 0; i < 3; i++) {
+          await click(title);
+          await click(menu);
+          expect(find.text('Rename').hitTestable(), findsOneWidget);
+          if (close == 'toggle') {
+            await click(menu);
+          } else if (close == 'escape') {
+            await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+            await tester.pumpAndSettle();
+          } else if (close == 'rename') {
+            await click(find.widgetWithText(MenuItemButton, 'Rename'));
+            await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+            await tester.pumpAndSettle();
+          }
+          await click(newButton);
+          await mouse.moveTo(const Offset(1100, 50));
+          await tester.pumpAndSettle();
+          expect(
+            ref.read(appRouterProvider).routerDelegate.state.uri.path,
+            '/',
+          );
+          expect(tester.widget<SidebarDestination>(entry).selected, isFalse);
+          expect(
+            await background(),
+            before,
+            reason: 'close=$close iteration=$i',
+          );
+        }
+      },
+      variant: TargetPlatformVariant({
+        TargetPlatform.linux,
+        TargetPlatform.windows,
+        TargetPlatform.android,
+      }),
+    );
+  }
+
+  testWidgets('会话菜单支持键盘打开、关闭后恢复按钮焦点并选择操作', (tester) async {
+    await pumpApp(tester);
+    final ref = container(tester);
+    final sessions = ref.read(sessionsControllerProvider.notifier);
+    sessions.setDraft(null, 'Existing task');
+    final id = sessions.submit(null)!;
+    ref.read(appRouterProvider).go('/sessions/$id');
+    await tester.pumpAndSettle();
+    final menu = find.byKey(ValueKey('session-menu-$id'));
+    final focus = tester.widget<IconButton>(menu).focusNode!;
+    focus.requestFocus();
+    await tester.pump();
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(find.text('Rename').hitTestable(), findsOneWidget);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pumpAndSettle();
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(find.text('Rename'), findsNothing);
+    expect(focus.hasPrimaryFocus, isTrue);
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pumpAndSettle();
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('rename-session-input')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

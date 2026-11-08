@@ -347,11 +347,12 @@ class _ComposerToolbar extends StatelessWidget {
               ),
             ),
         ],
-        builder: (context, menu, _) {
+        builder: (context, menu, focusNode) {
           void toggle() => menu.isOpen ? menu.close() : menu.open();
           return compact
               ? IconButton(
                   key: const ValueKey('preset-selector'),
+                  focusNode: focusNode,
                   tooltip: '${strings.sessionPresetLabel}: $presetLabel',
                   onPressed: toggle,
                   icon: Icon(
@@ -362,6 +363,7 @@ class _ComposerToolbar extends StatelessWidget {
                 )
               : TextButton.icon(
                   key: const ValueKey('preset-selector'),
+                  focusNode: focusNode,
                   onPressed: toggle,
                   icon: const Icon(Icons.tune),
                   label: Text(
@@ -437,9 +439,10 @@ class _ComposerToolbar extends StatelessWidget {
                   child: Text(strings.modelConnect),
                 ),
               ],
-              builder: (context, menu, _) => compact
+              builder: (context, menu, focusNode) => compact
                   ? IconButton(
                       key: const ValueKey('model-selector'),
+                      focusNode: focusNode,
                       tooltip: strings.sessionNoModel,
                       onPressed: () => menu.isOpen ? menu.close() : menu.open(),
                       icon: const Icon(Icons.smart_toy_outlined),
@@ -449,6 +452,7 @@ class _ComposerToolbar extends StatelessWidget {
                       excludeFromSemantics: true,
                       child: TextButton(
                         key: const ValueKey('model-selector'),
+                        focusNode: focusNode,
                         onPressed: () =>
                             menu.isOpen ? menu.close() : menu.open(),
                         child: Row(

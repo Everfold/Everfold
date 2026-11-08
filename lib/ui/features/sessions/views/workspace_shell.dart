@@ -391,7 +391,8 @@ class _WorkspaceNavigation extends StatelessWidget {
                         child: Text(strings.sessionDelete),
                       ),
                     ],
-                    builder: (context, menu, _) => IconButton(
+                    builder: (context, menu, focusNode) => IconButton(
+                      focusNode: focusNode,
                       key: ValueKey('session-menu-${session.id}'),
                       tooltip: strings.commonMore,
                       onPressed: () => menu.isOpen ? menu.close() : menu.open(),
