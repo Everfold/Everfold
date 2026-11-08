@@ -937,6 +937,30 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'失败'**
   String get messageToolFailed;
+
+  /// 将桌面侧栏折叠为图标导航的按钮提示。
+  ///
+  /// In zh, this message translates to:
+  /// **'折叠侧栏'**
+  String get navigationCollapseSidebar;
+
+  /// 展开桌面侧栏的按钮提示。
+  ///
+  /// In zh, this message translates to:
+  /// **'展开侧栏'**
+  String get navigationExpandSidebar;
+
+  /// 侧栏分隔条的无障碍标签。
+  ///
+  /// In zh, this message translates to:
+  /// **'调整侧栏宽度'**
+  String get navigationResizeSidebar;
+
+  /// 侧栏分隔条的鼠标操作提示。
+  ///
+  /// In zh, this message translates to:
+  /// **'拖动调整宽度，双击恢复默认'**
+  String get navigationResizeSidebarHint;
 }
 
 class _AppLocalizationsDelegate

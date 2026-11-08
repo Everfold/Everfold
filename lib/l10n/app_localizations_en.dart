@@ -439,4 +439,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get messageToolFailed => 'Failed';
+
+  @override
+  String get navigationCollapseSidebar => 'Collapse sidebar';
+
+  @override
+  String get navigationExpandSidebar => 'Expand sidebar';
+
+  @override
+  String get navigationResizeSidebar => 'Resize sidebar';
+
+  @override
+  String get navigationResizeSidebarHint =>
+      'Drag to resize; double-click to reset';
 }

@@ -5,6 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../../application/window/desktop_window_provider.dart';
 import '../../../l10n/app_localizations.dart';
 import '../layout/page_spacing.dart';
+import 'desktop_sidebar.dart';
 
 enum AppSection { settings, clusters }
 
@@ -85,7 +86,35 @@ class SectionShell extends ConsumerWidget {
           body: SafeArea(
             child: Row(
               children: [
-                if (wide) ...[navigation, const VerticalDivider(width: 1)],
+                if (wide)
+                  DesktopSidebar(
+                    availableWidth: constraints.maxWidth,
+                    builder: (collapsed, _) => collapsed
+                        ? DesktopNavigationRail(
+                            key: ValueKey('${section.name}-section-rail'),
+                            selectedIndex: 0,
+                            leading: IconButton(
+                              key: const ValueKey('return-to-workspace'),
+                              tooltip: strings.navigationReturnToWorkspace,
+                              onPressed: returnToWorkspace,
+                              icon: const Icon(Icons.arrow_back),
+                            ),
+                            onDestinationSelected: (_) {},
+                            destinations: [
+                              NavigationRailDestination(
+                                icon: Tooltip(
+                                  message: destination,
+                                  excludeFromSemantics: true,
+                                  child: Icon(
+                                    settings ? Icons.tune : Icons.hub_outlined,
+                                  ),
+                                ),
+                                label: Text(destination),
+                              ),
+                            ],
+                          )
+                        : navigation,
+                  ),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,

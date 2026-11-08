@@ -22,13 +22,20 @@ final class AppSettings {
     this.seedColor = 0xff6750a4,
     this.setupStage = AppSetupStage.introduction,
     this.connectionMode = AppConnectionMode.offline,
+    this.sidebarWidth = 360,
+    this.sidebarCollapsed = false,
   });
+
+  static const minSidebarWidth = 256.0;
+  static const maxSidebarWidth = 480.0;
 
   final AppLanguage language;
   final AppAppearance appearance;
   final AppColorMode colorMode;
   final AppSetupStage setupStage;
   final AppConnectionMode connectionMode;
+  final double sidebarWidth;
+  final bool sidebarCollapsed;
 
   /// 不透明 ARGB 种子色, 领域层不依赖 Flutter Color
   final int seedColor;
@@ -40,6 +47,8 @@ final class AppSettings {
     int? seedColor,
     AppSetupStage? setupStage,
     AppConnectionMode? connectionMode,
+    double? sidebarWidth,
+    bool? sidebarCollapsed,
   }) => AppSettings(
     language: language ?? this.language,
     appearance: appearance ?? this.appearance,
@@ -47,6 +56,8 @@ final class AppSettings {
     seedColor: seedColor ?? this.seedColor,
     setupStage: setupStage ?? this.setupStage,
     connectionMode: connectionMode ?? this.connectionMode,
+    sidebarWidth: sidebarWidth ?? this.sidebarWidth,
+    sidebarCollapsed: sidebarCollapsed ?? this.sidebarCollapsed,
   );
 
   @override
@@ -57,7 +68,9 @@ final class AppSettings {
       other.colorMode == colorMode &&
       other.seedColor == seedColor &&
       other.setupStage == setupStage &&
-      other.connectionMode == connectionMode;
+      other.connectionMode == connectionMode &&
+      other.sidebarWidth == sidebarWidth &&
+      other.sidebarCollapsed == sidebarCollapsed;
 
   @override
   int get hashCode => Object.hash(
@@ -67,5 +80,7 @@ final class AppSettings {
     seedColor,
     setupStage,
     connectionMode,
+    sidebarWidth,
+    sidebarCollapsed,
   );
 }

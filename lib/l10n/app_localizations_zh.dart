@@ -428,4 +428,16 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get messageToolFailed => '失败';
+
+  @override
+  String get navigationCollapseSidebar => '折叠侧栏';
+
+  @override
+  String get navigationExpandSidebar => '展开侧栏';
+
+  @override
+  String get navigationResizeSidebar => '调整侧栏宽度';
+
+  @override
+  String get navigationResizeSidebarHint => '拖动调整宽度，双击恢复默认';
 }

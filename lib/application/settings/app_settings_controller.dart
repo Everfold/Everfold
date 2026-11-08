@@ -87,6 +87,20 @@ final class AppSettingsController extends AsyncNotifier<AppSettings> {
         );
       });
 
+  Future<Result<void>> setSidebarWidth(double width) {
+    if (!width.isFinite ||
+        width < AppSettings.minSidebarWidth ||
+        width > AppSettings.maxSidebarWidth) {
+      return Future.value(
+        const Failure<void>(AppFailure(FailureKind.validation)),
+      );
+    }
+    return _update((current) => current.copyWith(sidebarWidth: width));
+  }
+
+  Future<Result<void>> setSidebarCollapsed(bool collapsed) =>
+      _update((current) => current.copyWith(sidebarCollapsed: collapsed));
+
   // 仅完成初始化, 不创建登录状态或保存任何凭据
   Future<Result<void>> continueConnectionSetup() => _update((s) {
     if (s.connectionMode != AppConnectionMode.cluster ||

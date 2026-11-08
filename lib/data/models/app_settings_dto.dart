@@ -46,6 +46,21 @@ final class AppSettingsDto {
       'cloud' || 'cluster' => AppConnectionMode.cluster,
       _ => throw const FormatException('Invalid connection mode'),
     };
+    final sidebarWidth = switch (map['sidebarWidth']) {
+      null when !map.containsKey('sidebarWidth') =>
+        const AppSettings().sidebarWidth,
+      num value
+          when value.isFinite &&
+              value >= AppSettings.minSidebarWidth &&
+              value <= AppSettings.maxSidebarWidth =>
+        value.toDouble(),
+      _ => throw const FormatException('Invalid sidebar width'),
+    };
+    final sidebarCollapsed = switch (map['sidebarCollapsed']) {
+      null when !map.containsKey('sidebarCollapsed') => false,
+      bool value => value,
+      _ => throw const FormatException('Invalid sidebar collapsed state'),
+    };
     return AppSettingsDto(
       AppSettings(
         language: language,
@@ -54,6 +69,8 @@ final class AppSettingsDto {
         seedColor: seedColor,
         setupStage: setupStage,
         connectionMode: connectionMode,
+        sidebarWidth: sidebarWidth,
+        sidebarCollapsed: sidebarCollapsed,
       ),
     );
   }
@@ -66,6 +83,8 @@ final class AppSettingsDto {
     'seedColor': settings.seedColor,
     'setupStage': settings.setupStage.name,
     'connectionMode': settings.connectionMode.name,
+    'sidebarWidth': settings.sidebarWidth,
+    'sidebarCollapsed': settings.sidebarCollapsed,
     'language': switch (settings.language) {
       AppLanguage.system => 'system',
       AppLanguage.english => 'en',

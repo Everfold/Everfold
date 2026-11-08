@@ -332,51 +332,49 @@ class _ComposerToolbar extends StatelessWidget {
       final presetLabel = session.preset == SessionPreset.standard
           ? strings.sessionStandardPreset
           : strings.sessionPlanPreset;
-      final contextActions = Wrap(
-        key: const ValueKey('composer-context-actions'),
-        spacing: 4,
-        runSpacing: 4,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        children: [
-          BackDismissibleMenuAnchor(
-            menuChildren: [
-              for (final preset in SessionPreset.values)
-                RadioMenuButton<SessionPreset>(
-                  value: preset,
-                  groupValue: session.preset,
-                  onChanged: (value) {
-                    if (value != null) onPresetChanged(value);
-                  },
-                  child: Text(
-                    preset == SessionPreset.standard
-                        ? strings.sessionStandardPreset
-                        : strings.sessionPlanPreset,
+      final presetAction = BackDismissibleMenuAnchor(
+        menuChildren: [
+          for (final preset in SessionPreset.values)
+            RadioMenuButton<SessionPreset>(
+              value: preset,
+              groupValue: session.preset,
+              onChanged: (value) {
+                if (value != null) onPresetChanged(value);
+              },
+              child: Text(
+                preset == SessionPreset.standard
+                    ? strings.sessionStandardPreset
+                    : strings.sessionPlanPreset,
+              ),
+            ),
+        ],
+        builder: (context, menu, _) {
+          void toggle() => menu.isOpen ? menu.close() : menu.open();
+          return compact
+              ? IconButton(
+                  key: const ValueKey('preset-selector'),
+                  tooltip: '${strings.sessionPresetLabel}: $presetLabel',
+                  onPressed: toggle,
+                  icon: Icon(
+                    session.preset == SessionPreset.standard
+                        ? Icons.tune
+                        : Icons.checklist,
                   ),
-                ),
-            ],
-            builder: (context, menu, _) {
-              void toggle() => menu.isOpen ? menu.close() : menu.open();
-              return compact
-                  ? IconButton(
-                      key: const ValueKey('preset-selector'),
-                      tooltip: '${strings.sessionPresetLabel}: $presetLabel',
-                      onPressed: toggle,
-                      icon: Icon(
-                        session.preset == SessionPreset.standard
-                            ? Icons.tune
-                            : Icons.checklist,
-                      ),
-                    )
-                  : TextButton.icon(
-                      key: const ValueKey('preset-selector'),
-                      onPressed: toggle,
-                      icon: const Icon(Icons.tune),
-                      label: Text(presetLabel),
-                    );
-            },
-          ),
-          if (compact)
-            IconButton.filledTonal(
+                )
+              : TextButton.icon(
+                  key: const ValueKey('preset-selector'),
+                  onPressed: toggle,
+                  icon: const Icon(Icons.tune),
+                  label: Text(
+                    presetLabel,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                );
+        },
+      );
+      final workspaceAction = compact
+          ? IconButton.filledTonal(
               key: const ValueKey('workspace-selector'),
               tooltip: session.workspace == null
                   ? strings.workspaceNone
@@ -390,15 +388,18 @@ class _ComposerToolbar extends StatelessWidget {
                   ? onPickWorkspace
                   : onOpenWorkspace,
             )
-          else if (session.workspace == null)
-            TextButton.icon(
+          : session.workspace == null
+          ? TextButton.icon(
               key: const ValueKey('workspace-selector'),
               onPressed: pickingWorkspace ? null : onPickWorkspace,
               icon: const Icon(Icons.folder_open),
-              label: Text(strings.workspaceNone),
+              label: Text(
+                strings.workspaceNone,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             )
-          else
-            InputChip(
+          : InputChip(
               key: const ValueKey('workspace-selector'),
               avatar: const Icon(Icons.folder_open, size: 18),
               label: Text(
@@ -410,7 +411,15 @@ class _ComposerToolbar extends StatelessWidget {
               onPressed: pickingWorkspace ? null : onOpenWorkspace,
               onDeleted: pickingWorkspace ? null : onClearWorkspace,
               deleteButtonTooltipMessage: strings.workspaceClear,
-            ),
+            );
+      // 每组内允许标签省略, 拖动侧栏时不把操作挤到下一行。
+      final contextActions = Row(
+        key: const ValueKey('composer-context-actions'),
+        mainAxisSize: MainAxisSize.min,
+        spacing: 4,
+        children: [
+          if (compact) presetAction else Flexible(child: presetAction),
+          if (compact) workspaceAction else Flexible(child: workspaceAction),
         ],
       );
       final submissionActions = Row(

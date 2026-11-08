@@ -62,6 +62,27 @@ void main() {
     );
   });
 
+  test('侧栏宽度和折叠按顺序保存, 不覆盖其他偏好, 拒绝非法宽度', () async {
+    await container.read(appSettingsControllerProvider.future);
+    final controller = container.read(appSettingsControllerProvider.notifier);
+    for (final width in [255.0, 481.0, double.nan, double.infinity]) {
+      expect(await controller.setSidebarWidth(width), isA<Failure<void>>());
+    }
+    expect(store.writes, 0);
+    await Future.wait([
+      controller.setSidebarWidth(440),
+      controller.setSidebarCollapsed(true),
+      controller.setAppearance(AppAppearance.dark),
+    ]);
+    final saved = (await LocalAppSettingsRepository(store).load()).getOrThrow();
+    expect(saved.sidebarWidth, 440);
+    expect(saved.sidebarCollapsed, isTrue);
+    expect(saved.appearance, AppAppearance.dark);
+    store.failWrite = true;
+    expect(await controller.setSidebarWidth(320), isA<Failure<void>>());
+    expect(container.read(appSettingsControllerProvider).requireValue, saved);
+  });
+
   test('集群方式在队列中不能跳过连接阶段, 跳过设置切回离线', () async {
     await container.read(appSettingsControllerProvider.future);
     final controller = container.read(appSettingsControllerProvider.notifier);

@@ -9,6 +9,7 @@ import '../../../../domain/sessions/agent_session.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../core/widgets/adaptive_dialog.dart';
 import '../../../core/widgets/back_dismissible_menu_anchor.dart';
+import '../../../core/widgets/desktop_sidebar.dart';
 
 /// 连接窗口顶栏中的菜单按钮与当前工作区抽屉, 生命周期跟随页面作用域
 final workspaceScaffoldKeyProvider = Provider<GlobalKey<ScaffoldState>>(
@@ -120,7 +121,20 @@ class WorkspaceShell extends ConsumerWidget {
           body: SafeArea(
             child: Row(
               children: [
-                if (wide) ...[sidebar, const VerticalDivider(width: 1)],
+                if (wide)
+                  DesktopSidebar(
+                    availableWidth: constraints.maxWidth,
+                    builder: (collapsed, expand) => collapsed
+                        ? _WorkspaceRail(
+                            onExpand: expand,
+                            onNewSession: () => navigate('/'),
+                            onOpenClusters: () =>
+                                navigate('/cloud', push: true),
+                            onOpenSettings: () =>
+                                navigate('/settings', push: true),
+                          )
+                        : sidebar,
+                  ),
                 Expanded(
                   child: _WorkspaceBody(
                     title: title,
@@ -138,6 +152,72 @@ class WorkspaceShell extends ConsumerWidget {
 }
 
 // 导航区只接收显示数据和操作回调, 不负责修改会话状态
+class _WorkspaceRail extends StatelessWidget {
+  const _WorkspaceRail({
+    required this.onExpand,
+    required this.onNewSession,
+    required this.onOpenClusters,
+    required this.onOpenSettings,
+  });
+
+  final VoidCallback? onExpand;
+  final VoidCallback onNewSession;
+  final VoidCallback onOpenClusters;
+  final VoidCallback onOpenSettings;
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = AppLocalizations.of(context);
+    return DesktopNavigationRail(
+      key: const ValueKey('workspace-navigation-rail'),
+      groupAlignment: 1,
+      leading: IconButton.filledTonal(
+        key: const ValueKey('new-session'),
+        tooltip: strings.sessionNew,
+        onPressed: onNewSession,
+        icon: const Icon(Icons.add),
+      ),
+      onDestinationSelected: (index) => switch (index) {
+        0 => onExpand?.call(),
+        1 => onOpenClusters(),
+        _ => onOpenSettings(),
+      },
+      destinations: [
+        NavigationRailDestination(
+          icon: Tooltip(
+            message: strings.sessionTitle,
+            excludeFromSemantics: true,
+            child: const Icon(Icons.forum_outlined),
+          ),
+          label: Text(strings.sessionTitle),
+        ),
+        NavigationRailDestination(
+          icon: Tooltip(
+            message: strings.clusterTitle,
+            excludeFromSemantics: true,
+            child: const Icon(
+              Icons.cloud_outlined,
+              key: ValueKey('cloud-navigation'),
+            ),
+          ),
+          label: Text(strings.clusterTitle),
+        ),
+        NavigationRailDestination(
+          icon: Tooltip(
+            message: strings.settingsTitle,
+            excludeFromSemantics: true,
+            child: const Icon(
+              Icons.settings_outlined,
+              key: ValueKey('settings-navigation'),
+            ),
+          ),
+          label: Text(strings.settingsTitle),
+        ),
+      ],
+    );
+  }
+}
+
 class _WorkspaceNavigation extends StatelessWidget {
   const _WorkspaceNavigation({
     required this.location,

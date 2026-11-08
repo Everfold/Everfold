@@ -559,5 +559,21 @@
   "messageToolFailed": "失败",
   "@messageToolFailed": {
     "description": "工具调用执行失败的状态标签。"
+  },
+  "navigationCollapseSidebar": "折叠侧栏",
+  "@navigationCollapseSidebar": {
+    "description": "将桌面侧栏折叠为图标导航的按钮提示。"
+  },
+  "navigationExpandSidebar": "展开侧栏",
+  "@navigationExpandSidebar": {
+    "description": "展开桌面侧栏的按钮提示。"
+  },
+  "navigationResizeSidebar": "调整侧栏宽度",
+  "@navigationResizeSidebar": {
+    "description": "侧栏分隔条的无障碍标签。"
+  },
+  "navigationResizeSidebarHint": "拖动调整宽度，双击恢复默认",
+  "@navigationResizeSidebarHint": {
+    "description": "侧栏分隔条的鼠标操作提示。"
   }
 }

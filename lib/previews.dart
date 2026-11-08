@@ -67,6 +67,33 @@ Widget workspacePreview() => _preview(stage: AppSetupStage.complete);
 Widget englishWorkspacePreview() =>
     _preview(stage: AppSetupStage.complete, language: 'en');
 
+@Preview(name: 'Workspace · Collapsed sidebar', size: Size(1280, 900))
+@Preview(
+  name: 'Workspace · Collapsed short',
+  size: Size(840, 400),
+  textScaleFactor: 2,
+)
+Widget collapsedWorkspacePreview() => _preview(
+  stage: AppSetupStage.complete,
+  language: 'en',
+  sidebarCollapsed: true,
+  sidebarWidth: 440,
+);
+
+@Preview(name: 'Settings · Collapsed sidebar', size: Size(1280, 900))
+Widget collapsedSettingsPreview() => _preview(
+  stage: AppSetupStage.complete,
+  path: '/settings',
+  sidebarCollapsed: true,
+);
+
+@Preview(name: 'Clusters · Collapsed sidebar', size: Size(1280, 900))
+Widget collapsedClustersPreview() => _preview(
+  stage: AppSetupStage.complete,
+  path: '/cloud',
+  sidebarCollapsed: true,
+);
+
 /// 桌面顶栏预览使用独立窗口替代实现, 不移动或关闭浏览器窗口
 @Preview(name: 'Window frame · Desktop', size: Size(1280, 900))
 @Preview(
@@ -206,6 +233,8 @@ Widget _preview({
   String? path,
   String? language,
   AppAppearance appearance = AppAppearance.system,
+  double sidebarWidth = 360,
+  bool sidebarCollapsed = false,
 }) => AppScope(
   config: AppConfig(),
   talker: Talker(settings: TalkerSettings(enabled: false)),
@@ -220,6 +249,8 @@ Widget _preview({
                 : 'system'),
         'setupStage': stage.name,
         'appearance': appearance.name,
+        'sidebarWidth': sidebarWidth,
+        'sidebarCollapsed': sidebarCollapsed,
         'connectionMode': stage == AppSetupStage.login ? 'cloud' : 'local',
       }),
     },

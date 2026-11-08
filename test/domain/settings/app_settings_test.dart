@@ -29,6 +29,8 @@ void main() {
       'seedColor': const AppSettings().seedColor,
       'setupStage': 'introduction',
       'connectionMode': 'offline',
+      'sidebarWidth': 360.0,
+      'sidebarCollapsed': false,
     });
   });
 
@@ -98,6 +100,50 @@ void main() {
       expect(
         settings.copyWith(language: AppLanguage.chinese).seedColor,
         settings.seedColor,
+      );
+    }
+  });
+
+  test('侧栏偏好兼容旧数据并独立保存, 拒绝非法宽度和折叠状态', () {
+    final defaults = AppSettingsDto.fromJson({'language': 'en'}).settings;
+    expect(defaults.sidebarWidth, 360);
+    expect(defaults.sidebarCollapsed, isFalse);
+    final settings = defaults.copyWith(
+      sidebarWidth: 432.5,
+      sidebarCollapsed: true,
+    );
+    final restored = AppSettingsDto.fromJson(AppSettingsDto(settings).toJson())
+        .settings;
+    expect(restored, settings);
+    expect(restored.hashCode, settings.hashCode);
+    expect(
+      settings.copyWith(appearance: AppAppearance.dark).sidebarWidth,
+      432.5,
+    );
+    expect(settings.copyWith(sidebarCollapsed: false).sidebarWidth, 432.5);
+    expect(settings.copyWith(sidebarWidth: 360), isNot(settings));
+    for (final value in [
+      null,
+      '360',
+      0,
+      255,
+      481,
+      double.nan,
+      double.infinity,
+    ]) {
+      expect(
+        () =>
+            AppSettingsDto.fromJson({'language': 'en', 'sidebarWidth': value}),
+        throwsFormatException,
+      );
+    }
+    for (final value in [null, 'true', 1]) {
+      expect(
+        () => AppSettingsDto.fromJson({
+          'language': 'en',
+          'sidebarCollapsed': value,
+        }),
+        throwsFormatException,
       );
     }
   });

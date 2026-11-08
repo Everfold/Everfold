@@ -139,5 +139,21 @@
   "messageToolOutput": "Tool output",
   "messageToolRunning": "Running",
   "messageToolCompleted": "Completed",
-  "messageToolFailed": "Failed"
+  "messageToolFailed": "Failed",
+  "navigationCollapseSidebar": "Collapse sidebar",
+  "@navigationCollapseSidebar": {
+    "description": "将桌面侧栏折叠为图标导航的按钮提示。"
+  },
+  "navigationExpandSidebar": "Expand sidebar",
+  "@navigationExpandSidebar": {
+    "description": "展开桌面侧栏的按钮提示。"
+  },
+  "navigationResizeSidebar": "Resize sidebar",
+  "@navigationResizeSidebar": {
+    "description": "侧栏分隔条的无障碍标签。"
+  },
+  "navigationResizeSidebarHint": "Drag to resize; double-click to reset",
+  "@navigationResizeSidebarHint": {
+    "description": "侧栏分隔条的鼠标操作提示。"
+  }
 }
