@@ -1143,6 +1143,40 @@ void main() {
     });
   }
 
+  for (final width in [390.0, 1280.0]) {
+    testWidgets('$width 提交后展开长消息保留开头, 可收起并再次提交', (tester) async {
+      await pumpApp(tester, size: Size(width, 800));
+      final input = find.byKey(const ValueKey('prompt-input'));
+      final text = List.generate(
+        45,
+        (i) => 'Line $i: detailed task description',
+      ).join('\n');
+      await tester.enterText(input, text);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('send-prompt')));
+      await tester.pumpAndSettle();
+      final header = find.text('完整内容');
+      final before = tester.getTopLeft(header).dy;
+      await tester.tap(header);
+      await tester.pumpAndSettle();
+      expect(header.hitTestable(), findsOneWidget);
+      expect(tester.getTopLeft(header).dy, closeTo(before, 0.1));
+      expect(
+        tester.widget<SelectableText>(find.byType(SelectableText)).data,
+        text,
+      );
+      await tester.tap(header);
+      await tester.pumpAndSettle();
+      expect(find.byType(SelectableText), findsNothing);
+      await tester.enterText(input, 'Next prompt');
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('send-prompt')));
+      await tester.pumpAndSettle();
+      expect(find.text('Next prompt').hitTestable(), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
   testWidgets('320 宽双倍字号下首次提交长消息, 键盘展开后末尾仍可见', (tester) async {
     await pumpApp(tester, size: const Size(320, 900), scale: 2);
     final prompt = List.generate(18, (index) => 'Line $index').join('\n');

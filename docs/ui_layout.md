@@ -91,7 +91,7 @@ WorkspaceShell
 1. [ConnectionForm](../lib/ui/features/setup/views/connection_form.dart): 先看 State 的 `build`, 再看 `_buildFields` 和 `_buildAction`. `_input` 和 `_certificate` 负责重复字段的排列, 控制器和 1 秒计时器仍由原来的 State 持有. `layoutBuilder` 允许集群连接在可用宽度小于 600dp, 或扣除键盘后的可用高度小于 480dp 时使用全屏 Dialog, 把主操作放在 AppBar 右侧; 其余尺寸使用 AlertDialog 的底部操作区. 共享字段滚动区用稳定 GlobalKey 保留切换外壳时的焦点与编辑状态, 表单控制器与连接计时器不随尺寸切换重建
 2. [SessionTranscript](../lib/ui/features/sessions/views/session_transcript.dart): 列表按需创建 `_MessageEntry`, 每条消息包含正文, 可选摘要和工具组. `_ToolEntry` 单独折叠工具输出, `MessageContent` 决定是否折叠长内容, `MessageMarkdown` 处理助手正文的 Markdown
 
-会话主动提交后显示最新消息, 列表按实际消息高度完成定位; 在底部时跟随追加内容和键盘引起的可用高度变化. 用户向上滚动浏览历史后停止跟随, 普通内容更新保留阅读位置. 提交触发的定位请求随会话隔离, 不带到其他会话.
+会话主动提交后显示最新消息, 列表按实际消息高度完成定位; 在底部时跟随追加内容和键盘引起的可用高度变化. 用户向上滚动浏览历史, 或主动展开及收起长正文, 思考摘要和工具输出后停止跟随, 普通内容更新保留阅读位置. 提交触发的定位请求随会话隔离, 不带到其他会话.
 
 `ValueKey` 用于稳定识别控件, `PageStorageKey` 用于恢复列表滚动或展开状态. 阅读时可以先略过键值, 修改区块时不要随意删除或重名, 否则可能把另一个会话的滚动或展开状态带过来
 

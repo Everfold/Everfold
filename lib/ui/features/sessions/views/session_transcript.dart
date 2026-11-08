@@ -80,28 +80,34 @@ class _SessionTranscriptState extends State<SessionTranscript> {
 
   @override
   Widget build(BuildContext context) {
-    return NotificationListener<UserScrollNotification>(
-      onNotification: (notification) {
-        if (notification.depth == 0 &&
-            notification.direction != ScrollDirection.idle) {
-          _followingLatest = false;
-        }
-        return false;
+    return NotificationListener<MessageExpansionNotification>(
+      onNotification: (_) {
+        _followingLatest = false;
+        return true;
       },
-      child: NotificationListener<ScrollMetricsNotification>(
+      child: NotificationListener<UserScrollNotification>(
         onNotification: (notification) {
-          if (notification.depth == 0 && _followingLatest) _scheduleReveal();
+          if (notification.depth == 0 &&
+              notification.direction != ScrollDirection.idle) {
+            _followingLatest = false;
+          }
           return false;
         },
-        child: ListView.builder(
-          key: PageStorageKey('transcript-${widget.storageId}'),
-          controller: _scroll,
-          padding: const EdgeInsets.all(16),
-          itemCount: widget.messages.length,
-          itemBuilder: (context, index) => _MessageEntry(
-            message: widget.messages[index],
-            index: index,
-            storageId: widget.storageId,
+        child: NotificationListener<ScrollMetricsNotification>(
+          onNotification: (notification) {
+            if (notification.depth == 0 && _followingLatest) _scheduleReveal();
+            return false;
+          },
+          child: ListView.builder(
+            key: PageStorageKey('transcript-${widget.storageId}'),
+            controller: _scroll,
+            padding: const EdgeInsets.all(16),
+            itemCount: widget.messages.length,
+            itemBuilder: (context, index) => _MessageEntry(
+              message: widget.messages[index],
+              index: index,
+              storageId: widget.storageId,
+            ),
           ),
         ),
       ),
@@ -154,6 +160,8 @@ class _MessageEntry extends StatelessWidget {
             // 展开状态和可选择文本的滚动偏移使用不同存储键
             ExpansionTile(
               key: PageStorageKey('reasoning-$index'),
+              onExpansionChanged: (_) =>
+                  const MessageExpansionNotification().dispatch(context),
               title: Text(strings.messageReasoningSummary),
               children: [
                 Padding(
@@ -168,6 +176,8 @@ class _MessageEntry extends StatelessWidget {
           if (message.tools.isNotEmpty)
             ExpansionTile(
               key: PageStorageKey('tools-$index'),
+              onExpansionChanged: (_) =>
+                  const MessageExpansionNotification().dispatch(context),
               title: Text(strings.messageToolCalls),
               children: [
                 for (
@@ -198,6 +208,8 @@ class _ToolEntry extends StatelessWidget {
   Widget build(BuildContext context) {
     final strings = AppLocalizations.of(context);
     return ExpansionTile(
+      onExpansionChanged: (_) =>
+          const MessageExpansionNotification().dispatch(context),
       leading: Icon(switch (tool.status) {
         ToolCallStatus.running => Icons.pending_outlined,
         ToolCallStatus.completed => Icons.check_circle_outline,

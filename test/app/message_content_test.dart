@@ -157,6 +157,58 @@ void main() {
     expect(find.text('逐字工具输出'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+  for (final tool in [false, true]) {
+    testWidgets('${tool ? '工具输出' : '思考摘要'}展开时暂停跟随, 双倍字号下可继续阅读', (tester) async {
+      final text = List.generate(18, (i) => '第 $i 行内容').join('\n');
+      final messages = [
+        SessionMessage(
+          role: MessageRole.assistant,
+          content: '回复',
+          reasoningSummary: tool ? null : text,
+          tools: tool
+              ? [
+                  ToolCall(
+                    name: 'read_file',
+                    status: ToolCallStatus.completed,
+                    output: text,
+                  ),
+                ]
+              : [],
+        ),
+      ];
+      Widget transcript(int request) =>
+          SessionTranscript(messages: messages, revealLatestRequest: request);
+      await pumpContent(
+        tester,
+        transcript(1),
+        size: const Size(390, 800),
+        scale: 2,
+      );
+      if (tool) {
+        await tester.tap(find.text('工具调用'));
+        await tester.pumpAndSettle();
+        // 先恢复底部跟随, 再检验内层工具输出的展开。
+        await pumpContent(
+          tester,
+          transcript(2),
+          size: const Size(390, 800),
+          scale: 2,
+        );
+      }
+      final header = find.text(tool ? 'read_file' : '思考摘要');
+      final before = tester.getTopLeft(header).dy;
+      await tester.tap(header);
+      await tester.pumpAndSettle();
+      expect(header.hitTestable(), findsOneWidget);
+      expect(tester.getTopLeft(header).dy, closeTo(before, 0.1));
+      expect(find.text(text), findsOneWidget);
+      await tester.tap(header);
+      await tester.pumpAndSettle();
+      expect(find.text(text), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
   testWidgets('320 宽双倍字号下长代码和宽表格水平滚动, 无布局溢出', (tester) async {
     final source =
         '```text\n${List.filled(80, 'wide').join()}\n```\n\n| col A | col B |\n| --- | --- |\n| ${List.filled(30, 'long').join()} | value |';
