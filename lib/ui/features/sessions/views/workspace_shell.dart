@@ -10,6 +10,7 @@ import '../../../../l10n/app_localizations.dart';
 import '../../../core/widgets/adaptive_dialog.dart';
 import '../../../core/widgets/back_dismissible_menu_anchor.dart';
 import '../../../core/widgets/desktop_sidebar.dart';
+import '../../../core/widgets/destructive_confirmation_dialog.dart';
 import '../../../core/widgets/sidebar_destination.dart';
 
 /// 连接窗口顶栏中的菜单按钮与当前工作区抽屉, 生命周期跟随页面作用域
@@ -71,20 +72,10 @@ class WorkspaceShell extends ConsumerWidget {
           } else {
             final confirmed = await showDialog<bool>(
               context: context,
-              builder: (context) => AlertDialog(
-                constraints: const BoxConstraints(maxWidth: 560),
-                title: Text(strings.sessionDeleteTitle),
-                content: Text(strings.sessionDeleteBody),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context, false),
-                    child: Text(strings.commonCancel),
-                  ),
-                  TextButton(
-                    onPressed: () => Navigator.pop(context, true),
-                    child: Text(strings.sessionDelete),
-                  ),
-                ],
+              builder: (context) => DestructiveConfirmationDialog(
+                title: strings.sessionDeleteTitle,
+                message: strings.sessionDeleteBody,
+                confirmLabel: strings.sessionDelete,
               ),
             );
             if (confirmed == true && context.mounted) {

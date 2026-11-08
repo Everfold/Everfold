@@ -8,6 +8,7 @@ import '../../../../domain/clusters/cluster_connection.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../core/layout/page_spacing.dart';
 import '../../../core/widgets/adaptive_dialog.dart';
+import '../../../core/widgets/destructive_confirmation_dialog.dart';
 import '../../setup/views/connection_form.dart';
 import 'cluster_labels.dart';
 
@@ -49,21 +50,10 @@ class ClustersPage extends ConsumerWidget {
     Future<void> remove(ClusterConnection cluster) async {
       final confirmed = await showDialog<bool>(
         context: context,
-        builder: (context) => AlertDialog(
-          constraints: const BoxConstraints(maxWidth: 560),
-          scrollable: true,
-          title: Text(strings.clusterRemoveTitle),
-          content: Text(strings.clusterRemoveBody),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: Text(strings.commonCancel),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: Text(strings.clusterRemove),
-            ),
-          ],
+        builder: (context) => DestructiveConfirmationDialog(
+          title: strings.clusterRemoveTitle,
+          message: strings.clusterRemoveBody,
+          confirmLabel: strings.clusterRemove,
         ),
       );
       if (confirmed == true && context.mounted) controller.remove(cluster.id);
