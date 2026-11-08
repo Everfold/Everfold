@@ -59,18 +59,21 @@ class SectionShell extends ConsumerWidget {
               },
               children: [
                 if (!wide)
-                  ListTile(
-                    key: const ValueKey('return-to-workspace'),
-                    leading: const Icon(Icons.arrow_back),
-                    title: Text(
-                      strings.navigationReturnToWorkspace,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: FilledButton.tonalIcon(
+                      key: const ValueKey('return-to-workspace'),
+                      icon: const Icon(Icons.arrow_back),
+                      label: Text(
+                        strings.navigationReturnToWorkspace,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      onPressed: () {
+                        scaffoldKey.currentState?.closeDrawer();
+                        returnToWorkspace();
+                      },
                     ),
-                    onTap: () {
-                      if (!wide) scaffoldKey.currentState?.closeDrawer();
-                      returnToWorkspace();
-                    },
                   ),
                 const Divider(),
                 NavigationDrawerDestination(
@@ -106,13 +109,13 @@ class SectionShell extends ConsumerWidget {
                     availableWidth: constraints.maxWidth,
                     header: LayoutBuilder(
                       builder: (context, bounds) => bounds.maxWidth < 160
-                          ? IconButton(
+                          ? IconButton.filledTonal(
                               key: const ValueKey('return-to-workspace'),
                               tooltip: strings.navigationReturnToWorkspace,
                               onPressed: returnToWorkspace,
                               icon: const Icon(Icons.arrow_back),
                             )
-                          : TextButton.icon(
+                          : FilledButton.tonalIcon(
                               key: const ValueKey('return-to-workspace'),
                               onPressed: returnToWorkspace,
                               icon: const Icon(Icons.arrow_back),
@@ -127,7 +130,7 @@ class SectionShell extends ConsumerWidget {
                         ? DesktopNavigationRail(
                             key: ValueKey('${section.name}-section-rail'),
                             selectedIndex: 0,
-                            leading: IconButton(
+                            leading: IconButton.filledTonal(
                               key: const ValueKey('return-to-workspace'),
                               tooltip: strings.navigationReturnToWorkspace,
                               onPressed: returnToWorkspace,
