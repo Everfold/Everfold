@@ -291,6 +291,42 @@ void main() {
     }
   }
 
+  for (final platform in [
+    TargetPlatform.linux,
+    TargetPlatform.windows,
+    TargetPlatform.macOS,
+  ]) {
+    testWidgets('${platform.name} 窗口图标为 18dp, 保留 40dp 点击区及原有顶栏与菜单尺寸', (
+      tester,
+    ) async {
+      final window = TestDesktopWindow();
+      await pumpApp(tester, window: window, width: 390);
+      await tester.pumpAndSettle();
+      Finder icon(String name) =>
+          find.descendant(of: control(name), matching: find.byType(Icon));
+      for (final name in ['minimize', 'maximize', 'close']) {
+        expect(tester.getSize(icon(name)), const Size(18, 18));
+        expect(tester.getSize(control(name)), const Size(40, 40));
+        expect(control(name).hitTestable(), findsOneWidget);
+      }
+      expect(tester.getSize(find.byType(AppBar)).height, 56);
+      expect(tester.getSize(icon('open-drawer')), const Size(24, 24));
+      await tester.tap(control('minimize'));
+      await tester.tap(control('maximize'));
+      await tester.pumpAndSettle();
+      expect(tester.widget<IconButton>(control('maximize')).tooltip, '还原窗口');
+      expect(tester.getSize(icon('maximize')), const Size(18, 18));
+      expect(tester.getSize(control('maximize')), const Size(40, 40));
+      await tester.tap(control('maximize'));
+      await tester.tap(control('close'));
+      expect(window.minimizes, 1);
+      expect(window.maximizes, 2);
+      expect(window.closes, 1);
+      expect(window.drags, 0);
+      expect(tester.takeException(), isNull);
+    }, variant: TargetPlatformVariant({platform}));
+  }
+
   testWidgets('切换明暗与自选色和语言不重建路由, 草稿与焦点保留', (tester) async {
     final window = TestDesktopWindow();
     await pumpApp(tester, window: window);
