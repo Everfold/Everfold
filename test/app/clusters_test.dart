@@ -5,6 +5,7 @@ import 'package:everfold/application/clusters/clusters_controller.dart';
 import 'package:everfold/core/config/app_config.dart';
 import 'package:everfold/data/services/storage/preferences_store.dart';
 import 'package:everfold/domain/clusters/cluster_connection.dart';
+import 'package:everfold/l10n/app_localizations.dart';
 import 'package:everfold/ui/features/clusters/views/clusters_page.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -19,10 +20,12 @@ void main() {
   Future<void> pumpApp(
     WidgetTester tester, {
     double width = 1280,
+    double height = 900,
     double scale = 1,
+    String language = 'zh',
   }) async {
     tester.view.devicePixelRatio = 1;
-    tester.view.physicalSize = Size(width, 900);
+    tester.view.physicalSize = Size(width, height);
     tester.platformDispatcher.textScaleFactorTestValue = scale;
     addTearDown(tester.view.resetDevicePixelRatio);
     addTearDown(tester.view.resetPhysicalSize);
@@ -34,7 +37,7 @@ void main() {
         preferencesStore: MemoryPreferencesStore(
           initialValues: {
             'everfold.app_settings.v1':
-                '{"language":"zh","setupStage":"complete"}',
+                '{"language":"$language","setupStage":"complete"}',
           },
         ),
         child: const EverfoldApp(),
@@ -200,6 +203,76 @@ void main() {
     expect(cluster.configuration.verification, ClusterVerification.credentials);
     expect(tester.takeException(), isNull);
   });
+
+  for (final (width, language) in [
+    (600.0, 'zh'),
+    (840.0, 'zh'),
+    (1280.0, 'en'),
+  ]) {
+    testWidgets('$width $language 矮窗双倍字号下键盘切换保持字段可编辑', (tester) async {
+      await pumpApp(
+        tester,
+        width: width,
+        height: 480,
+        scale: 2,
+        language: language,
+      );
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(ClustersPage)),
+      );
+      final strings = AppLocalizations.of(
+        tester.element(find.byType(ClustersPage)),
+      );
+      await tap(tester, find.byKey(const ValueKey('add-cluster')));
+      await tap(tester, find.byKey(const ValueKey('login-provider')));
+      await tap(tester, find.text(strings.clusterSelfHostedProvider).last);
+      await tap(tester, find.byKey(const ValueKey('login-verification')));
+      await tap(tester, find.text('mTLS').last);
+      final name = find.byKey(const ValueKey('cluster-name-input'));
+      await tester.ensureVisible(name);
+      await tester.enterText(name, '保留输入');
+      final editable = find.descendant(
+        of: name,
+        matching: find.byType(EditableText),
+      );
+      final focus = tester.widget<EditableText>(editable).focusNode;
+
+      tester.view.viewInsets = const FakeViewPadding(bottom: 280);
+      addTearDown(tester.view.resetViewInsets);
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(name);
+      await tester.pumpAndSettle();
+      expect(name.hitTestable(), findsOneWidget);
+      expect(focus.hasFocus, isTrue);
+      expect(tester.widget<TextField>(name).controller!.text, '保留输入');
+      await tester.enterText(name, '键盘下编辑');
+      final privateKey = find.byKey(
+        const ValueKey('certificate-privateKey-file'),
+      );
+      await tap(tester, privateKey);
+      expect(
+        find.byKey(const ValueKey('certificate-privateKey-selection')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey('connection-connect')).hitTestable(),
+        findsOneWidget,
+      );
+      expect(cancelConnection.hitTestable(), findsOneWidget);
+
+      tester.view.viewInsets = const FakeViewPadding();
+      await tester.pumpAndSettle();
+      expect(find.byType(AlertDialog), findsOneWidget);
+      expect(tester.widget<TextField>(name).controller!.text, '键盘下编辑');
+      expect(
+        find.byKey(const ValueKey('certificate-privateKey-selection')),
+        findsOneWidget,
+      );
+      await finishConnection(tester);
+      expect(container.read(clustersControllerProvider).single.name, '键盘下编辑');
+      expect(tester.takeException(), isNull);
+    });
+  }
 
   testWidgets('添加集群的取消与连接在同一操作区, 取消不增加集群', (tester) async {
     await pumpApp(tester);

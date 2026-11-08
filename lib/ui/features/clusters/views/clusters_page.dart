@@ -222,94 +222,106 @@ class _ClusterConnectionDialogState extends State<_ClusterConnectionDialog> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final strings = AppLocalizations.of(context);
-    final compact = MediaQuery.sizeOf(context).width < 600;
-    final title = widget.cluster == null
-        ? strings.clusterAdd
-        : strings.clusterConfigure;
-    return ConnectionForm(
-      key: const ValueKey('cluster-connection-form'),
-      initialConfiguration:
-          widget.cluster?.configuration ?? const ClusterConfiguration(),
-      saving: false,
-      advanceOnSuccess: true,
-      onNext: (configuration) => Navigator.pop<_ConnectionChoice>(context, (
-        name: _name.text.trim().isEmpty
-            ? clusterServiceLabel(strings, configuration.service)
-            : _name.text.trim(),
-        configuration: configuration,
-      )),
-      layoutBuilder: (fields, action, locked) {
-        void cancel() {
-          if (!locked) Navigator.pop(context);
-        }
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) {
+      final strings = AppLocalizations.of(context);
+      // 扣除键盘后的高度决定是否还能容纳弹窗标题、字段和底部操作。
+      final availableHeight =
+          constraints.maxHeight - MediaQuery.viewInsetsOf(context).vertical;
+      final fullscreen = constraints.maxWidth < 600 || availableHeight < 480;
+      final title = widget.cluster == null
+          ? strings.clusterAdd
+          : strings.clusterConfigure;
+      return ConnectionForm(
+        key: const ValueKey('cluster-connection-form'),
+        initialConfiguration:
+            widget.cluster?.configuration ?? const ClusterConfiguration(),
+        saving: false,
+        advanceOnSuccess: true,
+        onNext: (configuration) => Navigator.pop<_ConnectionChoice>(context, (
+          name: _name.text.trim().isEmpty
+              ? clusterServiceLabel(strings, configuration.service)
+              : _name.text.trim(),
+          configuration: configuration,
+        )),
+        layoutBuilder: (fields, action, locked) {
+          void cancel() {
+            if (!locked) Navigator.pop(context);
+          }
 
-        final content = SingleChildScrollView(
-          key: _fieldsKey,
-          padding: compact ? pagePaddingOf(context) : EdgeInsets.zero,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              TextField(
-                key: const ValueKey('cluster-name-input'),
-                controller: _name,
-                enabled: !locked,
-                decoration: InputDecoration(
-                  labelText: strings.clusterOptionalName,
-                  border: const OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              fields,
-            ],
-          ),
-        );
-        return CallbackShortcuts(
-          bindings: {const SingleActivator(LogicalKeyboardKey.escape): cancel},
-          child: PopScope(
-            canPop: !locked,
-            child: compact
-                ? Dialog.fullscreen(
-                    key: const ValueKey('cluster-connection-fullscreen'),
-                    child: Scaffold(
-                      appBar: AppBar(
-                        leading: IconButton(
-                          key: const ValueKey('cluster-connection-cancel'),
-                          tooltip: strings.commonCancel,
-                          onPressed: locked ? null : cancel,
-                          icon: const Icon(Icons.close),
-                        ),
-                        title: Text(title),
-                        actions: [
-                          Padding(
-                            padding: const EdgeInsetsDirectional.only(end: 16),
-                            child: action,
-                          ),
-                        ],
-                      ),
-                      body: SafeArea(child: content),
-                    ),
-                  )
-                : AlertDialog(
-                    constraints: const BoxConstraints(maxWidth: 560),
-                    title: Text(title),
-                    content: SizedBox(width: double.maxFinite, child: content),
-                    actions: [
-                      TextButton(
-                        key: const ValueKey('cluster-connection-cancel'),
-                        onPressed: locked ? null : cancel,
-                        child: Text(strings.commonCancel),
-                      ),
-                      action,
-                    ],
+          final content = SingleChildScrollView(
+            key: _fieldsKey,
+            padding: fullscreen ? pagePaddingOf(context) : EdgeInsets.zero,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                TextField(
+                  key: const ValueKey('cluster-name-input'),
+                  controller: _name,
+                  enabled: !locked,
+                  decoration: InputDecoration(
+                    labelText: strings.clusterOptionalName,
+                    border: const OutlineInputBorder(),
                   ),
-          ),
-        );
-      },
-    );
-  }
+                ),
+                const SizedBox(height: 16),
+                fields,
+              ],
+            ),
+          );
+          return CallbackShortcuts(
+            bindings: {
+              const SingleActivator(LogicalKeyboardKey.escape): cancel,
+            },
+            child: PopScope(
+              canPop: !locked,
+              child: fullscreen
+                  ? Dialog.fullscreen(
+                      key: const ValueKey('cluster-connection-fullscreen'),
+                      child: Scaffold(
+                        appBar: AppBar(
+                          leading: IconButton(
+                            key: const ValueKey('cluster-connection-cancel'),
+                            tooltip: strings.commonCancel,
+                            onPressed: locked ? null : cancel,
+                            icon: const Icon(Icons.close),
+                          ),
+                          title: Text(title),
+                          actions: [
+                            Padding(
+                              padding: const EdgeInsetsDirectional.only(
+                                end: 16,
+                              ),
+                              child: action,
+                            ),
+                          ],
+                        ),
+                        body: SafeArea(child: content),
+                      ),
+                    )
+                  : AlertDialog(
+                      constraints: const BoxConstraints(maxWidth: 560),
+                      title: Text(title),
+                      content: SizedBox(
+                        width: double.maxFinite,
+                        child: content,
+                      ),
+                      actions: [
+                        TextButton(
+                          key: const ValueKey('cluster-connection-cancel'),
+                          onPressed: locked ? null : cancel,
+                          child: Text(strings.commonCancel),
+                        ),
+                        action,
+                      ],
+                    ),
+            ),
+          );
+        },
+      );
+    },
+  );
 }
 
 class _ClusterNameDialog extends HookWidget {
