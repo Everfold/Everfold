@@ -27,13 +27,13 @@ fmt:
   cargo fmt --all
   nixfmt flake.nix nix/*.nix
 
+android-emulator:
+  emulator -avd everfold -gpu host
+
 update:
   flutter pub upgrade
   cargo update
   cargo install-update -a
   prek autoupdate
-  npx skills update
   nix flake update
-
-android-emulator:
-  emulator -avd everfold -gpu host
+  npx skills update
