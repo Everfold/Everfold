@@ -1,335 +1,247 @@
 {
   "@@locale": "zh",
-  "pageNotFound": "页面不存在",
-  "@pageNotFound": {
-    "description": "找不到目标页面时显示的提示。"
-  },
-  "settingsDestination": "设置",
-  "@settingsDestination": {
-    "description": "导航中进入应用设置的入口名称。"
-  },
-  "more": "更多",
-  "@more": {
+  "commonMore": "更多",
+  "@commonMore": {
     "description": "打开更多操作菜单的按钮标签。"
   },
-  "add": "添加",
-  "@add": {
+  "commonAdd": "添加",
+  "@commonAdd": {
     "description": "添加条目的通用操作标签。"
   },
-  "loading": "正在加载",
-  "@loading": {
+  "commonLoading": "正在加载",
+  "@commonLoading": {
     "description": "内容加载期间显示的状态提示。"
   },
-  "minimizeWindow": "最小化窗口",
-  "@minimizeWindow": {
+  "commonRetry": "重试",
+  "@commonRetry": {
+    "description": "重新尝试失败操作的按钮标签。"
+  },
+  "commonCancel": "取消",
+  "@commonCancel": {
+    "description": "取消当前操作或关闭编辑对话框的按钮标签。"
+  },
+  "commonSave": "保存",
+  "@commonSave": {
+    "description": "保存当前编辑内容的按钮标签。"
+  },
+  "commonContinueAction": "继续",
+  "@commonContinueAction": {
+    "description": "继续当前流程的通用按钮标签。"
+  },
+  "commonBack": "返回",
+  "@commonBack": {
+    "description": "返回上一步或上一页面的操作标签。"
+  },
+  "commonNextStep": "下一步",
+  "@commonNextStep": {
+    "description": "进入设置流程下一步的按钮标签。"
+  },
+  "commonCloseAction": "关闭",
+  "@commonCloseAction": {
+    "description": "关闭当前面板或对话框的通用按钮标签。"
+  },
+  "commonCopied": "已复制",
+  "@commonCopied": {
+    "description": "内容已成功复制到剪贴板时的反馈文本。"
+  },
+  "errorPageNotFound": "页面不存在",
+  "@errorPageNotFound": {
+    "description": "找不到目标页面时显示的提示。"
+  },
+  "errorConfiguration": "网络服务尚未配置",
+  "@errorConfiguration": {
+    "description": "网络服务缺少配置时显示的错误提示。"
+  },
+  "errorNetwork": "无法连接网络，请检查网络连接",
+  "@errorNetwork": {
+    "description": "网络连接失败时显示的错误提示。"
+  },
+  "errorTimeout": "请求超时，请稍后重试",
+  "@errorTimeout": {
+    "description": "请求超过等待时限时显示的错误提示。"
+  },
+  "errorCancelled": "操作已取消",
+  "@errorCancelled": {
+    "description": "请求被取消时显示的提示。"
+  },
+  "errorUnauthorized": "当前操作需要身份验证",
+  "@errorUnauthorized": {
+    "description": "当前操作需要身份验证时显示的错误提示。"
+  },
+  "errorForbidden": "没有执行此操作的权限",
+  "@errorForbidden": {
+    "description": "用户没有执行当前操作的权限时显示的错误提示。"
+  },
+  "errorConflict": "数据已发生变化，请重新加载",
+  "@errorConflict": {
+    "description": "数据发生冲突，需要重新加载时显示的错误提示。"
+  },
+  "errorValidation": "输入内容不符合要求",
+  "@errorValidation": {
+    "description": "提交的输入未通过验证时显示的错误提示。"
+  },
+  "errorServer": "集群暂时不可用，请稍后重试",
+  "@errorServer": {
+    "description": "集群服务暂时不可用时显示的错误提示。"
+  },
+  "errorInvalidData": "数据格式不正确，无法完成操作",
+  "@errorInvalidData": {
+    "description": "收到或处理的数据格式无效时显示的错误提示。"
+  },
+  "errorStorage": "无法访问本地存储，请重试",
+  "@errorStorage": {
+    "description": "本地存储无法访问时显示的错误提示。"
+  },
+  "errorUnexpected": "操作未完成，请重试",
+  "@errorUnexpected": {
+    "description": "无法归类的操作失败所使用的通用错误提示。"
+  },
+  "windowMinimize": "最小化窗口",
+  "@windowMinimize": {
     "description": "桌面窗口最小化按钮的提示和无障碍标签。"
   },
-  "maximizeWindow": "最大化窗口",
-  "@maximizeWindow": {
+  "windowMaximize": "最大化窗口",
+  "@windowMaximize": {
     "description": "桌面窗口最大化按钮的提示和无障碍标签。"
   },
-  "restoreWindow": "还原窗口",
-  "@restoreWindow": {
+  "windowRestore": "还原窗口",
+  "@windowRestore": {
     "description": "将最大化窗口恢复到原尺寸的操作标签。"
   },
-  "closeWindow": "关闭窗口",
-  "@closeWindow": {
+  "windowClose": "关闭窗口",
+  "@windowClose": {
     "description": "关闭桌面应用窗口的操作标签。"
   },
   "windowActionFailure": "无法操作窗口，请重试",
   "@windowActionFailure": {
     "description": "窗口控制操作失败时显示的提示。"
   },
-  "retry": "重试",
-  "@retry": {
-    "description": "重新尝试失败操作的按钮标签。"
+  "settingsTitle": "设置",
+  "@settingsTitle": {
+    "description": "导航中进入应用设置的入口名称。"
   },
-  "configurationFailure": "网络服务尚未配置",
-  "@configurationFailure": {
-    "description": "网络服务缺少配置时显示的错误提示。"
-  },
-  "networkFailure": "无法连接网络，请检查网络连接",
-  "@networkFailure": {
-    "description": "网络连接失败时显示的错误提示。"
-  },
-  "timeoutFailure": "请求超时，请稍后重试",
-  "@timeoutFailure": {
-    "description": "请求超过等待时限时显示的错误提示。"
-  },
-  "cancelledFailure": "操作已取消",
-  "@cancelledFailure": {
-    "description": "请求被取消时显示的提示。"
-  },
-  "unauthorizedFailure": "当前操作需要身份验证",
-  "@unauthorizedFailure": {
-    "description": "当前操作需要身份验证时显示的错误提示。"
-  },
-  "forbiddenFailure": "没有执行此操作的权限",
-  "@forbiddenFailure": {
-    "description": "用户没有执行当前操作的权限时显示的错误提示。"
-  },
-  "conflictFailure": "数据已发生变化，请重新加载",
-  "@conflictFailure": {
-    "description": "数据发生冲突，需要重新加载时显示的错误提示。"
-  },
-  "validationFailure": "输入内容不符合要求",
-  "@validationFailure": {
-    "description": "提交的输入未通过验证时显示的错误提示。"
-  },
-  "serverFailure": "集群暂时不可用，请稍后重试",
-  "@serverFailure": {
-    "description": "集群服务暂时不可用时显示的错误提示。"
-  },
-  "invalidDataFailure": "数据格式不正确，无法完成操作",
-  "@invalidDataFailure": {
-    "description": "收到或处理的数据格式无效时显示的错误提示。"
-  },
-  "storageFailure": "无法访问本地存储，请重试",
-  "@storageFailure": {
-    "description": "本地存储无法访问时显示的错误提示。"
-  },
-  "unexpectedFailure": "操作未完成，请重试",
-  "@unexpectedFailure": {
-    "description": "无法归类的操作失败所使用的通用错误提示。"
-  },
-  "saveFailure": "无法保存设置，请重试",
-  "@saveFailure": {
+  "settingsSaveFailure": "无法保存设置，请重试",
+  "@settingsSaveFailure": {
     "description": "应用设置保存失败时显示的错误提示。"
   },
-  "brightnessTitle": "明暗模式",
-  "@brightnessTitle": {
+  "settingsBrightnessTitle": "明暗模式",
+  "@settingsBrightnessTitle": {
     "description": "选择浅色、深色或跟随系统外观的设置标题。"
   },
-  "followSystem": "跟随系统",
-  "@followSystem": {
+  "settingsFollowSystem": "跟随系统",
+  "@settingsFollowSystem": {
     "description": "使用操作系统当前设置的选项标签。"
   },
-  "lightAppearance": "浅色",
-  "@lightAppearance": {
+  "settingsLightAppearance": "浅色",
+  "@settingsLightAppearance": {
     "description": "浅色外观选项的标签。"
   },
-  "darkAppearance": "深色",
-  "@darkAppearance": {
+  "settingsDarkAppearance": "深色",
+  "@settingsDarkAppearance": {
     "description": "深色外观选项的标签。"
   },
-  "languageTitle": "语言",
-  "@languageTitle": {
+  "settingsLanguageTitle": "语言",
+  "@settingsLanguageTitle": {
     "description": "应用界面语言设置的标题。"
   },
-  "colorTitle": "配色",
-  "@colorTitle": {
+  "settingsColorTitle": "配色",
+  "@settingsColorTitle": {
     "description": "应用主题配色设置的标题。"
   },
-  "defaultColor": "默认",
-  "@defaultColor": {
+  "settingsDefaultColor": "默认",
+  "@settingsDefaultColor": {
     "description": "使用默认主题配色的选项标签。"
   },
-  "customColor": "自选颜色",
-  "@customColor": {
+  "settingsCustomColor": "自选颜色",
+  "@settingsCustomColor": {
     "description": "使用用户自选主题颜色的选项标签。"
   },
-  "editColor": "编辑颜色",
-  "@editColor": {
+  "settingsEditColor": "编辑颜色",
+  "@settingsEditColor": {
     "description": "打开自定义颜色编辑器的操作标签。"
   },
-  "hexColor": "十六进制颜色",
-  "@hexColor": {
+  "settingsHexColor": "十六进制颜色",
+  "@settingsHexColor": {
     "description": "输入十六进制颜色值的字段标签。"
   },
-  "invalidColor": "请输入 6 位十六进制颜色",
-  "@invalidColor": {
+  "settingsInvalidColor": "请输入 6 位十六进制颜色",
+  "@settingsInvalidColor": {
     "description": "颜色值不符合六位十六进制格式时的验证提示。"
   },
-  "cancel": "取消",
-  "@cancel": {
-    "description": "取消当前操作或关闭编辑对话框的按钮标签。"
-  },
-  "save": "保存",
-  "@save": {
-    "description": "保存当前编辑内容的按钮标签。"
-  },
-  "welcomeTagline": "你的无界人工智能工作台",
-  "@welcomeTagline": {
+  "setupWelcomeTagline": "你的无界人工智能工作台",
+  "@setupWelcomeTagline": {
     "description": "首次设置欢迎页面的产品标语。人工智能工作台是产品定位。"
   },
-  "featureSessions": "按会话组织任务",
-  "@featureSessions": {
+  "setupFeatureSessions": "按会话组织任务",
+  "@setupFeatureSessions": {
     "description": "欢迎页面介绍按会话组织任务的功能标题。"
   },
-  "featureSessionsBody": "让每一次提问、回复与工具记录都有清晰的归属",
-  "@featureSessionsBody": {
+  "setupFeatureSessionsBody": "让每一次提问、回复与工具记录都有清晰的归属",
+  "@setupFeatureSessionsBody": {
     "description": "欢迎页面对会话如何组织提问、回复和工具记录的说明。"
   },
-  "featureModels": "自由选择模型",
-  "@featureModels": {
+  "setupFeatureModels": "自由选择模型",
+  "@setupFeatureModels": {
     "description": "欢迎页面介绍模型选择能力的功能标题。"
   },
-  "featureModelsBody": "按任务选择合适的模型",
-  "@featureModelsBody": {
+  "setupFeatureModelsBody": "按任务选择合适的模型",
+  "@setupFeatureModelsBody": {
     "description": "按任务选择合适的模型。"
   },
-  "featureWorkspace": "围绕工作区协作",
-  "@featureWorkspace": {
+  "setupFeatureWorkspace": "围绕工作区协作",
+  "@setupFeatureWorkspace": {
     "description": "欢迎页面介绍工作区协作能力的功能标题。"
   },
-  "featureWorkspaceBody": "将提示、预设和工作区放在同一个工作流中",
-  "@featureWorkspaceBody": {
+  "setupFeatureWorkspaceBody": "将提示、预设和工作区放在同一个工作流中",
+  "@setupFeatureWorkspaceBody": {
     "description": "说明提示、预设和工作区可以在同一工作流中使用。"
   },
-  "startSetup": "开始使用",
-  "@startSetup": {
+  "setupStart": "开始使用",
+  "@setupStart": {
     "description": "开始使用。"
   },
-  "skipSetup": "跳过",
-  "@skipSetup": {
+  "setupSkip": "跳过",
+  "@setupSkip": {
     "description": "跳过首次设置的操作标签。"
   },
   "setupModeTitle": "选择使用方式",
   "@setupModeTitle": {
     "description": "选择使用方式。"
   },
-  "continueAction": "继续",
-  "@continueAction": {
-    "description": "继续当前流程的通用按钮标签。"
+  "setupOfflineMode": "离线",
+  "@setupOfflineMode": {
+    "description": "离线。"
   },
-  "back": "返回",
-  "@back": {
-    "description": "返回上一步或上一页面的操作标签。"
+  "setupOfflineModeBody": "不连接集群，在此设备上工作",
+  "@setupOfflineModeBody": {
+    "description": "不连接集群，在此设备上工作。"
   },
-  "loginTitle": "连接集群",
-  "@loginTitle": {
-    "description": "配置集群连接的页面标题。"
+  "setupClusterMode": "集群",
+  "@setupClusterMode": {
+    "description": "集群。"
   },
-  "identityProvider": "供应商",
-  "@identityProvider": {
-    "description": "集群连接表单中的供应商类型标签，选项包括局域网、自部署和测试云。"
+  "setupClusterModeBody": "连接集群使用多端能力，也可选择本机作为工作节点",
+  "@setupClusterModeBody": {
+    "description": "连接集群使用多端能力，也可选择本机作为工作节点。"
   },
-  "lanProvider": "局域网",
-  "@lanProvider": {
-    "description": "通过局域网连接集群的供应商类型名称。"
+  "setupContinueOffline": "跳过，离线使用",
+  "@setupContinueOffline": {
+    "description": "跳过，离线使用。"
   },
-  "selfHostedProvider": "自部署",
-  "@selfHostedProvider": {
-    "description": "连接用户自行部署集群的供应商类型名称。"
-  },
-  "testCloudProvider": "测试云",
-  "@testCloudProvider": {
-    "description": "连接测试云集群的供应商类型名称。"
-  },
-  "loginAction": "登录",
-  "@loginAction": {
-    "description": "提交身份凭据并登录的按钮标签。"
-  },
-  "connectAction": "连接",
-  "@connectAction": {
-    "description": "发起集群连接的按钮标签。"
-  },
-  "nextStep": "下一步",
-  "@nextStep": {
-    "description": "进入设置流程下一步的按钮标签。"
-  },
-  "serverIp": "IP",
-  "@serverIp": {
-    "description": "集群连接表单中的服务端 IP 地址字段标签。IP 为技术缩写。"
-  },
-  "serverPort": "端口",
-  "@serverPort": {
-    "description": "集群连接表单中的服务端端口字段标签。"
-  },
-  "verificationLabel": "验证",
-  "@verificationLabel": {
-    "description": "集群连接表单中选择身份验证方式的字段标签。"
-  },
-  "verificationNone": "无",
-  "@verificationNone": {
-    "description": "不使用身份验证的选项标签。"
-  },
-  "verificationCredentials": "用户名/密码",
-  "@verificationCredentials": {
-    "description": "使用用户名和密码进行身份验证的选项标签。"
-  },
-  "serverCertificate": "服务端证书",
-  "@serverCertificate": {
-    "description": "集群连接表单中的服务端证书字段标签。"
-  },
-  "usernameLabel": "用户名",
-  "@usernameLabel": {
-    "description": "身份验证所用的用户名输入字段标签。"
-  },
-  "passwordLabel": "密码",
-  "@passwordLabel": {
-    "description": "身份验证所用的密码输入字段标签。"
-  },
-  "publicKey": "公钥",
-  "@publicKey": {
-    "description": "身份验证配置中的公钥字段标签。"
-  },
-  "privateKey": "私钥",
-  "@privateKey": {
-    "description": "身份验证配置中的私钥字段标签。"
-  },
-  "chooseLocalFile": "选择本地文件",
-  "@chooseLocalFile": {
-    "description": "从本地文件选择器导入证书或密钥的操作标签。"
-  },
-  "scanQrCode": "扫描二维码",
-  "@scanQrCode": {
-    "description": "通过扫描二维码导入内容的操作标签。"
-  },
-  "certificateFileSelected": "已选择文件",
-  "@certificateFileSelected": {
-    "description": "已通过本地文件选取证书材料时的状态提示。"
-  },
-  "certificateQrSelected": "已获取二维码内容",
-  "@certificateQrSelected": {
-    "description": "已通过二维码获取证书材料时的状态提示。"
-  },
-  "clearCertificate": "清除选择",
-  "@clearCertificate": {
-    "description": "清除当前选择的证书材料的操作标签。"
-  },
-  "connectingStatus": "正在尝试连接",
-  "@connectingStatus": {
-    "description": "正在尝试建立集群连接时的状态提示。"
-  },
-  "signingInStatus": "正在尝试登录",
-  "@signingInStatus": {
-    "description": "正在尝试登录时的状态提示。"
-  },
-  "connectionSucceeded": "连接成功",
-  "@connectionSucceeded": {
-    "description": "成功建立集群连接后的状态提示。"
-  },
-  "signInSucceeded": "登录成功",
-  "@signInSucceeded": {
-    "description": "成功登录后的状态提示。"
-  },
-  "preferencesTitle": "个性化设置",
-  "@preferencesTitle": {
+  "setupPreferencesTitle": "个性化设置",
+  "@setupPreferencesTitle": {
     "description": "首次设置中的个性化设置页面标题。"
   },
-  "finishSetup": "进入 Everfold",
-  "@finishSetup": {
+  "setupFinish": "进入 Everfold",
+  "@setupFinish": {
     "description": "完成首次设置并进入应用的按钮标签。Everfold 是产品名称，保留原文。"
   },
-  "modelConnections": "接入模型",
-  "@modelConnections": {
-    "description": "进入模型服务接入配置的入口标签。"
-  },
-  "newSession": "新建会话",
-  "@newSession": {
-    "description": "创建新会话的操作标签。"
-  },
-  "sessionsTitle": "会话",
-  "@sessionsTitle": {
-    "description": "会话列表的标题或导航名称。"
-  },
-  "cloudServices": "集群",
-  "@cloudServices": {
+  "clusterTitle": "集群",
+  "@clusterTitle": {
     "description": "集群管理入口的名称。此处指已配置的集群。"
   },
-  "addCluster": "添加集群",
-  "@addCluster": {
+  "clusterAdd": "添加集群",
+  "@clusterAdd": {
     "description": "添加集群配置的操作标签。"
   },
   "clusterEmptyTitle": "尚未添加集群",
@@ -344,24 +256,24 @@
   "@clusterName": {
     "description": "输入或编辑集群显示名称的字段标签。"
   },
-  "renameCluster": "重命名集群",
-  "@renameCluster": {
+  "clusterRename": "重命名集群",
+  "@clusterRename": {
     "description": "修改集群显示名称的操作标签。"
   },
-  "removeCluster": "移除集群",
-  "@removeCluster": {
+  "clusterRemove": "移除集群",
+  "@clusterRemove": {
     "description": "移除已保存集群配置的操作标签。"
   },
-  "removeClusterTitle": "移除此集群？",
-  "@removeClusterTitle": {
+  "clusterRemoveTitle": "移除此集群？",
+  "@clusterRemoveTitle": {
     "description": "确认移除所选集群的对话框标题。"
   },
-  "removeClusterBody": "只移除所选集群，不影响其他集群或会话",
-  "@removeClusterBody": {
+  "clusterRemoveBody": "只移除所选集群，不影响其他集群或会话",
+  "@clusterRemoveBody": {
     "description": "移除集群确认对话框的说明，强调不影响其他集群或会话。"
   },
-  "disconnectCluster": "断开",
-  "@disconnectCluster": {
+  "clusterDisconnect": "断开",
+  "@clusterDisconnect": {
     "description": "断开当前集群连接的操作标签。"
   },
   "clusterConnected": "已连接",
@@ -372,48 +284,192 @@
   "@clusterDisconnected": {
     "description": "集群当前未连接的状态标签。"
   },
-  "configureCluster": "配置并连接",
-  "@configureCluster": {
+  "clusterConfigure": "配置并连接",
+  "@clusterConfigure": {
     "description": "配置集群连接参数并建立连接的操作标签。"
   },
-  "promptHint": "你想处理什么任务？",
-  "@promptHint": {
+  "clusterConnectionTitle": "连接集群",
+  "@clusterConnectionTitle": {
+    "description": "配置集群连接的页面标题。"
+  },
+  "clusterIdentityProvider": "供应商",
+  "@clusterIdentityProvider": {
+    "description": "集群连接表单中的供应商类型标签，选项包括局域网、自部署和测试云。"
+  },
+  "clusterLanProvider": "局域网",
+  "@clusterLanProvider": {
+    "description": "通过局域网连接集群的供应商类型名称。"
+  },
+  "clusterSelfHostedProvider": "自部署",
+  "@clusterSelfHostedProvider": {
+    "description": "连接用户自行部署集群的供应商类型名称。"
+  },
+  "clusterTestCloudProvider": "测试云",
+  "@clusterTestCloudProvider": {
+    "description": "连接测试云集群的供应商类型名称。"
+  },
+  "clusterLoginAction": "登录",
+  "@clusterLoginAction": {
+    "description": "提交身份凭据并登录的按钮标签。"
+  },
+  "clusterConnectAction": "连接",
+  "@clusterConnectAction": {
+    "description": "发起集群连接的按钮标签。"
+  },
+  "clusterServerIp": "IP",
+  "@clusterServerIp": {
+    "description": "集群连接表单中的服务端 IP 地址字段标签。IP 为技术缩写。"
+  },
+  "clusterServerPort": "端口",
+  "@clusterServerPort": {
+    "description": "集群连接表单中的服务端端口字段标签。"
+  },
+  "clusterVerificationLabel": "验证",
+  "@clusterVerificationLabel": {
+    "description": "集群连接表单中选择身份验证方式的字段标签。"
+  },
+  "clusterVerificationNone": "无",
+  "@clusterVerificationNone": {
+    "description": "不使用身份验证的选项标签。"
+  },
+  "clusterVerificationCredentials": "用户名/密码",
+  "@clusterVerificationCredentials": {
+    "description": "使用用户名和密码进行身份验证的选项标签。"
+  },
+  "clusterServerCertificate": "服务端证书",
+  "@clusterServerCertificate": {
+    "description": "集群连接表单中的服务端证书字段标签。"
+  },
+  "clusterUsernameLabel": "用户名",
+  "@clusterUsernameLabel": {
+    "description": "身份验证所用的用户名输入字段标签。"
+  },
+  "clusterPasswordLabel": "密码",
+  "@clusterPasswordLabel": {
+    "description": "身份验证所用的密码输入字段标签。"
+  },
+  "clusterPublicKey": "公钥",
+  "@clusterPublicKey": {
+    "description": "身份验证配置中的公钥字段标签。"
+  },
+  "clusterPrivateKey": "私钥",
+  "@clusterPrivateKey": {
+    "description": "身份验证配置中的私钥字段标签。"
+  },
+  "clusterChooseLocalFile": "选择本地文件",
+  "@clusterChooseLocalFile": {
+    "description": "从本地文件选择器导入证书或密钥的操作标签。"
+  },
+  "clusterScanQrCode": "扫描二维码",
+  "@clusterScanQrCode": {
+    "description": "通过扫描二维码导入内容的操作标签。"
+  },
+  "clusterCertificateFileSelected": "已选择文件",
+  "@clusterCertificateFileSelected": {
+    "description": "已通过本地文件选取证书材料时的状态提示。"
+  },
+  "clusterCertificateQrSelected": "已获取二维码内容",
+  "@clusterCertificateQrSelected": {
+    "description": "已通过二维码获取证书材料时的状态提示。"
+  },
+  "clusterClearCertificate": "清除选择",
+  "@clusterClearCertificate": {
+    "description": "清除当前选择的证书材料的操作标签。"
+  },
+  "clusterConnectingStatus": "正在尝试连接",
+  "@clusterConnectingStatus": {
+    "description": "正在尝试建立集群连接时的状态提示。"
+  },
+  "clusterSigningInStatus": "正在尝试登录",
+  "@clusterSigningInStatus": {
+    "description": "正在尝试登录时的状态提示。"
+  },
+  "clusterConnectionSucceeded": "连接成功",
+  "@clusterConnectionSucceeded": {
+    "description": "成功建立集群连接后的状态提示。"
+  },
+  "clusterSignInSucceeded": "登录成功",
+  "@clusterSignInSucceeded": {
+    "description": "成功登录后的状态提示。"
+  },
+  "modelConnect": "接入模型",
+  "@modelConnect": {
+    "description": "进入模型服务接入配置的入口标签。"
+  },
+  "sessionNew": "新建会话",
+  "@sessionNew": {
+    "description": "创建新会话的操作标签。"
+  },
+  "sessionTitle": "会话",
+  "@sessionTitle": {
+    "description": "会话列表的标题或导航名称。"
+  },
+  "sessionRename": "重命名",
+  "@sessionRename": {
+    "description": "修改会话名称的操作标签。"
+  },
+  "sessionDelete": "删除",
+  "@sessionDelete": {
+    "description": "删除会话的操作标签。"
+  },
+  "sessionName": "会话名称",
+  "@sessionName": {
+    "description": "输入或编辑会话名称的字段标签。"
+  },
+  "sessionDeleteTitle": "删除会话？",
+  "@sessionDeleteTitle": {
+    "description": "确认删除会话的对话框标题。"
+  },
+  "sessionDeleteBody": "此会话及其提示词将被移除",
+  "@sessionDeleteBody": {
+    "description": "删除会话确认对话框的说明，告知会话及其提示词将被移除。"
+  },
+  "sessionMissing": "会话不存在",
+  "@sessionMissing": {
+    "description": "无法找到目标会话时显示的提示。"
+  },
+  "sessionNewPromptTitle": "这次处理什么任务？",
+  "@sessionNewPromptTitle": {
+    "description": "新建提示词时引导用户描述任务的标题。"
+  },
+  "sessionPromptHint": "你想处理什么任务？",
+  "@sessionPromptHint": {
     "description": "提示词输入框为空时显示的引导文本。"
   },
-  "sendPrompt": "保存提示词",
-  "@sendPrompt": {
+  "sessionSavePrompt": "保存提示词",
+  "@sessionSavePrompt": {
     "description": "保存当前提示词的操作标签；当前行为是保存，不能译成已发送给模型。"
   },
-  "stopRun": "停止",
-  "@stopRun": {
+  "sessionStopRun": "停止",
+  "@sessionStopRun": {
     "description": "停止当前运行任务的操作标签。"
   },
-  "noModel": "未选择模型",
-  "@noModel": {
+  "sessionNoModel": "未选择模型",
+  "@sessionNoModel": {
     "description": "尚未选择模型时模型选择控件显示的文本。"
   },
-  "presetLabel": "预设",
-  "@presetLabel": {
+  "sessionPresetLabel": "预设",
+  "@sessionPresetLabel": {
     "description": "提示词或会话预设选择控件的标签。"
   },
-  "standardPreset": "默认",
-  "@standardPreset": {
+  "sessionStandardPreset": "默认",
+  "@sessionStandardPreset": {
     "description": "默认预设的名称。"
   },
-  "planPreset": "规划",
-  "@planPreset": {
+  "sessionPlanPreset": "规划",
+  "@sessionPlanPreset": {
     "description": "用于规划任务的预设名称。"
   },
-  "noWorkspace": "未选择工作区",
-  "@noWorkspace": {
+  "workspaceNone": "未选择工作区",
+  "@workspaceNone": {
     "description": "尚未选择工作区时工作区控件显示的文本。"
   },
-  "clearWorkspace": "清除工作区",
-  "@clearWorkspace": {
+  "workspaceClear": "清除工作区",
+  "@workspaceClear": {
     "description": "移除当前会话的工作区关联的操作标签，不表示删除本地目录。"
   },
-  "workspaceFailure": "无法打开工作区选择器",
-  "@workspaceFailure": {
+  "workspacePickerFailure": "无法打开工作区选择器",
+  "@workspacePickerFailure": {
     "description": "无法打开工作区目录选择器时显示的错误提示。"
   },
   "workspaceContext": "工作区上下文",
@@ -428,37 +484,13 @@
   "@workspaceContextBody": {
     "description": "解释目录关联仅属于当前会话，不会自动读取或发送文件，也不会因解除关联而删除文件。"
   },
-  "changeWorkspace": "更换目录",
-  "@changeWorkspace": {
+  "workspaceChange": "更换目录",
+  "@workspaceChange": {
     "description": "更换当前会话关联目录的操作标签。"
   },
-  "copyWorkspacePath": "复制路径",
-  "@copyWorkspacePath": {
+  "workspaceCopyPath": "复制路径",
+  "@workspaceCopyPath": {
     "description": "将关联目录路径复制到剪贴板的操作标签。"
-  },
-  "closeAction": "关闭",
-  "@closeAction": {
-    "description": "关闭当前面板或对话框的通用按钮标签。"
-  },
-  "renameSession": "重命名",
-  "@renameSession": {
-    "description": "修改会话名称的操作标签。"
-  },
-  "deleteSession": "删除",
-  "@deleteSession": {
-    "description": "删除会话的操作标签。"
-  },
-  "sessionTitle": "会话名称",
-  "@sessionTitle": {
-    "description": "输入或编辑会话名称的字段标签。"
-  },
-  "deleteSessionTitle": "删除会话？",
-  "@deleteSessionTitle": {
-    "description": "确认删除会话的对话框标题。"
-  },
-  "deleteSessionBody": "此会话及其提示词将被移除",
-  "@deleteSessionBody": {
-    "description": "删除会话确认对话框的说明，告知会话及其提示词将被移除。"
   },
   "messageUser": "你",
   "@messageUser": {
@@ -468,76 +500,44 @@
   "@messageAssistant": {
     "description": "会话中人工智能助手消息的发送者标签。"
   },
-  "unsentPrompt": "未发送：尚未接入模型",
-  "@unsentPrompt": {
+  "messageUnsentPrompt": "未发送：尚未接入模型",
+  "@messageUnsentPrompt": {
     "description": "尚未接入模型时，标记已保存但未发送的提示词的状态说明。"
   },
-  "reasoningSummary": "思考摘要",
-  "@reasoningSummary": {
+  "messageReasoningSummary": "思考摘要",
+  "@messageReasoningSummary": {
     "description": "展示模型思考摘要的区域标题。"
   },
-  "toolCalls": "工具调用",
-  "@toolCalls": {
+  "messageToolCalls": "工具调用",
+  "@messageToolCalls": {
     "description": "展示模型工具调用记录的区域标题。"
   },
-  "copyCode": "复制代码",
-  "@copyCode": {
+  "messageCopyCode": "复制代码",
+  "@messageCopyCode": {
     "description": "将代码块内容复制到剪贴板的操作标签。"
   },
-  "copied": "已复制",
-  "@copied": {
-    "description": "内容已成功复制到剪贴板时的反馈文本。"
-  },
-  "codeLabel": "代码",
-  "@codeLabel": {
+  "messageCodeLabel": "代码",
+  "@messageCodeLabel": {
     "description": "代码内容的通用标签。"
   },
-  "longContent": "完整内容",
-  "@longContent": {
+  "messageLongContent": "完整内容",
+  "@messageLongContent": {
     "description": "查看完整内容时使用的标题或入口标签。"
   },
-  "toolOutput": "工具输出",
-  "@toolOutput": {
+  "messageToolOutput": "工具输出",
+  "@messageToolOutput": {
     "description": "展示工具执行输出的区域标题。"
   },
-  "toolRunning": "运行中",
-  "@toolRunning": {
+  "messageToolRunning": "运行中",
+  "@messageToolRunning": {
     "description": "工具调用正在执行的状态标签。"
   },
-  "toolCompleted": "已完成",
-  "@toolCompleted": {
+  "messageToolCompleted": "已完成",
+  "@messageToolCompleted": {
     "description": "工具调用执行完成的状态标签。"
   },
-  "toolFailed": "失败",
-  "@toolFailed": {
+  "messageToolFailed": "失败",
+  "@messageToolFailed": {
     "description": "工具调用执行失败的状态标签。"
-  },
-  "sessionMissing": "会话不存在",
-  "@sessionMissing": {
-    "description": "无法找到目标会话时显示的提示。"
-  },
-  "newPromptTitle": "这次处理什么任务？",
-  "@newPromptTitle": {
-    "description": "新建提示词时引导用户描述任务的标题。"
-  },
-  "offlineMode": "离线",
-  "@offlineMode": {
-    "description": "离线。"
-  },
-  "offlineModeBody": "不连接集群，在此设备上工作",
-  "@offlineModeBody": {
-    "description": "不连接集群，在此设备上工作。"
-  },
-  "clusterMode": "集群",
-  "@clusterMode": {
-    "description": "集群。"
-  },
-  "clusterModeBody": "连接集群使用多端能力，也可选择本机作为工作节点",
-  "@clusterModeBody": {
-    "description": "连接集群使用多端能力，也可选择本机作为工作节点。"
-  },
-  "continueOffline": "跳过，离线使用",
-  "@continueOffline": {
-    "description": "跳过，离线使用。"
   }
 }

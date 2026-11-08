@@ -64,11 +64,11 @@ class SettingsContent extends HookConsumerWidget {
     // 同一语言区块只渲染一次, 引导将它放在首部, 正式设置保留原有顺序
     final language = _ChoiceSection<AppLanguage>(
       id: 'language',
-      title: strings.languageTitle,
+      title: strings.settingsLanguageTitle,
       enabled: !busy.value,
       selected: settings.language,
       choices: {
-        AppLanguage.system: strings.followSystem,
+        AppLanguage.system: strings.settingsFollowSystem,
         AppLanguage.chinese: '中文',
         AppLanguage.english: 'English',
       },
@@ -85,19 +85,19 @@ class SettingsContent extends HookConsumerWidget {
                 ListTile(
                   key: const ValueKey('connect-model'),
                   leading: const Icon(Icons.add_circle_outline),
-                  title: Text(strings.modelConnections),
+                  title: Text(strings.modelConnect),
                   // 用户确认本阶段仅预留接入入口
                   onTap: () {},
                 ),
               _ChoiceSection<AppAppearance>(
                 id: 'appearance',
-                title: strings.brightnessTitle,
+                title: strings.settingsBrightnessTitle,
                 enabled: !busy.value,
                 selected: settings.appearance,
                 choices: {
-                  AppAppearance.system: strings.followSystem,
-                  AppAppearance.light: strings.lightAppearance,
-                  AppAppearance.dark: strings.darkAppearance,
+                  AppAppearance.system: strings.settingsFollowSystem,
+                  AppAppearance.light: strings.settingsLightAppearance,
+                  AppAppearance.dark: strings.settingsDarkAppearance,
                 },
                 onChanged: (value) =>
                     save(() => controller.setAppearance(value)),
@@ -122,7 +122,7 @@ class SettingsContent extends HookConsumerWidget {
             padding: const EdgeInsets.all(16),
             child: Semantics(
               liveRegion: true,
-              child: Text(strings.saveFailure),
+              child: Text(strings.settingsSaveFailure),
             ),
           ),
       ],
@@ -155,13 +155,13 @@ class _ColorPreferences extends StatelessWidget {
       children: [
         _ChoiceSection<AppColorMode>(
           id: 'colorMode',
-          title: strings.colorTitle,
+          title: strings.settingsColorTitle,
           enabled: enabled,
           selected: settings.colorMode,
           choices: {
-            AppColorMode.standard: strings.defaultColor,
-            AppColorMode.system: strings.followSystem,
-            AppColorMode.custom: strings.customColor,
+            AppColorMode.standard: strings.settingsDefaultColor,
+            AppColorMode.system: strings.settingsFollowSystem,
+            AppColorMode.custom: strings.settingsCustomColor,
           },
           onChanged: (value) => onModeChanged(value),
         ),
@@ -192,12 +192,12 @@ class _ColorPreferences extends StatelessWidget {
             ],
           ),
           ListTile(
-            title: Text(strings.hexColor),
+            title: Text(strings.settingsHexColor),
             subtitle: Text(
               '#${settings.seedColor.toRadixString(16).substring(2).toUpperCase()}',
             ),
             trailing: IconButton(
-              tooltip: strings.editColor,
+              tooltip: strings.settingsEditColor,
               icon: const Icon(Icons.colorize),
               onPressed: enabled ? onEditColor : null,
             ),

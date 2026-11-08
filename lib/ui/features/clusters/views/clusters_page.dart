@@ -48,16 +48,16 @@ class ClustersPage extends ConsumerWidget {
         context: context,
         builder: (context) => AlertDialog(
           constraints: const BoxConstraints(maxWidth: 560),
-          title: Text(strings.removeClusterTitle),
-          content: Text(strings.removeClusterBody),
+          title: Text(strings.clusterRemoveTitle),
+          content: Text(strings.clusterRemoveBody),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: Text(strings.cancel),
+              child: Text(strings.commonCancel),
             ),
             TextButton(
               onPressed: () => Navigator.pop(context, true),
-              child: Text(strings.removeCluster),
+              child: Text(strings.clusterRemove),
             ),
           ],
         ),
@@ -75,7 +75,7 @@ class ClustersPage extends ConsumerWidget {
               key: const ValueKey('add-cluster'),
               onPressed: connect,
               icon: const Icon(Icons.add),
-              label: Text(strings.addCluster),
+              label: Text(strings.clusterAdd),
             ),
           ),
           const SizedBox(height: 24),
@@ -139,15 +139,15 @@ class _ClusterEntry extends StatelessWidget {
       children: [
         if (cluster.configuration.service == ClusterService.selfHosted) ...[
           ListTile(
-            title: Text(strings.serverIp),
+            title: Text(strings.clusterServerIp),
             subtitle: Text(cluster.configuration.ip),
           ),
           ListTile(
-            title: Text(strings.serverPort),
+            title: Text(strings.clusterServerPort),
             subtitle: Text(cluster.configuration.port),
           ),
           ListTile(
-            title: Text(strings.verificationLabel),
+            title: Text(strings.clusterVerificationLabel),
             subtitle: Text(
               clusterVerificationLabel(
                 strings,
@@ -172,19 +172,19 @@ class _ClusterEntry extends StatelessWidget {
                 ),
                 label: Text(
                   cluster.status == ClusterStatus.connected
-                      ? strings.disconnectCluster
-                      : strings.configureCluster,
+                      ? strings.clusterDisconnect
+                      : strings.clusterConfigure,
                 ),
               ),
               TextButton(
                 key: ValueKey('cluster-rename-${cluster.id}'),
                 onPressed: onRename,
-                child: Text(strings.renameCluster),
+                child: Text(strings.clusterRename),
               ),
               TextButton(
                 key: ValueKey('cluster-remove-${cluster.id}'),
                 onPressed: onRemove,
-                child: Text(strings.removeCluster),
+                child: Text(strings.clusterRemove),
               ),
             ],
           ),
@@ -234,8 +234,8 @@ class _ClusterConnectionDialogState extends State<_ClusterConnectionDialog> {
           constraints: const BoxConstraints(maxWidth: 560),
           title: Text(
             widget.cluster == null
-                ? strings.addCluster
-                : strings.configureCluster,
+                ? strings.clusterAdd
+                : strings.clusterConfigure,
           ),
           content: SizedBox(
             width: double.maxFinite,
@@ -262,7 +262,7 @@ class _ClusterConnectionDialogState extends State<_ClusterConnectionDialog> {
           actions: [
             TextButton(
               onPressed: locked ? null : () => Navigator.pop(context),
-              child: Text(strings.cancel),
+              child: Text(strings.commonCancel),
             ),
             action,
           ],
@@ -283,7 +283,7 @@ class _ClusterNameDialog extends HookWidget {
     final value = useValueListenable(input);
     return AlertDialog(
       constraints: const BoxConstraints(maxWidth: 560),
-      title: Text(strings.renameCluster),
+      title: Text(strings.clusterRename),
       content: TextField(
         key: const ValueKey('rename-cluster-input'),
         controller: input,
@@ -293,13 +293,13 @@ class _ClusterNameDialog extends HookWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text(strings.cancel),
+          child: Text(strings.commonCancel),
         ),
         FilledButton(
           onPressed: value.text.trim().isEmpty
               ? null
               : () => Navigator.pop(context, input.text.trim()),
-          child: Text(strings.save),
+          child: Text(strings.commonSave),
         ),
       ],
     );

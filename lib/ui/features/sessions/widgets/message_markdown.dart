@@ -238,10 +238,12 @@ class _CodeBlock extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: Text(language.isEmpty ? strings.codeLabel : language),
+                  child: Text(
+                    language.isEmpty ? strings.messageCodeLabel : language,
+                  ),
                 ),
                 IconButton(
-                  tooltip: strings.copyCode,
+                  tooltip: strings.messageCopyCode,
                   onPressed: () => copyText(context, data),
                   icon: const Icon(Icons.copy_outlined),
                 ),

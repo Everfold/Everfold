@@ -81,7 +81,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context) => Scaffold(
           body: SafeArea(
             child: Center(
-              child: Text(AppLocalizations.of(context).pageNotFound),
+              child: Text(AppLocalizations.of(context).errorPageNotFound),
             ),
           ),
         ),

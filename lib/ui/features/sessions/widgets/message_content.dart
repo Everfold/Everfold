@@ -26,7 +26,7 @@ class MessageContent extends StatelessWidget {
     final strings = AppLocalizations.of(context);
     return ExpansionTile(
       key: PageStorageKey('content-$storageId'),
-      title: Text(strings.longContent),
+      title: Text(strings.messageLongContent),
       subtitle: Text(data, maxLines: 3, overflow: TextOverflow.ellipsis),
       children: [Padding(padding: const EdgeInsets.all(16), child: body())],
     );

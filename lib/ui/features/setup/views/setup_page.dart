@@ -54,8 +54,8 @@ class SetupPage extends HookConsumerWidget {
     final title = switch (stage) {
       AppSetupStage.introduction => 'Everfold',
       AppSetupStage.mode => strings.setupModeTitle,
-      AppSetupStage.login => strings.loginTitle,
-      _ => strings.preferencesTitle,
+      AppSetupStage.login => strings.clusterConnectionTitle,
+      _ => strings.setupPreferencesTitle,
     };
     // 阶段内容只决定正文显示什么, 外层始终保留相同的页面骨架
     final content = <Widget>[
@@ -96,7 +96,7 @@ class SetupPage extends HookConsumerWidget {
                 title: Text(title),
                 automaticallyImplyLeading: false,
                 leading: IconButton(
-                  tooltip: strings.back,
+                  tooltip: strings.commonBack,
                   onPressed: pageBusy ? null : back,
                   icon: const Icon(Icons.arrow_back),
                 ),
@@ -117,7 +117,7 @@ class SetupPage extends HookConsumerWidget {
                   padding: const EdgeInsets.all(16),
                   child: Semantics(
                     liveRegion: true,
-                    child: Text(strings.saveFailure),
+                    child: Text(strings.settingsSaveFailure),
                   ),
                 ),
               _SetupActions(
@@ -157,24 +157,24 @@ class _SetupIntroduction extends StatelessWidget {
         Text('Everfold', style: Theme.of(context).textTheme.headlineLarge),
         const SizedBox(height: 8),
         Text(
-          strings.welcomeTagline,
+          strings.setupWelcomeTagline,
           style: Theme.of(context).textTheme.titleMedium,
         ),
         const SizedBox(height: 32),
         ListTile(
           leading: const Icon(Icons.chat_bubble_outline),
-          title: Text(strings.featureSessions),
-          subtitle: Text(strings.featureSessionsBody),
+          title: Text(strings.setupFeatureSessions),
+          subtitle: Text(strings.setupFeatureSessionsBody),
         ),
         ListTile(
           leading: const Icon(Icons.hub_outlined),
-          title: Text(strings.featureModels),
-          subtitle: Text(strings.featureModelsBody),
+          title: Text(strings.setupFeatureModels),
+          subtitle: Text(strings.setupFeatureModelsBody),
         ),
         ListTile(
           leading: const Icon(Icons.folder_open),
-          title: Text(strings.featureWorkspace),
-          subtitle: Text(strings.featureWorkspaceBody),
+          title: Text(strings.setupFeatureWorkspace),
+          subtitle: Text(strings.setupFeatureWorkspaceBody),
         ),
       ],
     );
@@ -207,15 +207,15 @@ class _SetupModeChoices extends StatelessWidget {
             key: const ValueKey('mode-offline'),
             value: AppConnectionMode.offline,
             enabled: enabled,
-            title: Text(strings.offlineMode),
-            subtitle: Text(strings.offlineModeBody),
+            title: Text(strings.setupOfflineMode),
+            subtitle: Text(strings.setupOfflineModeBody),
           ),
           RadioListTile<AppConnectionMode>(
             key: const ValueKey('mode-cluster'),
             value: AppConnectionMode.cluster,
             enabled: enabled,
-            title: Text(strings.clusterMode),
-            subtitle: Text(strings.clusterModeBody),
+            title: Text(strings.setupClusterMode),
+            subtitle: Text(strings.setupClusterModeBody),
           ),
         ],
       ),
@@ -258,29 +258,29 @@ class _SetupActions extends StatelessWidget {
             TextButton.icon(
               onPressed: navigationLocked ? null : onBack,
               icon: const Icon(Icons.arrow_back),
-              label: Text(strings.back),
+              label: Text(strings.commonBack),
             ),
           if (intro)
             TextButton(
               onPressed: saving ? null : onSkip,
-              child: Text(strings.skipSetup),
+              child: Text(strings.setupSkip),
             ),
           if (stage == AppSetupStage.login)
             TextButton(
               // 连接开始后连同返回一起冻结, 成功后只允许表单中的下一步
               onPressed: navigationLocked ? null : onSkip,
-              child: Text(strings.continueOffline),
+              child: Text(strings.setupContinueOffline),
             )
           else
             FilledButton(
               onPressed: saving ? null : onContinue,
               child: Text(
                 intro
-                    ? strings.startSetup
+                    ? strings.setupStart
                     : stage == AppSetupStage.mode &&
                           selectedMode == AppConnectionMode.offline
-                    ? strings.finishSetup
-                    : strings.continueAction,
+                    ? strings.setupFinish
+                    : strings.commonContinueAction,
               ),
             ),
         ],

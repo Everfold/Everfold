@@ -36,11 +36,11 @@ class WorkspaceShell extends ConsumerWidget {
         .where((session) => location == '/sessions/${session.id}')
         .firstOrNull;
     final title = location == '/settings'
-        ? strings.settingsDestination
+        ? strings.settingsTitle
         : location == '/cloud'
-        ? strings.cloudServices
+        ? strings.clusterTitle
         : currentSession == null || currentSession.title.isEmpty
-        ? strings.newSession
+        ? strings.sessionNew
         : currentSession.title;
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -69,16 +69,16 @@ class WorkspaceShell extends ConsumerWidget {
               context: context,
               builder: (context) => AlertDialog(
                 constraints: const BoxConstraints(maxWidth: 560),
-                title: Text(strings.deleteSessionTitle),
-                content: Text(strings.deleteSessionBody),
+                title: Text(strings.sessionDeleteTitle),
+                content: Text(strings.sessionDeleteBody),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(context, false),
-                    child: Text(strings.cancel),
+                    child: Text(strings.commonCancel),
                   ),
                   TextButton(
                     onPressed: () => Navigator.pop(context, true),
-                    child: Text(strings.deleteSession),
+                    child: Text(strings.sessionDelete),
                   ),
                 ],
               ),
@@ -179,14 +179,14 @@ class _WorkspaceNavigation extends StatelessWidget {
                     key: const ValueKey('cloud-navigation'),
                     selected: location == '/cloud',
                     leading: const Icon(Icons.cloud_outlined),
-                    title: Text(strings.cloudServices),
+                    title: Text(strings.clusterTitle),
                     onTap: onOpenClusters,
                   ),
                   ListTile(
                     key: const ValueKey('settings-navigation'),
                     selected: location == '/settings',
                     leading: const Icon(Icons.settings_outlined),
-                    title: Text(strings.settingsDestination),
+                    title: Text(strings.settingsTitle),
                     onTap: onOpenSettings,
                   ),
                 ],
@@ -201,7 +201,7 @@ class _WorkspaceNavigation extends StatelessWidget {
               key: const ValueKey('new-session'),
               onPressed: onNewSession,
               icon: const Icon(Icons.add),
-              label: Text(strings.newSession),
+              label: Text(strings.sessionNew),
             ),
           ),
           const Divider(key: ValueKey('session-list-divider')),
@@ -213,7 +213,7 @@ class _WorkspaceNavigation extends StatelessWidget {
             shape: const Border(),
             collapsedShape: const Border(),
             title: Text(
-              strings.sessionsTitle,
+              strings.sessionTitle,
               style: Theme.of(context).textTheme.labelLarge,
             ),
             children: [
@@ -223,7 +223,7 @@ class _WorkspaceNavigation extends StatelessWidget {
                   selected: location == '/sessions/${session.id}',
                   leading: const Icon(Icons.chat_bubble_outline),
                   title: Text(
-                    session.title.isEmpty ? strings.newSession : session.title,
+                    session.title.isEmpty ? strings.sessionNew : session.title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -232,16 +232,16 @@ class _WorkspaceNavigation extends StatelessWidget {
                     menuChildren: [
                       MenuItemButton(
                         onPressed: () => onEditSession(session, 'rename'),
-                        child: Text(strings.renameSession),
+                        child: Text(strings.sessionRename),
                       ),
                       MenuItemButton(
                         onPressed: () => onEditSession(session, 'delete'),
-                        child: Text(strings.deleteSession),
+                        child: Text(strings.sessionDelete),
                       ),
                     ],
                     builder: (context, menu, _) => IconButton(
                       key: ValueKey('session-menu-${session.id}'),
-                      tooltip: strings.more,
+                      tooltip: strings.commonMore,
                       onPressed: () => menu.isOpen ? menu.close() : menu.open(),
                       icon: const Icon(Icons.more_vert),
                     ),
@@ -301,11 +301,11 @@ class _RenameSessionDialog extends HookWidget {
     useListenable(input);
     return AlertDialog(
       constraints: const BoxConstraints(maxWidth: 560),
-      title: Text(strings.renameSession),
+      title: Text(strings.sessionRename),
       content: TextField(
         controller: input,
         autofocus: true,
-        decoration: InputDecoration(labelText: strings.sessionTitle),
+        decoration: InputDecoration(labelText: strings.sessionName),
         maxLength: 100,
         onSubmitted: (value) {
           if (value.trim().isNotEmpty) Navigator.pop(context, value);
@@ -314,13 +314,13 @@ class _RenameSessionDialog extends HookWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text(strings.cancel),
+          child: Text(strings.commonCancel),
         ),
         TextButton(
           onPressed: input.text.trim().isEmpty
               ? null
               : () => Navigator.pop(context, input.text),
-          child: Text(strings.save),
+          child: Text(strings.commonSave),
         ),
       ],
     );

@@ -188,13 +188,13 @@ class _ConnectionFormState extends State<ConnectionForm> {
                     ? null
                     : () => choose(_CertificateSource.file),
                 icon: const Icon(Icons.file_open_outlined),
-                label: Text(strings.chooseLocalFile),
+                label: Text(strings.clusterChooseLocalFile),
               ),
               OutlinedButton.icon(
                 key: ValueKey('certificate-$slot-qr'),
                 onPressed: _locked ? null : () => choose(_CertificateSource.qr),
                 icon: const Icon(Icons.qr_code_scanner),
-                label: Text(strings.scanQrCode),
+                label: Text(strings.clusterScanQrCode),
               ),
             ],
           ),
@@ -204,14 +204,14 @@ class _ConnectionFormState extends State<ConnectionForm> {
                 Expanded(
                   child: Text(
                     selected == _CertificateSource.file
-                        ? strings.certificateFileSelected
-                        : strings.certificateQrSelected,
+                        ? strings.clusterCertificateFileSelected
+                        : strings.clusterCertificateQrSelected,
                     key: ValueKey('certificate-$slot-selection'),
                   ),
                 ),
                 IconButton(
                   key: ValueKey('certificate-$slot-clear'),
-                  tooltip: strings.clearCertificate,
+                  tooltip: strings.clusterClearCertificate,
                   onPressed: _locked
                       ? null
                       : () => setState(() {
@@ -264,25 +264,25 @@ class _ConnectionFormState extends State<ConnectionForm> {
           initialSelection: _provider,
           expandedInsets: EdgeInsets.zero,
           enabled: !_locked,
-          label: Text(strings.identityProvider),
+          label: Text(strings.clusterIdentityProvider),
           dropdownMenuEntries: [
-            DropdownMenuEntry(value: 'lan', label: strings.lanProvider),
+            DropdownMenuEntry(value: 'lan', label: strings.clusterLanProvider),
             DropdownMenuEntry(
               value: 'selfHosted',
-              label: strings.selfHostedProvider,
+              label: strings.clusterSelfHostedProvider,
             ),
             DropdownMenuEntry(
               value: 'testCloud',
-              label: strings.testCloudProvider,
+              label: strings.clusterTestCloudProvider,
             ),
           ],
           onSelected: _selectProvider,
         ),
         if (selfHosted) ...[
-          _input('ip', strings.serverIp, _ip),
+          _input('ip', strings.clusterServerIp, _ip),
           _input(
             'port',
-            strings.serverPort,
+            strings.clusterServerPort,
             _port,
             keyboardType: TextInputType.number,
           ),
@@ -292,32 +292,40 @@ class _ConnectionFormState extends State<ConnectionForm> {
             initialSelection: _verification,
             expandedInsets: EdgeInsets.zero,
             enabled: !_locked,
-            label: Text(strings.verificationLabel),
+            label: Text(strings.clusterVerificationLabel),
             dropdownMenuEntries: [
-              DropdownMenuEntry(value: 'none', label: strings.verificationNone),
+              DropdownMenuEntry(
+                value: 'none',
+                label: strings.clusterVerificationNone,
+              ),
               DropdownMenuEntry(
                 value: 'credentials',
-                label: strings.verificationCredentials,
+                label: strings.clusterVerificationCredentials,
               ),
               DropdownMenuEntry(
                 value: 'serverCertificate',
-                label: strings.serverCertificate,
+                label: strings.clusterServerCertificate,
               ),
               const DropdownMenuEntry(value: 'mtls', label: 'mTLS'),
             ],
             onSelected: _selectVerification,
           ),
           if (_verification == 'serverCertificate')
-            _certificate('server', strings.serverCertificate),
+            _certificate('server', strings.clusterServerCertificate),
           if (_verification == 'mtls') ...[
             _certificate('ca', 'CA'),
-            _certificate('publicKey', strings.publicKey),
-            _certificate('privateKey', strings.privateKey),
+            _certificate('publicKey', strings.clusterPublicKey),
+            _certificate('privateKey', strings.clusterPrivateKey),
           ],
         ],
         if (credentials) ...[
-          _input('username', strings.usernameLabel, _username),
-          _input('password', strings.passwordLabel, _password, secret: true),
+          _input('username', strings.clusterUsernameLabel, _username),
+          _input(
+            'password',
+            strings.clusterPasswordLabel,
+            _password,
+            secret: true,
+          ),
         ],
         if (connecting || succeeded) ...[
           const SizedBox(height: 16),
@@ -325,10 +333,12 @@ class _ConnectionFormState extends State<ConnectionForm> {
             liveRegion: true,
             child: Text(
               connecting
-                  ? (cloud ? strings.signingInStatus : strings.connectingStatus)
+                  ? (cloud
+                        ? strings.clusterSigningInStatus
+                        : strings.clusterConnectingStatus)
                   : (cloud
-                        ? strings.signInSucceeded
-                        : strings.connectionSucceeded),
+                        ? strings.clusterSignInSucceeded
+                        : strings.clusterConnectionSucceeded),
               key: const ValueKey('connection-connection-status'),
             ),
           ),
@@ -354,8 +364,10 @@ class _ConnectionFormState extends State<ConnectionForm> {
       ),
       label: Text(
         awaitingNext
-            ? strings.nextStep
-            : (cloud ? strings.loginAction : strings.connectAction),
+            ? strings.commonNextStep
+            : (cloud
+                  ? strings.clusterLoginAction
+                  : strings.clusterConnectAction),
       ),
     );
   }

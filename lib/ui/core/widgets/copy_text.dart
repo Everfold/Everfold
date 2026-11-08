@@ -9,12 +9,12 @@ Future<void> copyText(BuildContext context, String text) async {
     await Clipboard.setData(ClipboardData(text: text));
     if (context.mounted) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(strings.copied)));
+          .showSnackBar(SnackBar(content: Text(strings.commonCopied)));
     }
   } catch (_) {
     if (context.mounted) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(strings.unexpectedFailure)));
+          .showSnackBar(SnackBar(content: Text(strings.errorUnexpected)));
     }
   }
 }

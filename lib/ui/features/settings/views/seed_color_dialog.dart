@@ -31,7 +31,7 @@ class SeedColorDialog extends HookWidget {
     // 输入校验留在弹窗, 取消不返回颜色, 也不会触发设置保存
     return AlertDialog(
       constraints: const BoxConstraints(maxWidth: 560),
-      title: Text(strings.editColor),
+      title: Text(strings.settingsEditColor),
       scrollable: true,
       content: Form(
         key: formKey,
@@ -41,7 +41,7 @@ class SeedColorDialog extends HookWidget {
           autofocus: true,
           maxLength: 7,
           decoration: InputDecoration(
-            labelText: strings.hexColor,
+            labelText: strings.settingsHexColor,
             hintText: '#008080',
           ),
           textInputAction: TextInputAction.done,
@@ -49,15 +49,15 @@ class SeedColorDialog extends HookWidget {
           validator: (value) =>
               RegExp(r'^#?[0-9a-fA-F]{6}$').hasMatch(value?.trim() ?? '')
               ? null
-              : strings.invalidColor,
+              : strings.settingsInvalidColor,
         ),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: Text(strings.cancel),
+          child: Text(strings.commonCancel),
         ),
-        TextButton(onPressed: submit, child: Text(strings.save)),
+        TextButton(onPressed: submit, child: Text(strings.commonSave)),
       ],
     );
   }

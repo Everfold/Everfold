@@ -90,7 +90,7 @@ class DesktopWindowFrame extends HookConsumerWidget {
                 IconButton(
                   key: const ValueKey('window-minimize'),
                   iconSize: 18,
-                  tooltip: strings.minimizeWindow,
+                  tooltip: strings.windowMinimize,
                   onPressed: () => command(window.minimize),
                   icon: const Icon(Icons.minimize),
                 ),
@@ -98,8 +98,8 @@ class DesktopWindowFrame extends HookConsumerWidget {
                   key: const ValueKey('window-maximize'),
                   iconSize: 18,
                   tooltip: state!.maximized || state.fullScreen
-                      ? strings.restoreWindow
-                      : strings.maximizeWindow,
+                      ? strings.windowRestore
+                      : strings.windowMaximize,
                   onPressed: () => command(window.toggleMaximize),
                   icon: Icon(
                     state.maximized || state.fullScreen
@@ -110,7 +110,7 @@ class DesktopWindowFrame extends HookConsumerWidget {
                 IconButton(
                   key: const ValueKey('window-close'),
                   iconSize: 18,
-                  tooltip: strings.closeWindow,
+                  tooltip: strings.windowClose,
                   onPressed: () => command(window.close),
                   icon: const Icon(Icons.close),
                 ),

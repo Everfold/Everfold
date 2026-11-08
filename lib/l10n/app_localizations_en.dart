@@ -10,260 +10,194 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get pageNotFound => 'Page not found';
+  String get commonMore => 'More';
 
   @override
-  String get settingsDestination => 'Settings';
+  String get commonAdd => 'Add';
 
   @override
-  String get more => 'More';
+  String get commonLoading => 'Loading';
 
   @override
-  String get add => 'Add';
+  String get commonRetry => 'Retry';
 
   @override
-  String get loading => 'Loading';
+  String get commonCancel => 'Cancel';
 
   @override
-  String get minimizeWindow => 'Minimize window';
+  String get commonSave => 'Save';
 
   @override
-  String get maximizeWindow => 'Maximize window';
+  String get commonContinueAction => 'Continue';
 
   @override
-  String get restoreWindow => 'Restore window';
+  String get commonBack => 'Back';
 
   @override
-  String get closeWindow => 'Close window';
+  String get commonNextStep => 'Next';
+
+  @override
+  String get commonCloseAction => 'Close';
+
+  @override
+  String get commonCopied => 'Copied';
+
+  @override
+  String get errorPageNotFound => 'Page not found';
+
+  @override
+  String get errorConfiguration => 'The network service is not configured';
+
+  @override
+  String get errorNetwork => 'Unable to connect. Check your network connection';
+
+  @override
+  String get errorTimeout => 'The request timed out. Try again later';
+
+  @override
+  String get errorCancelled => 'The operation was cancelled';
+
+  @override
+  String get errorUnauthorized => 'Authentication is required for this action';
+
+  @override
+  String get errorForbidden => 'You do not have permission for this action';
+
+  @override
+  String get errorConflict => 'The data has changed. Reload and try again';
+
+  @override
+  String get errorValidation => 'The input does not meet the requirements';
+
+  @override
+  String get errorServer =>
+      'The cluster is temporarily unavailable. Try again later';
+
+  @override
+  String get errorInvalidData =>
+      'The data format is invalid. The operation could not be completed';
+
+  @override
+  String get errorStorage => 'Unable to access local storage. Try again';
+
+  @override
+  String get errorUnexpected =>
+      'The operation could not be completed. Try again';
+
+  @override
+  String get windowMinimize => 'Minimize window';
+
+  @override
+  String get windowMaximize => 'Maximize window';
+
+  @override
+  String get windowRestore => 'Restore window';
+
+  @override
+  String get windowClose => 'Close window';
 
   @override
   String get windowActionFailure => 'Unable to control the window. Try again';
 
   @override
-  String get retry => 'Retry';
+  String get settingsTitle => 'Settings';
 
   @override
-  String get configurationFailure => 'The network service is not configured';
+  String get settingsSaveFailure => 'Unable to save settings. Try again';
 
   @override
-  String get networkFailure =>
-      'Unable to connect. Check your network connection';
+  String get settingsBrightnessTitle => 'Brightness mode';
 
   @override
-  String get timeoutFailure => 'The request timed out. Try again later';
+  String get settingsFollowSystem => 'Follow system';
 
   @override
-  String get cancelledFailure => 'The operation was cancelled';
+  String get settingsLightAppearance => 'Light';
 
   @override
-  String get unauthorizedFailure =>
-      'Authentication is required for this action';
+  String get settingsDarkAppearance => 'Dark';
 
   @override
-  String get forbiddenFailure => 'You do not have permission for this action';
+  String get settingsLanguageTitle => 'Language';
 
   @override
-  String get conflictFailure => 'The data has changed. Reload and try again';
+  String get settingsColorTitle => 'Colors';
 
   @override
-  String get validationFailure => 'The input does not meet the requirements';
+  String get settingsDefaultColor => 'Default';
 
   @override
-  String get serverFailure =>
-      'The cluster is temporarily unavailable. Try again later';
+  String get settingsCustomColor => 'Custom color';
 
   @override
-  String get invalidDataFailure =>
-      'The data format is invalid. The operation could not be completed';
+  String get settingsEditColor => 'Edit color';
 
   @override
-  String get storageFailure => 'Unable to access local storage. Try again';
+  String get settingsHexColor => 'Hex color';
 
   @override
-  String get unexpectedFailure =>
-      'The operation could not be completed. Try again';
+  String get settingsInvalidColor => 'Enter a 6-digit hex color';
 
   @override
-  String get saveFailure => 'Unable to save settings. Try again';
+  String get setupWelcomeTagline => 'Your boundless AI workspace';
 
   @override
-  String get brightnessTitle => 'Brightness mode';
+  String get setupFeatureSessions => 'Organize tasks by session';
 
   @override
-  String get followSystem => 'Follow system';
-
-  @override
-  String get lightAppearance => 'Light';
-
-  @override
-  String get darkAppearance => 'Dark';
-
-  @override
-  String get languageTitle => 'Language';
-
-  @override
-  String get colorTitle => 'Colors';
-
-  @override
-  String get defaultColor => 'Default';
-
-  @override
-  String get customColor => 'Custom color';
-
-  @override
-  String get editColor => 'Edit color';
-
-  @override
-  String get hexColor => 'Hex color';
-
-  @override
-  String get invalidColor => 'Enter a 6-digit hex color';
-
-  @override
-  String get cancel => 'Cancel';
-
-  @override
-  String get save => 'Save';
-
-  @override
-  String get welcomeTagline => 'Your boundless AI workspace';
-
-  @override
-  String get featureSessions => 'Organize tasks by session';
-
-  @override
-  String get featureSessionsBody =>
+  String get setupFeatureSessionsBody =>
       'Keep every prompt, response, and tool record tied to its session';
 
   @override
-  String get featureModels => 'Choose your models';
+  String get setupFeatureModels => 'Choose your models';
 
   @override
-  String get featureModelsBody => 'Choose the right model for each task';
+  String get setupFeatureModelsBody => 'Choose the right model for each task';
 
   @override
-  String get featureWorkspace => 'Collaborate around your workspace';
+  String get setupFeatureWorkspace => 'Collaborate around your workspace';
 
   @override
-  String get featureWorkspaceBody =>
+  String get setupFeatureWorkspaceBody =>
       'Keep prompts, presets, and workspaces in one workflow';
 
   @override
-  String get startSetup => 'Get started';
+  String get setupStart => 'Get started';
 
   @override
-  String get skipSetup => 'Skip';
+  String get setupSkip => 'Skip';
 
   @override
   String get setupModeTitle => 'Choose how to work';
 
   @override
-  String get continueAction => 'Continue';
+  String get setupOfflineMode => 'Offline';
 
   @override
-  String get back => 'Back';
+  String get setupOfflineModeBody =>
+      'Work on this device without connecting to a cluster';
 
   @override
-  String get loginTitle => 'Connect to cluster';
+  String get setupClusterMode => 'Cluster';
 
   @override
-  String get identityProvider => 'Provider';
+  String get setupClusterModeBody =>
+      'Connect across devices, with this device also available as a worker node';
 
   @override
-  String get lanProvider => 'Local network';
+  String get setupContinueOffline => 'Skip, work offline';
 
   @override
-  String get selfHostedProvider => 'Self-hosted';
+  String get setupPreferencesTitle => 'Personalize';
 
   @override
-  String get testCloudProvider => 'Test cloud';
+  String get setupFinish => 'Open Everfold';
 
   @override
-  String get loginAction => 'Sign in';
+  String get clusterTitle => 'Clusters';
 
   @override
-  String get connectAction => 'Connect';
-
-  @override
-  String get nextStep => 'Next';
-
-  @override
-  String get serverIp => 'IP';
-
-  @override
-  String get serverPort => 'Port';
-
-  @override
-  String get verificationLabel => 'Verification';
-
-  @override
-  String get verificationNone => 'None';
-
-  @override
-  String get verificationCredentials => 'Username/password';
-
-  @override
-  String get serverCertificate => 'Server certificate';
-
-  @override
-  String get usernameLabel => 'Username';
-
-  @override
-  String get passwordLabel => 'Password';
-
-  @override
-  String get publicKey => 'Public key';
-
-  @override
-  String get privateKey => 'Private key';
-
-  @override
-  String get chooseLocalFile => 'Choose local file';
-
-  @override
-  String get scanQrCode => 'Scan QR code';
-
-  @override
-  String get certificateFileSelected => 'File selected';
-
-  @override
-  String get certificateQrSelected => 'QR content received';
-
-  @override
-  String get clearCertificate => 'Clear selection';
-
-  @override
-  String get connectingStatus => 'Connecting';
-
-  @override
-  String get signingInStatus => 'Signing in';
-
-  @override
-  String get connectionSucceeded => 'Connected';
-
-  @override
-  String get signInSucceeded => 'Signed in';
-
-  @override
-  String get preferencesTitle => 'Personalize';
-
-  @override
-  String get finishSetup => 'Open Everfold';
-
-  @override
-  String get modelConnections => 'Connect a model';
-
-  @override
-  String get newSession => 'New session';
-
-  @override
-  String get sessionsTitle => 'Sessions';
-
-  @override
-  String get cloudServices => 'Clusters';
-
-  @override
-  String get addCluster => 'Add cluster';
+  String get clusterAdd => 'Add cluster';
 
   @override
   String get clusterEmptyTitle => 'No clusters yet';
@@ -276,20 +210,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clusterName => 'Cluster name';
 
   @override
-  String get renameCluster => 'Rename cluster';
+  String get clusterRename => 'Rename cluster';
 
   @override
-  String get removeCluster => 'Remove cluster';
+  String get clusterRemove => 'Remove cluster';
 
   @override
-  String get removeClusterTitle => 'Remove this cluster?';
+  String get clusterRemoveTitle => 'Remove this cluster?';
 
   @override
-  String get removeClusterBody =>
+  String get clusterRemoveBody =>
       'Only this cluster will be removed. Other clusters and sessions are unaffected';
 
   @override
-  String get disconnectCluster => 'Disconnect';
+  String get clusterDisconnect => 'Disconnect';
 
   @override
   String get clusterConnected => 'Connected';
@@ -298,37 +232,146 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clusterDisconnected => 'Disconnected';
 
   @override
-  String get configureCluster => 'Configure and connect';
+  String get clusterConfigure => 'Configure and connect';
 
   @override
-  String get promptHint => 'What would you like to work on?';
+  String get clusterConnectionTitle => 'Connect to cluster';
 
   @override
-  String get sendPrompt => 'Save prompt';
+  String get clusterIdentityProvider => 'Provider';
 
   @override
-  String get stopRun => 'Stop';
+  String get clusterLanProvider => 'Local network';
 
   @override
-  String get noModel => 'No model selected';
+  String get clusterSelfHostedProvider => 'Self-hosted';
 
   @override
-  String get presetLabel => 'Preset';
+  String get clusterTestCloudProvider => 'Test cloud';
 
   @override
-  String get standardPreset => 'Default';
+  String get clusterLoginAction => 'Sign in';
 
   @override
-  String get planPreset => 'Plan';
+  String get clusterConnectAction => 'Connect';
 
   @override
-  String get noWorkspace => 'No workspace selected';
+  String get clusterServerIp => 'IP';
 
   @override
-  String get clearWorkspace => 'Clear workspace';
+  String get clusterServerPort => 'Port';
 
   @override
-  String get workspaceFailure => 'Unable to open the workspace picker';
+  String get clusterVerificationLabel => 'Verification';
+
+  @override
+  String get clusterVerificationNone => 'None';
+
+  @override
+  String get clusterVerificationCredentials => 'Username/password';
+
+  @override
+  String get clusterServerCertificate => 'Server certificate';
+
+  @override
+  String get clusterUsernameLabel => 'Username';
+
+  @override
+  String get clusterPasswordLabel => 'Password';
+
+  @override
+  String get clusterPublicKey => 'Public key';
+
+  @override
+  String get clusterPrivateKey => 'Private key';
+
+  @override
+  String get clusterChooseLocalFile => 'Choose local file';
+
+  @override
+  String get clusterScanQrCode => 'Scan QR code';
+
+  @override
+  String get clusterCertificateFileSelected => 'File selected';
+
+  @override
+  String get clusterCertificateQrSelected => 'QR content received';
+
+  @override
+  String get clusterClearCertificate => 'Clear selection';
+
+  @override
+  String get clusterConnectingStatus => 'Connecting';
+
+  @override
+  String get clusterSigningInStatus => 'Signing in';
+
+  @override
+  String get clusterConnectionSucceeded => 'Connected';
+
+  @override
+  String get clusterSignInSucceeded => 'Signed in';
+
+  @override
+  String get modelConnect => 'Connect a model';
+
+  @override
+  String get sessionNew => 'New session';
+
+  @override
+  String get sessionTitle => 'Sessions';
+
+  @override
+  String get sessionRename => 'Rename';
+
+  @override
+  String get sessionDelete => 'Delete';
+
+  @override
+  String get sessionName => 'Session name';
+
+  @override
+  String get sessionDeleteTitle => 'Delete session?';
+
+  @override
+  String get sessionDeleteBody =>
+      'This session and its prompts will be removed';
+
+  @override
+  String get sessionMissing => 'Session not found';
+
+  @override
+  String get sessionNewPromptTitle => 'What are we working on?';
+
+  @override
+  String get sessionPromptHint => 'What would you like to work on?';
+
+  @override
+  String get sessionSavePrompt => 'Save prompt';
+
+  @override
+  String get sessionStopRun => 'Stop';
+
+  @override
+  String get sessionNoModel => 'No model selected';
+
+  @override
+  String get sessionPresetLabel => 'Preset';
+
+  @override
+  String get sessionStandardPreset => 'Default';
+
+  @override
+  String get sessionPlanPreset => 'Plan';
+
+  @override
+  String get workspaceNone => 'No workspace selected';
+
+  @override
+  String get workspaceClear => 'Clear workspace';
+
+  @override
+  String get workspacePickerFailure => 'Unable to open the workspace picker';
 
   @override
   String get workspaceContext => 'Workspace context';
@@ -341,29 +384,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'This directory is linked only to this session. Files are not read or sent automatically. Removing the link does not delete local files';
 
   @override
-  String get changeWorkspace => 'Change directory';
+  String get workspaceChange => 'Change directory';
 
   @override
-  String get copyWorkspacePath => 'Copy path';
-
-  @override
-  String get closeAction => 'Close';
-
-  @override
-  String get renameSession => 'Rename';
-
-  @override
-  String get deleteSession => 'Delete';
-
-  @override
-  String get sessionTitle => 'Session name';
-
-  @override
-  String get deleteSessionTitle => 'Delete session?';
-
-  @override
-  String get deleteSessionBody =>
-      'This session and its prompts will be removed';
+  String get workspaceCopyPath => 'Copy path';
 
   @override
   String get messageUser => 'You';
@@ -372,58 +396,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get messageAssistant => 'Assistant';
 
   @override
-  String get unsentPrompt => 'Not sent: no model connected';
+  String get messageUnsentPrompt => 'Not sent: no model connected';
 
   @override
-  String get reasoningSummary => 'Reasoning summary';
+  String get messageReasoningSummary => 'Reasoning summary';
 
   @override
-  String get toolCalls => 'Tool calls';
+  String get messageToolCalls => 'Tool calls';
 
   @override
-  String get copyCode => 'Copy code';
+  String get messageCopyCode => 'Copy code';
 
   @override
-  String get copied => 'Copied';
+  String get messageCodeLabel => 'Code';
 
   @override
-  String get codeLabel => 'Code';
+  String get messageLongContent => 'Full content';
 
   @override
-  String get longContent => 'Full content';
+  String get messageToolOutput => 'Tool output';
 
   @override
-  String get toolOutput => 'Tool output';
+  String get messageToolRunning => 'Running';
 
   @override
-  String get toolRunning => 'Running';
+  String get messageToolCompleted => 'Completed';
 
   @override
-  String get toolCompleted => 'Completed';
-
-  @override
-  String get toolFailed => 'Failed';
-
-  @override
-  String get sessionMissing => 'Session not found';
-
-  @override
-  String get newPromptTitle => 'What are we working on?';
-
-  @override
-  String get offlineMode => 'Offline';
-
-  @override
-  String get offlineModeBody =>
-      'Work on this device without connecting to a cluster';
-
-  @override
-  String get clusterMode => 'Cluster';
-
-  @override
-  String get clusterModeBody =>
-      'Connect across devices, with this device also available as a worker node';
-
-  @override
-  String get continueOffline => 'Skip, work offline';
+  String get messageToolFailed => 'Failed';
 }

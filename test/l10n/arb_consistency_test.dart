@@ -41,15 +41,15 @@ void main() {
 
   test('生成的英文文案使用当前工作台与集群术语, 不保留旧云登录表述', () async {
     final english = await AppLocalizations.delegate.load(const Locale('en'));
-    expect(english.welcomeTagline, 'Your boundless AI workspace');
-    expect(english.clusterMode, 'Cluster');
-    expect(english.loginTitle, 'Connect to cluster');
-    expect(english.cloudServices, 'Clusters');
-    expect(english.identityProvider, 'Provider');
+    expect(english.setupWelcomeTagline, 'Your boundless AI workspace');
+    expect(english.setupClusterMode, 'Cluster');
+    expect(english.clusterConnectionTitle, 'Connect to cluster');
+    expect(english.clusterTitle, 'Clusters');
+    expect(english.clusterIdentityProvider, 'Provider');
     expect(
-      english.offlineModeBody,
+      english.setupOfflineModeBody,
       'Work on this device without connecting to a cluster',
     );
-    expect(english.toolCalls, 'Tool calls');
+    expect(english.messageToolCalls, 'Tool calls');
   });
 }

@@ -61,8 +61,9 @@ class SessionPage extends HookConsumerWidget {
         }
       } catch (_) {
         if (context.mounted) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(strings.workspaceFailure)));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(strings.workspacePickerFailure)),
+          );
         }
       } finally {
         if (context.mounted) pickingWorkspace.value = false;
@@ -158,7 +159,7 @@ class _EmptySessionBody extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Text(
-                strings.newPromptTitle,
+                strings.sessionNewPromptTitle,
                 key: const ValueKey('session-task-title'),
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.headlineMedium,
@@ -260,7 +261,7 @@ class _SessionComposer extends StatelessWidget {
             minLines: 2,
             maxLines: 4,
             decoration: InputDecoration(
-              hintText: strings.promptHint,
+              hintText: strings.sessionPromptHint,
               border: const OutlineInputBorder(),
             ),
             onChanged: (text) => onDraftChanged(text),
@@ -286,8 +287,8 @@ class _SessionComposer extends StatelessWidget {
                         },
                         child: Text(
                           preset == SessionPreset.standard
-                              ? strings.standardPreset
-                              : strings.planPreset,
+                              ? strings.sessionStandardPreset
+                              : strings.sessionPlanPreset,
                         ),
                       ),
                   ],
@@ -297,8 +298,8 @@ class _SessionComposer extends StatelessWidget {
                     icon: const Icon(Icons.tune),
                     label: Text(
                       session.preset == SessionPreset.standard
-                          ? strings.standardPreset
-                          : strings.planPreset,
+                          ? strings.sessionStandardPreset
+                          : strings.sessionPlanPreset,
                     ),
                   ),
                 ),
@@ -307,7 +308,7 @@ class _SessionComposer extends StatelessWidget {
                     key: const ValueKey('workspace-selector'),
                     onPressed: pickingWorkspace ? null : onPickWorkspace,
                     icon: const Icon(Icons.folder_open),
-                    label: Text(strings.noWorkspace),
+                    label: Text(strings.workspaceNone),
                   )
                 else
                   InputChip(
@@ -323,7 +324,7 @@ class _SessionComposer extends StatelessWidget {
                     onDeleted: pickingWorkspace
                         ? null
                         : () => onClearWorkspace(),
-                    deleteButtonTooltipMessage: strings.clearWorkspace,
+                    deleteButtonTooltipMessage: strings.workspaceClear,
                   ),
               ],
             ),
@@ -340,28 +341,28 @@ class _SessionComposer extends StatelessWidget {
                       MenuItemButton(
                         leadingIcon: const Icon(Icons.add),
                         onPressed: () {},
-                        child: Text(strings.modelConnections),
+                        child: Text(strings.modelConnect),
                       ),
                     ],
                     builder: (context, menu, _) => TextButton.icon(
                       key: const ValueKey('model-selector'),
                       onPressed: () => menu.isOpen ? menu.close() : menu.open(),
                       icon: const Icon(Icons.smart_toy_outlined),
-                      label: Text(strings.noModel),
+                      label: Text(strings.sessionNoModel),
                     ),
                   ),
                 ),
                 if (showStop)
                   IconButton(
                     key: const ValueKey('stop-run'),
-                    tooltip: strings.stopRun,
+                    tooltip: strings.sessionStopRun,
                     // 已有会话仍未接入执行引擎, 不提供虚假的停止行为
                     onPressed: null,
                     icon: const Icon(Icons.stop_circle_outlined),
                   ),
                 IconButton.filled(
                   key: const ValueKey('send-prompt'),
-                  tooltip: strings.sendPrompt,
+                  tooltip: strings.sessionSavePrompt,
                   onPressed: session.draft.trim().isEmpty ? null : onSubmit,
                   icon: const Icon(Icons.arrow_upward),
                 ),

@@ -27,7 +27,7 @@ class AsyncValueView<T> extends StatelessWidget {
       skipError: false,
       data: data,
       loading: () => Center(
-        child: CircularProgressIndicator(semanticsLabel: strings.loading),
+        child: CircularProgressIndicator(semanticsLabel: strings.commonLoading),
       ),
       error: (error, stackTrace) => Center(
         child: SingleChildScrollView(
@@ -40,7 +40,10 @@ class AsyncValueView<T> extends StatelessWidget {
               Text(failureMessage(error, strings), textAlign: TextAlign.center),
               if (onRetry != null) ...[
                 const SizedBox(height: 16),
-                FilledButton(onPressed: onRetry, child: Text(strings.retry)),
+                FilledButton(
+                  onPressed: onRetry,
+                  child: Text(strings.commonRetry),
+                ),
               ],
             ],
           ),

@@ -43,23 +43,23 @@ class WorkspaceContextDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text(strings.closeAction),
+          child: Text(strings.commonCloseAction),
         ),
         TextButton.icon(
           key: const ValueKey('copy-workspace-path'),
           onPressed: () => copyText(context, path),
           icon: const Icon(Icons.copy_outlined),
-          label: Text(strings.copyWorkspacePath),
+          label: Text(strings.workspaceCopyPath),
         ),
         TextButton(
           onPressed: () =>
               Navigator.pop(context, WorkspaceContextAction.remove),
-          child: Text(strings.clearWorkspace),
+          child: Text(strings.workspaceClear),
         ),
         FilledButton.tonal(
           onPressed: () =>
               Navigator.pop(context, WorkspaceContextAction.replace),
-          child: Text(strings.changeWorkspace),
+          child: Text(strings.workspaceChange),
         ),
       ],
     );

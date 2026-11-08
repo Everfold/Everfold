@@ -68,25 +68,25 @@ class DesktopAppFrame extends HookConsumerWidget {
         path != null &&
         !setup;
     final title = settings.isLoading
-        ? strings.loading
+        ? strings.commonLoading
         : settings.hasError
-        ? strings.unexpectedFailure
+        ? strings.errorUnexpected
         : current.value.error
-        ? strings.pageNotFound
+        ? strings.errorPageNotFound
         : setup
         ? switch (preferences?.setupStage) {
-            AppSetupStage.introduction => strings.startSetup,
+            AppSetupStage.introduction => strings.setupStart,
             AppSetupStage.mode => strings.setupModeTitle,
-            AppSetupStage.login => strings.loginTitle,
-            _ => strings.preferencesTitle,
+            AppSetupStage.login => strings.clusterConnectionTitle,
+            _ => strings.setupPreferencesTitle,
           }
         : path == '/settings'
-        ? strings.settingsDestination
+        ? strings.settingsTitle
         : path == '/cloud'
-        ? strings.cloudServices
+        ? strings.clusterTitle
         : sessionTitle.isNotEmpty && path != '/'
         ? sessionTitle
-        : strings.newSession;
+        : strings.sessionNew;
     return LayoutBuilder(
       builder: (context, constraints) => DesktopWindowFrame(
         title: title,

@@ -5,18 +5,18 @@ import '../../../l10n/app_localizations.dart';
 String failureMessage(Object error, AppLocalizations strings) {
   final kind = error is AppFailure ? error.kind : FailureKind.unexpected;
   return switch (kind) {
-    FailureKind.configuration => strings.configurationFailure,
-    FailureKind.network => strings.networkFailure,
-    FailureKind.timeout => strings.timeoutFailure,
-    FailureKind.cancelled => strings.cancelledFailure,
-    FailureKind.unauthorized => strings.unauthorizedFailure,
-    FailureKind.forbidden => strings.forbiddenFailure,
-    FailureKind.notFound => strings.pageNotFound,
-    FailureKind.conflict => strings.conflictFailure,
-    FailureKind.validation => strings.validationFailure,
-    FailureKind.server => strings.serverFailure,
-    FailureKind.invalidData => strings.invalidDataFailure,
-    FailureKind.storage => strings.storageFailure,
-    FailureKind.unexpected => strings.unexpectedFailure,
+    FailureKind.configuration => strings.errorConfiguration,
+    FailureKind.network => strings.errorNetwork,
+    FailureKind.timeout => strings.errorTimeout,
+    FailureKind.cancelled => strings.errorCancelled,
+    FailureKind.unauthorized => strings.errorUnauthorized,
+    FailureKind.forbidden => strings.errorForbidden,
+    FailureKind.notFound => strings.errorPageNotFound,
+    FailureKind.conflict => strings.errorConflict,
+    FailureKind.validation => strings.errorValidation,
+    FailureKind.server => strings.errorServer,
+    FailureKind.invalidData => strings.errorInvalidData,
+    FailureKind.storage => strings.errorStorage,
+    FailureKind.unexpected => strings.errorUnexpected,
   };
 }

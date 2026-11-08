@@ -66,7 +66,7 @@ class _MessageEntry extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: 8),
               child: Text(
-                strings.unsentPrompt,
+                strings.messageUnsentPrompt,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ),
@@ -75,7 +75,7 @@ class _MessageEntry extends StatelessWidget {
             // 展开状态和可选择文本的滚动偏移使用不同存储键
             ExpansionTile(
               key: PageStorageKey('reasoning-$index'),
-              title: Text(strings.reasoningSummary),
+              title: Text(strings.messageReasoningSummary),
               children: [
                 Padding(
                   padding: const EdgeInsets.all(16),
@@ -89,7 +89,7 @@ class _MessageEntry extends StatelessWidget {
           if (message.tools.isNotEmpty)
             ExpansionTile(
               key: PageStorageKey('tools-$index'),
-              title: Text(strings.toolCalls),
+              title: Text(strings.messageToolCalls),
               children: [
                 for (
                   var toolIndex = 0;
@@ -126,16 +126,16 @@ class _ToolEntry extends StatelessWidget {
       }),
       title: Text(tool.name),
       subtitle: Text(switch (tool.status) {
-        ToolCallStatus.running => strings.toolRunning,
-        ToolCallStatus.completed => strings.toolCompleted,
-        ToolCallStatus.failed => strings.toolFailed,
+        ToolCallStatus.running => strings.messageToolRunning,
+        ToolCallStatus.completed => strings.messageToolCompleted,
+        ToolCallStatus.failed => strings.messageToolFailed,
       }),
       children: [
         if (tool.output.isNotEmpty)
           Padding(
             padding: const EdgeInsets.all(16),
             child: Semantics(
-              label: strings.toolOutput,
+              label: strings.messageToolOutput,
               child: MessageContent(
                 data: tool.output,
                 storageId: '$storageId-output',

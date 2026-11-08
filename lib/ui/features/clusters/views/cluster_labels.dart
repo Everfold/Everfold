@@ -3,17 +3,17 @@ import '../../../../l10n/app_localizations.dart';
 
 String clusterServiceLabel(AppLocalizations strings, ClusterService service) =>
     switch (service) {
-      ClusterService.lan => strings.lanProvider,
-      ClusterService.selfHosted => strings.selfHostedProvider,
-      ClusterService.testCloud => strings.testCloudProvider,
+      ClusterService.lan => strings.clusterLanProvider,
+      ClusterService.selfHosted => strings.clusterSelfHostedProvider,
+      ClusterService.testCloud => strings.clusterTestCloudProvider,
     };
 
 String clusterVerificationLabel(
   AppLocalizations strings,
   ClusterVerification verification,
 ) => switch (verification) {
-  ClusterVerification.none => strings.verificationNone,
-  ClusterVerification.credentials => strings.verificationCredentials,
-  ClusterVerification.serverCertificate => strings.serverCertificate,
+  ClusterVerification.none => strings.clusterVerificationNone,
+  ClusterVerification.credentials => strings.clusterVerificationCredentials,
+  ClusterVerification.serverCertificate => strings.clusterServerCertificate,
   ClusterVerification.mtls => 'mTLS',
 };
