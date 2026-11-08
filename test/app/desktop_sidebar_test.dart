@@ -224,6 +224,63 @@ void main() {
     expect(find.byKey(ValueKey('session-$id')), findsOneWidget);
   });
 
+  for (final width in [390.0, 1280.0]) {
+    testWidgets('$width 会话分组重新展开后菜单可反复打开, 返回仍优先关闭菜单', (tester) async {
+      await pumpApp(tester, size: Size(width, 900));
+      final ref = container(tester);
+      final sessions = ref.read(sessionsControllerProvider.notifier);
+      sessions.setDraft(null, 'Existing task');
+      final id = sessions.submit(null)!;
+      final router = ref.read(appRouterProvider);
+      router.go('/sessions/$id');
+      await tester.pumpAndSettle();
+      if (width < 840) {
+        await tester.tap(find.byIcon(Icons.menu));
+        await tester.pumpAndSettle();
+      }
+      // 真实的展开切换会向 PageStorage 写入布尔值; 初始展开不会。
+      for (var index = 0; index < 2; index++) {
+        await tester.tap(find.text('Sessions'));
+        await tester.pumpAndSettle();
+      }
+      final menu = find.byKey(ValueKey('session-menu-$id'));
+      for (var index = 0; index < 2; index++) {
+        await tester.tap(menu);
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(find.text('Rename').hitTestable(), findsOneWidget);
+        expect(find.text('Delete').hitTestable(), findsOneWidget);
+        await tester.binding.handlePopRoute();
+        await tester.pumpAndSettle();
+        expect(find.text('Rename'), findsNothing);
+        expect(menu.hitTestable(), findsOneWidget);
+        expect(router.routerDelegate.state.uri.path, '/sessions/$id');
+      }
+      // 重建导航后仍恢复分组的展开状态, 菜单不能覆盖它。
+      if (width < 840) {
+        await tester.binding.handlePopRoute();
+        await tester.pumpAndSettle();
+        await tester.tap(find.byIcon(Icons.menu));
+        await tester.pumpAndSettle();
+      } else {
+        for (var index = 0; index < 2; index++) {
+          await tester.tap(toggle);
+          await tester.pumpAndSettle();
+        }
+      }
+      expect(menu.hitTestable(), findsOneWidget);
+      await tester.tap(menu);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Rename'));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('rename-session-input')),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
+    });
+  }
+
   testWidgets('折叠状态跨设置和集群共享, 图标可导航, 重启恢复偏好', (tester) async {
     final store = await pumpApp(tester);
     await tester.enterText(input, 'Unsent task');

@@ -18,6 +18,8 @@ class BackDismissibleMenuAnchor extends StatefulWidget {
 
 class _BackDismissibleMenuAnchorState extends State<BackDismissibleMenuAnchor> {
   final _controller = MenuController();
+  // 弹层沿用锚点的继承环境; 隔离菜单滚动位置, 避免读写父级分组的展开状态。
+  final _menuStorage = PageStorageBucket();
   LocalHistoryEntry? _history;
 
   void _opened() {
@@ -48,11 +50,14 @@ class _BackDismissibleMenuAnchorState extends State<BackDismissibleMenuAnchor> {
   }
 
   @override
-  Widget build(BuildContext context) => MenuAnchor(
-    controller: _controller,
-    onOpen: _opened,
-    onClose: _closed,
-    menuChildren: widget.menuChildren,
-    builder: widget.builder,
+  Widget build(BuildContext context) => PageStorage(
+    bucket: _menuStorage,
+    child: MenuAnchor(
+      controller: _controller,
+      onOpen: _opened,
+      onClose: _closed,
+      menuChildren: widget.menuChildren,
+      builder: widget.builder,
+    ),
   );
 }
