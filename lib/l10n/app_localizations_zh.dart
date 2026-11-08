@@ -184,7 +184,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get setupPreferencesTitle => '个性化设置';
 
   @override
-  String get setupFinish => '进入 Everfold';
+  String get setupFinish => '直接进入';
 
   @override
   String get clusterTitle => '集群';
@@ -200,6 +200,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get clusterName => '集群名称';
+
+  @override
+  String get clusterOptionalName => '集群名称（可选）';
 
   @override
   String get clusterRename => '重命名集群';
@@ -229,7 +232,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get clusterConnectionTitle => '连接集群';
 
   @override
-  String get clusterIdentityProvider => '供应商';
+  String get clusterIdentityProvider => '连接类型';
 
   @override
   String get clusterLanProvider => '局域网';

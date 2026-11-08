@@ -191,7 +191,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get setupPreferencesTitle => 'Personalize';
 
   @override
-  String get setupFinish => 'Open Everfold';
+  String get setupFinish => 'Direct Enter';
 
   @override
   String get clusterTitle => 'Clusters';
@@ -208,6 +208,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get clusterName => 'Cluster name';
+
+  @override
+  String get clusterOptionalName => 'Cluster name (optional)';
 
   @override
   String get clusterRename => 'Rename cluster';
@@ -238,7 +241,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clusterConnectionTitle => 'Connect to cluster';
 
   @override
-  String get clusterIdentityProvider => 'Provider';
+  String get clusterIdentityProvider => 'Connection type';
 
   @override
   String get clusterLanProvider => 'Local network';

@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:everfold/app/app_scope.dart';
 import 'package:everfold/app/everfold_app.dart';
 import 'package:everfold/application/clusters/clusters_controller.dart';
@@ -133,6 +134,47 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   }
+
+  testWidgets('连接弹窗支持 Esc 取消并恢复入口焦点, 连接期间锁定', (tester) async {
+    await pumpApp(tester);
+    final addButton = find.byKey(const ValueKey('add-cluster'));
+    Focus.of(tester.element(find.text('添加集群'))).requestFocus();
+    await tester.pump();
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(find.byType(AlertDialog), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('cluster-name-input')));
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(find.byType(AlertDialog), findsNothing);
+    expect(Focus.of(tester.element(find.text('添加集群'))).hasFocus, isTrue);
+    await tap(tester, addButton);
+    await tester.tap(find.byKey(const ValueKey('connection-connect')));
+    await tester.pump();
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pump();
+    expect(find.byType(AlertDialog), findsOneWidget);
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pumpAndSettle();
+    expect(find.byType(AlertDialog), findsNothing);
+  });
+
+  testWidgets('集群重命名支持回车提交并拒绝空名称', (tester) async {
+    await pumpApp(tester);
+    await add(tester, '测试集群');
+    await tap(tester, find.text('测试集群'));
+    await tap(tester, find.byKey(const ValueKey('cluster-rename-1')));
+    final input = find.byKey(const ValueKey('rename-cluster-input'));
+    await tester.enterText(input, '   ');
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await tester.pumpAndSettle();
+    expect(find.byType(AlertDialog), findsOneWidget);
+    await tester.enterText(input, '  新名称  ');
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await tester.pumpAndSettle();
+    expect(find.byType(AlertDialog), findsNothing);
+    expect(find.text('新名称'), findsOneWidget);
+  });
 
   testWidgets('集群与设置并列, 可添加多个并独立断开, 重命名, 移除', (tester) async {
     await pumpApp(tester);

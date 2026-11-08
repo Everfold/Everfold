@@ -249,41 +249,44 @@ class _SetupActions extends StatelessWidget {
     final intro = stage == AppSetupStage.introduction;
     return Padding(
       padding: const EdgeInsets.all(24),
-      child: Wrap(
-        spacing: 12,
-        runSpacing: 12,
-        alignment: WrapAlignment.end,
-        children: [
-          if (onBack != null)
-            TextButton.icon(
-              onPressed: navigationLocked ? null : onBack,
-              icon: const Icon(Icons.arrow_back),
-              label: Text(strings.commonBack),
-            ),
-          if (intro)
-            TextButton(
-              onPressed: saving ? null : onSkip,
-              child: Text(strings.setupSkip),
-            ),
-          if (stage == AppSetupStage.login)
-            TextButton(
-              // 连接开始后连同返回一起冻结, 成功后只允许表单中的下一步
-              onPressed: navigationLocked ? null : onSkip,
-              child: Text(strings.setupContinueOffline),
-            )
-          else
-            FilledButton(
-              onPressed: saving ? null : onContinue,
-              child: Text(
-                intro
-                    ? strings.setupStart
-                    : stage == AppSetupStage.mode &&
-                          selectedMode == AppConnectionMode.offline
-                    ? strings.setupFinish
-                    : strings.commonContinueAction,
+      child: SizedBox(
+        width: double.infinity,
+        child: Wrap(
+          spacing: 12,
+          runSpacing: 12,
+          alignment: WrapAlignment.end,
+          children: [
+            if (onBack != null)
+              TextButton.icon(
+                onPressed: navigationLocked ? null : onBack,
+                icon: const Icon(Icons.arrow_back),
+                label: Text(strings.commonBack),
               ),
-            ),
-        ],
+            if (intro)
+              TextButton(
+                onPressed: saving ? null : onSkip,
+                child: Text(strings.setupSkip),
+              ),
+            if (stage == AppSetupStage.login)
+              TextButton(
+                // 连接开始后连同返回一起冻结, 成功后只允许表单中的下一步
+                onPressed: navigationLocked ? null : onSkip,
+                child: Text(strings.setupContinueOffline),
+              )
+            else
+              FilledButton(
+                onPressed: saving ? null : onContinue,
+                child: Text(
+                  intro
+                      ? strings.setupStart
+                      : stage == AppSetupStage.mode &&
+                            selectedMode == AppConnectionMode.offline
+                      ? strings.setupFinish
+                      : strings.commonContinueAction,
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

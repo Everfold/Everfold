@@ -89,7 +89,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Get started'), findsOneWidget);
     await tap(tester, 'Get started');
-    await tap(tester, 'Open Everfold');
+    await tap(tester, 'Direct Enter');
     expect(find.byType(SessionPage), findsOneWidget);
     final saved = AppSettingsDto.fromJson(
       jsonDecode((await store.readString('everfold.app_settings.v1'))!),
@@ -152,10 +152,10 @@ void main() {
     expect(find.text('选择使用方式'), findsOneWidget);
     expect(find.text('个性化设置'), findsNothing);
     store.failWrite = true;
-    await tap(tester, '进入 Everfold');
+    await tap(tester, '直接进入');
     expect(find.byType(SessionPage), findsNothing);
     store.failWrite = false;
-    await tap(tester, '进入 Everfold');
+    await tap(tester, '直接进入');
     expect(find.byType(SessionPage), findsOneWidget);
     expect(
       Theme.of(tester.element(find.byType(Scaffold))).brightness,
@@ -181,7 +181,7 @@ void main() {
         ),
       );
       expect(find.text('选择使用方式'), findsOneWidget);
-      await tap(tester, '进入 Everfold');
+      await tap(tester, '直接进入');
       expect(find.byType(SessionPage), findsOneWidget);
       expect(tester.takeException(), isNull);
     });

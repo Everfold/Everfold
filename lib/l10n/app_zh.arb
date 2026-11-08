@@ -232,9 +232,9 @@
   "@setupPreferencesTitle": {
     "description": "首次设置中的个性化设置页面标题。"
   },
-  "setupFinish": "进入 Everfold",
+  "setupFinish": "直接进入",
   "@setupFinish": {
-    "description": "完成首次设置并进入应用的按钮标签。Everfold 是产品名称，保留原文。"
+    "description": "完成首次设置并进入应用的按钮标签。"
   },
   "clusterTitle": "集群",
   "@clusterTitle": {
@@ -255,6 +255,10 @@
   "clusterName": "集群名称",
   "@clusterName": {
     "description": "输入或编辑集群显示名称的字段标签。"
+  },
+  "clusterOptionalName": "集群名称（可选）",
+  "@clusterOptionalName": {
+    "description": "添加或配置连接时的可选集群名称，留空使用连接类型名称。"
   },
   "clusterRename": "重命名集群",
   "@clusterRename": {
@@ -292,9 +296,9 @@
   "@clusterConnectionTitle": {
     "description": "配置集群连接的页面标题。"
   },
-  "clusterIdentityProvider": "供应商",
+  "clusterIdentityProvider": "连接类型",
   "@clusterIdentityProvider": {
-    "description": "集群连接表单中的供应商类型标签，选项包括局域网、自部署和测试云。"
+    "description": "集群连接表单中的连接类型标签，选项包括局域网、自部署和测试云。"
   },
   "clusterLanProvider": "局域网",
   "@clusterLanProvider": {

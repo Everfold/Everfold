@@ -45,7 +45,7 @@ void main() {
     expect(english.setupClusterMode, 'Cluster');
     expect(english.clusterConnectionTitle, 'Connect to cluster');
     expect(english.clusterTitle, 'Clusters');
-    expect(english.clusterIdentityProvider, 'Provider');
+    expect(english.clusterIdentityProvider, 'Connection type');
     expect(
       english.setupOfflineModeBody,
       'Work on this device without connecting to a cluster',

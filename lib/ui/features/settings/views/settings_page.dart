@@ -17,17 +17,11 @@ class SettingsPage extends StatelessWidget {
       const SafeArea(child: SettingsContent());
 }
 
-/// 组织语言, 明暗和配色区块, 引导与正式设置复用同一组控件
+/// 组织设置页的语言, 明暗和配色区块
 ///
 /// 保存反馈由本组件统一管理, 配色区块只通过回调提交用户选择
 class SettingsContent extends HookConsumerWidget {
-  const SettingsContent({
-    super.key,
-    this.showModelEntry = true,
-    this.languageFirst = false,
-  });
-  final bool showModelEntry;
-  final bool languageFirst;
+  const SettingsContent({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -61,7 +55,6 @@ class SettingsContent extends HookConsumerWidget {
       }
     }
 
-    // 同一语言区块只渲染一次, 引导将它放在首部, 正式设置保留原有顺序
     final language = _ChoiceSection<AppLanguage>(
       id: 'language',
       title: strings.settingsLanguageTitle,
@@ -80,15 +73,15 @@ class SettingsContent extends HookConsumerWidget {
           child: ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              if (languageFirst) language,
-              if (showModelEntry)
-                ListTile(
-                  key: const ValueKey('connect-model'),
-                  leading: const Icon(Icons.add_circle_outline),
-                  title: Text(strings.modelConnect),
-                  // 用户确认本阶段仅预留接入入口
-                  onTap: () {},
-                ),
+              ListTile(
+                key: const ValueKey('connect-model'),
+                leading: const Icon(Icons.add_circle_outline),
+                title: Text(strings.modelConnect),
+                // 用户确认本阶段仅预留接入入口
+                onTap: () {},
+              ),
+              const Divider(),
+              const SizedBox(height: 16),
               _ChoiceSection<AppAppearance>(
                 id: 'appearance',
                 title: strings.settingsBrightnessTitle,
@@ -111,7 +104,7 @@ class SettingsContent extends HookConsumerWidget {
                     save(() => controller.setSeedColor(value)),
                 onEditColor: editColor,
               ),
-              if (!languageFirst) language,
+              language,
             ],
           ),
         ),

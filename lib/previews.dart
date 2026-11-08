@@ -2,9 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/widget_previews.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:talker/talker.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'application/settings/app_settings_controller.dart';
+import 'ui/features/settings/views/settings_page.dart';
 import 'app/app_scope.dart';
 import 'app/everfold_app.dart';
 import 'core/config/app_config.dart';
@@ -69,6 +72,38 @@ Widget darkDesktopWindowPreview() => _preview(
 @Preview(name: 'Connection · Mobile', size: Size(390, 844))
 @Preview(name: 'Connection · Desktop', size: Size(1280, 900))
 Widget connectionPreview() => _preview(stage: AppSetupStage.login);
+
+@Preview(name: 'Settings · Mobile', size: Size(390, 844))
+@Preview(name: 'Settings · Desktop', size: Size(1280, 900))
+@Preview(
+  name: 'Settings · Compact large text',
+  size: Size(320, 900),
+  textScaleFactor: 2,
+)
+Widget settingsPreview() => AppScope(
+  config: AppConfig(),
+  talker: Talker(settings: TalkerSettings(enabled: false)),
+  preferencesStore: MemoryPreferencesStore(),
+  child: MaterialApp(
+    localizationsDelegates: const [
+      AppLocalizations.delegate,
+      ...GlobalMaterialLocalizations.delegates,
+    ],
+    supportedLocales: AppLocalizations.supportedLocales,
+    home: Scaffold(
+      body: Consumer(
+        builder: (context, ref, _) => ref
+            .watch(appSettingsControllerProvider)
+            .when(
+              data: (_) => const SettingsPage(),
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (_, _) =>
+                  Text(AppLocalizations.of(context).settingsSaveFailure),
+            ),
+      ),
+    ),
+  ),
+);
 
 @Preview(name: 'Clusters · Mobile', size: Size(390, 844))
 @Preview(name: 'Clusters · Desktop', size: Size(1280, 900))

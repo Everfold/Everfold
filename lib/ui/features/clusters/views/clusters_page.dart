@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
@@ -69,6 +70,15 @@ class ClustersPage extends ConsumerWidget {
       child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          if (clusters.isEmpty) ...[
+            Text(
+              strings.clusterEmptyTitle,
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 8),
+            Text(strings.clusterEmptyBody),
+            const SizedBox(height: 24),
+          ],
           Align(
             alignment: Alignment.centerLeft,
             child: FilledButton.icon(
@@ -79,14 +89,6 @@ class ClustersPage extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 24),
-          if (clusters.isEmpty) ...[
-            Text(
-              strings.clusterEmptyTitle,
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 8),
-            Text(strings.clusterEmptyBody),
-          ],
           for (final cluster in clusters)
             _ClusterEntry(
               cluster: cluster,
@@ -228,44 +230,51 @@ class _ClusterConnectionDialogState extends State<_ClusterConnectionDialog> {
         configuration: configuration,
       )),
       // 表单提供字段, 主操作和锁定状态, 弹窗只把取消与主操作排在同一区域
-      layoutBuilder: (fields, action, locked) => PopScope(
-        canPop: !locked,
-        child: AlertDialog(
-          constraints: const BoxConstraints(maxWidth: 560),
-          title: Text(
-            widget.cluster == null
-                ? strings.clusterAdd
-                : strings.clusterConfigure,
-          ),
-          content: SizedBox(
-            width: double.maxFinite,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  TextField(
-                    key: const ValueKey('cluster-name-input'),
-                    controller: _name,
-                    enabled: !locked,
-                    decoration: InputDecoration(
-                      labelText: strings.clusterName,
-                      border: const OutlineInputBorder(),
+      layoutBuilder: (fields, action, locked) => CallbackShortcuts(
+        bindings: {
+          const SingleActivator(LogicalKeyboardKey.escape): () {
+            if (!locked) Navigator.pop(context);
+          },
+        },
+        child: PopScope(
+          canPop: !locked,
+          child: AlertDialog(
+            constraints: const BoxConstraints(maxWidth: 560),
+            title: Text(
+              widget.cluster == null
+                  ? strings.clusterAdd
+                  : strings.clusterConfigure,
+            ),
+            content: SizedBox(
+              width: double.maxFinite,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    TextField(
+                      key: const ValueKey('cluster-name-input'),
+                      controller: _name,
+                      enabled: !locked,
+                      decoration: InputDecoration(
+                        labelText: strings.clusterOptionalName,
+                        border: const OutlineInputBorder(),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  fields,
-                ],
+                    const SizedBox(height: 16),
+                    fields,
+                  ],
+                ),
               ),
             ),
+            actions: [
+              TextButton(
+                onPressed: locked ? null : () => Navigator.pop(context),
+                child: Text(strings.commonCancel),
+              ),
+              action,
+            ],
           ),
-          actions: [
-            TextButton(
-              onPressed: locked ? null : () => Navigator.pop(context),
-              child: Text(strings.commonCancel),
-            ),
-            action,
-          ],
         ),
       ),
     );
@@ -289,6 +298,10 @@ class _ClusterNameDialog extends HookWidget {
         controller: input,
         autofocus: true,
         decoration: InputDecoration(labelText: strings.clusterName),
+        textInputAction: TextInputAction.done,
+        onSubmitted: (name) {
+          if (name.trim().isNotEmpty) Navigator.pop(context, name.trim());
+        },
       ),
       actions: [
         TextButton(

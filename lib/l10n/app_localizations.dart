@@ -446,10 +446,10 @@ abstract class AppLocalizations {
   /// **'个性化设置'**
   String get setupPreferencesTitle;
 
-  /// 完成首次设置并进入应用的按钮标签。Everfold 是产品名称，保留原文。
+  /// 完成首次设置并进入应用的按钮标签。
   ///
   /// In zh, this message translates to:
-  /// **'进入 Everfold'**
+  /// **'直接进入'**
   String get setupFinish;
 
   /// 集群管理入口的名称。此处指已配置的集群。
@@ -481,6 +481,12 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'集群名称'**
   String get clusterName;
+
+  /// 添加或配置连接时的可选集群名称，留空使用连接类型名称。
+  ///
+  /// In zh, this message translates to:
+  /// **'集群名称（可选）'**
+  String get clusterOptionalName;
 
   /// 修改集群显示名称的操作标签。
   ///
@@ -536,10 +542,10 @@ abstract class AppLocalizations {
   /// **'连接集群'**
   String get clusterConnectionTitle;
 
-  /// 集群连接表单中的供应商类型标签，选项包括局域网、自部署和测试云。
+  /// 集群连接表单中的连接类型标签，选项包括局域网、自部署和测试云。
   ///
   /// In zh, this message translates to:
-  /// **'供应商'**
+  /// **'连接类型'**
   String get clusterIdentityProvider;
 
   /// 通过局域网连接集群的供应商类型名称。
