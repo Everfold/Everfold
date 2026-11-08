@@ -55,7 +55,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             path: '/sessions/:id',
             pageBuilder: (context, state) => MaterialPage<void>(
               key: state.pageKey,
-              child: SessionPage(sessionId: state.pathParameters['id']),
+              child: SessionPage(
+                sessionId: state.pathParameters['id'],
+                // 只有新建页提交后的导航携带自动聚焦请求。
+                focusComposer: state.extra == true,
+              ),
             ),
           ),
         ],

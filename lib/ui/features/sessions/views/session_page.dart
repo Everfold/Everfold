@@ -15,9 +15,10 @@ import 'workspace_context_dialog.dart';
 ///
 /// 页面保留控制器与 Hooks, 下方私有区块仅组织欢迎区, 消息区和输入区
 class SessionPage extends HookConsumerWidget {
-  const SessionPage({super.key, this.sessionId});
+  const SessionPage({super.key, this.sessionId, this.focusComposer = false});
 
   final String? sessionId;
+  final bool focusComposer;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -48,8 +49,12 @@ class SessionPage extends HookConsumerWidget {
     final hasMessages = session.messages.isNotEmpty;
     void submit() {
       final id = controller.submit(sessionId);
-      if (id != null && sessionId == null) context.go('/sessions/$id');
-      focus.requestFocus();
+      if (id != null && sessionId == null) {
+        // 新页面接收一次自动聚焦请求, 不再聚焦即将卸载的输入框。
+        context.go('/sessions/$id', extra: true);
+      } else {
+        focus.requestFocus();
+      }
     }
 
     Future<void> pickWorkspace() async {
@@ -91,6 +96,7 @@ class SessionPage extends HookConsumerWidget {
       session: session,
       input: input,
       focus: focus,
+      autofocus: focusComposer,
       pickingWorkspace: pickingWorkspace.value,
       // 创建页没有运行可停止, 不展示执行操作
       showStop: sessionId != null,
@@ -195,6 +201,7 @@ class _SessionComposer extends StatelessWidget {
     required this.session,
     required this.input,
     required this.focus,
+    required this.autofocus,
     required this.pickingWorkspace,
     required this.showStop,
     required this.onDraftChanged,
@@ -208,6 +215,7 @@ class _SessionComposer extends StatelessWidget {
   final AgentSession session;
   final TextEditingController input;
   final FocusNode focus;
+  final bool autofocus;
   final bool pickingWorkspace;
   final bool showStop;
   final ValueChanged<String> onDraftChanged;
@@ -230,6 +238,7 @@ class _SessionComposer extends StatelessWidget {
             key: const ValueKey('prompt-input'),
             controller: input,
             focusNode: focus,
+            autofocus: autofocus,
             minLines: 2,
             maxLines: 4,
             decoration: InputDecoration(

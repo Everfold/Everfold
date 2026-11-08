@@ -1011,6 +1011,60 @@ void main() {
     });
   }
 
+  for (final width in [390.0, 1280.0]) {
+    testWidgets('$width 首次提交后可连续输入, 普通打开会话不自动弹出键盘', (tester) async {
+      await pumpApp(tester, size: Size(width, 900));
+      final input = find.byKey(const ValueKey('prompt-input'));
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(SessionPage)),
+      );
+      final router = container.read(appRouterProvider);
+      expect(tester.widget<TextField>(input).focusNode!.hasFocus, isFalse);
+      await tester.enterText(input, '第一个任务');
+      await tester.pumpAndSettle();
+      final originalFocus = tester.widget<TextField>(input).focusNode;
+      await tester.tap(find.byKey(const ValueKey('send-prompt')));
+      await tester.pumpAndSettle();
+      final id = container.read(sessionsControllerProvider).sessions.single.id;
+      expect(router.routerDelegate.state.uri.path, '/sessions/$id');
+      final focus = tester.widget<TextField>(input).focusNode!;
+      expect(focus, isNot(same(originalFocus)));
+      expect(focus.hasFocus, isTrue);
+      expect(tester.testTextInput.hasAnyClients, isTrue);
+      expect(tester.widget<TextField>(input).controller!.text, isEmpty);
+      // 直接从已连接的输入法继续输入, 不通过 enterText 重新获取焦点。
+      tester.testTextInput.updateEditingValue(
+        const TextEditingValue(text: '继续补充'),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        container.read(sessionsControllerProvider).find(id)!.draft,
+        '继续补充',
+      );
+      await tester.tap(find.byKey(const ValueKey('send-prompt')));
+      await tester.pumpAndSettle();
+      expect(focus.hasFocus, isTrue);
+      expect(
+        container.read(sessionsControllerProvider).find(id)!.messages,
+        hasLength(2),
+      );
+      focus.unfocus();
+      await tester.pumpAndSettle();
+      router.push('/settings');
+      await tester.pumpAndSettle();
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(focus.hasFocus, isFalse);
+      router.go('/');
+      await tester.pumpAndSettle();
+      router.go('/sessions/$id');
+      await tester.pumpAndSettle();
+      expect(tester.widget<TextField>(input).focusNode!.hasFocus, isFalse);
+      expect(tester.testTextInput.hasAnyClients, isFalse);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
   testWidgets('提交成为未发送会话, 草稿和会话切换保留, 已有会话停止不可用', (tester) async {
     await pumpApp(tester);
     expect(find.byType(NavigationBar), findsNothing);
