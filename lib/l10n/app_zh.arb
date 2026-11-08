@@ -464,6 +464,10 @@
   "@sessionNoModel": {
     "description": "尚未选择模型时模型选择控件显示的文本。"
   },
+  "sessionModelLabel": "模型",
+  "@sessionModelLabel": {
+    "description": "窄屏输入区中未选择模型时的简短入口文案"
+  },
   "sessionPresetLabel": "预设",
   "@sessionPresetLabel": {
     "description": "提示词或会话预设选择控件的标签。"

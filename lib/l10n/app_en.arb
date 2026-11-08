@@ -116,6 +116,7 @@
   "sessionSavePrompt": "Save prompt",
   "sessionStopRun": "Stop",
   "sessionNoModel": "No model selected",
+  "sessionModelLabel": "Model",
   "sessionPresetLabel": "Preset",
   "sessionStandardPreset": "Default",
   "sessionPlanPreset": "Plan",

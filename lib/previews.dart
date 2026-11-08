@@ -58,6 +58,15 @@ Widget darkSetupPreview() => _preview(appearance: AppAppearance.dark);
 )
 Widget workspacePreview() => _preview(stage: AppSetupStage.complete);
 
+@Preview(name: 'Workspace · English mobile', size: Size(390, 844))
+@Preview(
+  name: 'Workspace · English compact large text',
+  size: Size(320, 900),
+  textScaleFactor: 2,
+)
+Widget englishWorkspacePreview() =>
+    _preview(stage: AppSetupStage.complete, language: 'en');
+
 /// 桌面顶栏预览使用独立窗口替代实现, 不移动或关闭浏览器窗口
 @Preview(name: 'Window frame · Desktop', size: Size(1280, 900))
 @Preview(
@@ -184,6 +193,7 @@ Widget _preview({
   AppSetupStage stage = AppSetupStage.introduction,
   DesktopWindow? window,
   String? path,
+  String? language,
   AppAppearance appearance = AppAppearance.system,
 }) => AppScope(
   config: AppConfig(),
@@ -193,9 +203,10 @@ Widget _preview({
     initialValues: {
       'everfold.app_settings.v1': jsonEncode({
         'language':
-            stage == AppSetupStage.login || stage == AppSetupStage.introduction
-            ? 'zh'
-            : 'system',
+            language ??
+            (stage == AppSetupStage.login || stage == AppSetupStage.introduction
+                ? 'zh'
+                : 'system'),
         'setupStage': stage.name,
         'appearance': appearance.name,
         'connectionMode': stage == AppSetupStage.login ? 'cloud' : 'local',

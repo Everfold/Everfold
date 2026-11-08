@@ -368,6 +368,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sessionNoModel => 'No model selected';
 
   @override
+  String get sessionModelLabel => 'Model';
+
+  @override
   String get sessionPresetLabel => 'Preset';
 
   @override

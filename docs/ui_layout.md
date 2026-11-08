@@ -15,7 +15,7 @@
 | 想看什么 | 从哪里开始 | 继续看哪些区块 |
 | --- | --- | --- |
 | 侧栏, 抽屉和页面标题 | [WorkspaceShell](../lib/ui/features/sessions/views/workspace_shell.dart) | `_WorkspaceNavigation`, `_WorkspaceBody` |
-| 欢迎区, 消息区和输入区 | [SessionPage](../lib/ui/features/sessions/views/session_page.dart) | `_SessionBody`, `_EmptySessionBody`, `_SessionComposer`, `_ComposerActionGroups` |
+| 欢迎区, 消息区和输入区 | [SessionPage](../lib/ui/features/sessions/views/session_page.dart) | `_SessionBody`, `_EmptySessionBody`, `_SessionComposer`, `_ComposerToolbar` |
 | 首次启动的阶段布局 | [SetupPage](../lib/ui/features/setup/views/setup_page.dart) | `_SetupIntroduction`, `_SetupModeChoices`, `_SetupActions` |
 | 语言, 明暗和颜色设置 | [SettingsContent](../lib/ui/features/settings/views/settings_page.dart) | `_ColorPreferences`, `_ChoiceSection` |
 | 集群列表与连接弹窗 | [ClustersPage](../lib/ui/features/clusters/views/clusters_page.dart) | `_ClusterEntry`, `_ClusterConnectionDialog` |
@@ -64,9 +64,9 @@ WorkspaceShell
 
 `_SessionBody` 用 `Expanded` 给上方内容分配剩余高度, 输入区始终位于底部. 空会话的 `_EmptySessionBody` 在上方空间内居中显示任务提示, 有消息后替换为 `SessionTranscript`. 欢迎提示和输入区分别滚动, 避免短窗口或键盘弹出后互相遮挡
 
-`_ComposerActionGroups` 把预设与工作区放在左侧, 模型与发送放在右侧. 它按输入区自身的宽度和按钮字号切换单行或上下两组, 分行后提交组仍靠右. 模型按钮内的文字可按标准控件行为换行, 不缩小字号或点击区域
+`_ComposerToolbar` 把预设与工作区放在左侧, 模型与发送放在右侧. 空间不足时采用单行紧凑布局: 预设用图标区分默认与规划, 工作区用图标显示关联状态, 模型保留单行文字, 发送固定在最右侧. 未选择模型时紧凑入口使用“模型 / Model”, 完整状态通过长按提示和无障碍语义提供; 文字过长时省略显示, 不缩小字号或点击区域. 工作区图标打开原有详情, 更换与移除操作; 宽屏继续显示预设文字和目录名称
 
-当前的 840dp 是工作区宽窄切换断点, 操作栏的 600dp 分行阈值随按钮字号调整, 输入区最多占可用高度的 65% 是现有布局策略. 这些都是产品排版选择, 不是所有 Material 页面必须使用的数值. 普通弹窗的 560dp 上限来自 M3 建议, 约束的是整个弹窗, 不是其中的文本区域
+当前的 840dp 是工作区宽窄切换断点, 操作栏的 600dp 紧凑布局阈值随按钮字号调整, 输入区最多占可用高度的 65% 是现有布局策略. 这些都是产品排版选择, 不是所有 Material 页面必须使用的数值. 普通弹窗的 560dp 上限来自 M3 建议, 约束的是整个弹窗, 不是其中的文本区域
 
 ## 状态和回调为什么留在页面
 

@@ -124,7 +124,7 @@ void main() {
   }
 
   for (final locale in [const Locale('zh'), const Locale('en')]) {
-    for (final (width, scale, inline) in [
+    for (final (width, scale, expanded) in [
       (320.0, 1.0, false),
       (320.0, 2.0, false),
       (390.0, 1.0, false),
@@ -134,7 +134,7 @@ void main() {
       (1920.0, 2.0, true),
     ]) {
       testWidgets(
-        '${locale.languageCode} 宽度 $width 字号 $scale 操作分组对齐, 创建后保持发送可达',
+        '${locale.languageCode} 宽度 $width 字号 $scale 操作保持单行, 创建后保持发送可达',
         (tester) async {
           await pumpApp(
             tester,
@@ -146,9 +146,7 @@ void main() {
           final model = find.byKey(const ValueKey('model-selector'));
           final send = find.byKey(const ValueKey('send-prompt'));
           final preset = find.byKey(const ValueKey('preset-selector'));
-          final contextActions = find.byKey(
-            const ValueKey('composer-context-actions'),
-          );
+          final workspace = find.byKey(const ValueKey('workspace-selector'));
           expect(
             tester.getTopLeft(preset).dx,
             closeTo(tester.getTopLeft(input).dx, 0.1),
@@ -165,17 +163,18 @@ void main() {
             tester.getBottomRight(model).dx,
             lessThanOrEqualTo(tester.getTopLeft(send).dx),
           );
-          if (inline) {
+          for (final control in [preset, workspace, model, send]) {
             expect(
-              tester.getCenter(preset).dy,
+              tester.getCenter(control).dy,
               closeTo(tester.getCenter(send).dy, 0.1),
             );
-          } else {
-            expect(
-              tester.getTopLeft(model).dy,
-              greaterThanOrEqualTo(tester.getBottomRight(contextActions).dy),
-            );
+            expect(tester.getSize(control).width, greaterThanOrEqualTo(48));
+            expect(tester.getSize(control).height, greaterThanOrEqualTo(48));
           }
+          expect(
+            tester.widget(preset),
+            expanded ? isA<TextButton>() : isA<IconButton>(),
+          );
           await tester.enterText(input, '保存分组后的输入');
           await tester.pumpAndSettle();
           await tester.ensureVisible(send);
@@ -194,13 +193,105 @@ void main() {
             tester.getCenter(model).dy,
             closeTo(tester.getCenter(send).dy, 0.1),
           );
+          expect(
+            tester.getCenter(preset).dy,
+            closeTo(tester.getCenter(send).dy, 0.1),
+          );
+          expect(tester.getSize(model).width, greaterThanOrEqualTo(48));
           expect(tester.takeException(), isNull);
         },
       );
     }
   }
 
-  testWidgets('分组切换保留输入焦点, 草稿和上下文, 键盘下模型菜单仍可用', (tester) async {
+  testWidgets('英文紧凑工具栏的预设, 工作区和模型入口保留状态与操作', (tester) async {
+    final workspacePath =
+        '/projects/${List.filled(20, 'long-directory').join()}';
+    var selections = 0;
+    await pumpApp(
+      tester,
+      size: const Size(390, 900),
+      locale: const Locale('en'),
+      selectWorkspace: () async =>
+          selections++ == 0 ? workspacePath : '/projects/replaced',
+    );
+    final semantics = tester.ensureSemantics();
+    try {
+      await tester.pump();
+      final preset = find.byKey(const ValueKey('preset-selector'));
+      final workspace = find.byKey(const ValueKey('workspace-selector'));
+      final model = find.byKey(const ValueKey('model-selector'));
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(SessionPage)),
+      );
+      expect(tester.getSemantics(preset).tooltip, 'Preset: Default');
+      expect(tester.getSemantics(workspace).tooltip, 'No workspace selected');
+      expect(tester.getSemantics(model).label, 'No model selected');
+      expect(find.text('Model'), findsOneWidget);
+      await tester.tap(preset);
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.widgetWithText(RadioMenuButton<SessionPreset>, 'Plan'),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        container.read(sessionsControllerProvider).newSession.preset,
+        SessionPreset.plan,
+      );
+      expect(tester.getSemantics(preset).tooltip, 'Preset: Plan');
+      expect(
+        find.descendant(of: preset, matching: find.byIcon(Icons.checklist)),
+        findsOneWidget,
+      );
+      await tester.tap(workspace);
+      await tester.pumpAndSettle();
+      expect(tester.widget<IconButton>(workspace).isSelected, isTrue);
+      expect(
+        tester.getSemantics(workspace).tooltip,
+        'Workspace context: $workspacePath',
+      );
+      await tester.longPress(workspace);
+      await tester.pumpAndSettle();
+      expect(find.text('Workspace context: $workspacePath'), findsOneWidget);
+      await tester.pump(const Duration(seconds: 3));
+      await tester.pumpAndSettle();
+      await tester.tap(workspace);
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<SelectableText>(
+              find.byKey(const ValueKey('workspace-full-path')),
+            )
+            .data,
+        workspacePath,
+      );
+      await tester.tap(find.text('Change directory'));
+      await tester.pumpAndSettle();
+      expect(
+        container.read(sessionsControllerProvider).newSession.workspace,
+        '/projects/replaced',
+      );
+      await tester.tap(workspace);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Clear workspace'));
+      await tester.pumpAndSettle();
+      expect(
+        container.read(sessionsControllerProvider).newSession.workspace,
+        isNull,
+      );
+      expect(tester.widget<IconButton>(workspace).isSelected, isFalse);
+      await tester.tap(model);
+      await tester.pumpAndSettle();
+      expect(find.text('Connect a model').hitTestable(), findsOneWidget);
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+    } finally {
+      semantics.dispose();
+    }
+  });
+
+  testWidgets('紧凑布局切换保留输入焦点, 草稿和上下文, 键盘下模型菜单仍可用', (tester) async {
     final workspace = '/projects/${List.filled(60, '长目录').join()}';
     await pumpApp(tester, selectWorkspace: () async => workspace);
     final container = ProviderScope.containerOf(
@@ -642,7 +733,7 @@ void main() {
     });
   }
 
-  testWidgets('320 宽双倍字号和键盘下长目录名使用组件自身约束', (tester) async {
+  testWidgets('320 宽双倍字号和键盘下长目录名使用紧凑图标入口', (tester) async {
     await pumpApp(
       tester,
       size: const Size(320, 900),
@@ -652,8 +743,9 @@ void main() {
     );
     await tester.tap(find.byKey(const ValueKey('workspace-selector')));
     await tester.pumpAndSettle();
-    final chip = find.byType(InputChip);
-    expect(tester.getSize(chip).width, lessThanOrEqualTo(320));
+    final workspace = find.byKey(const ValueKey('workspace-selector'));
+    expect(tester.widget<IconButton>(workspace).isSelected, isTrue);
+    expect(find.byType(InputChip), findsNothing);
     tester.view.viewInsets = const FakeViewPadding(bottom: 360);
     addTearDown(tester.view.resetViewInsets);
     final input = find.byKey(const ValueKey('prompt-input'));

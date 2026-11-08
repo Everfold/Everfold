@@ -358,6 +358,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get sessionNoModel => '未选择模型';
 
   @override
+  String get sessionModelLabel => '模型';
+
+  @override
   String get sessionPresetLabel => '预设';
 
   @override

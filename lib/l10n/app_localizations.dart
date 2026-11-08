@@ -794,6 +794,12 @@ abstract class AppLocalizations {
   /// **'未选择模型'**
   String get sessionNoModel;
 
+  /// 窄屏输入区中未选择模型时的简短入口文案
+  ///
+  /// In zh, this message translates to:
+  /// **'模型'**
+  String get sessionModelLabel;
+
   /// 提示词或会话预设选择控件的标签。
   ///
   /// In zh, this message translates to:
