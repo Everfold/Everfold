@@ -6,6 +6,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../../../application/clusters/clusters_controller.dart';
 import '../../../../domain/clusters/cluster_connection.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../core/layout/page_spacing.dart';
 import '../../setup/views/connection_form.dart';
 import 'cluster_labels.dart';
 
@@ -68,12 +69,15 @@ class ClustersPage extends ConsumerWidget {
 
     return SafeArea(
       child: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: pagePaddingOf(context),
         children: [
           if (clusters.isEmpty) ...[
-            Text(
-              strings.clusterEmptyTitle,
-              style: Theme.of(context).textTheme.titleLarge,
+            Semantics(
+              header: true,
+              child: Text(
+                strings.clusterEmptyTitle,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
             ),
             const SizedBox(height: 8),
             Text(strings.clusterEmptyBody),

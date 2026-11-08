@@ -8,6 +8,7 @@ import '../../../../application/window/desktop_window_provider.dart';
 import '../../../../domain/common/result.dart';
 import '../../../../domain/settings/app_settings.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../core/layout/page_spacing.dart';
 import '../../clusters/views/cluster_labels.dart';
 import 'connection_form.dart';
 
@@ -109,14 +110,14 @@ class SetupPage extends HookConsumerWidget {
               // 只有正文滚动, 进度, 错误和底部操作保持在可视区域
               Expanded(
                 child: ListView(
-                  padding: const EdgeInsets.all(24),
+                  padding: pagePaddingOf(context),
                   children: content,
                 ),
               ),
               if (busy.value) const LinearProgressIndicator(),
               if (failed.value)
                 Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: pagePaddingOf(context),
                   child: Semantics(
                     liveRegion: true,
                     child: Text(strings.settingsSaveFailure),
@@ -160,7 +161,7 @@ class _SetupIntroduction extends StatelessWidget {
           strings.setupWelcomeTagline,
           style: Theme.of(context).textTheme.titleMedium,
         ),
-        const SizedBox(height: 32),
+        const SizedBox(height: 24),
         ListTile(
           leading: const Icon(Icons.chat_bubble_outline),
           title: Text(strings.setupFeatureSessions),
@@ -248,7 +249,7 @@ class _SetupActions extends StatelessWidget {
     final strings = AppLocalizations.of(context);
     final intro = stage == AppSetupStage.introduction;
     return Padding(
-      padding: const EdgeInsets.all(24),
+      padding: pagePaddingOf(context),
       child: SizedBox(
         width: double.infinity,
         child: Wrap(

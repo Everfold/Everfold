@@ -4,6 +4,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../application/window/desktop_window_provider.dart';
 import '../../../l10n/app_localizations.dart';
+import '../layout/page_spacing.dart';
 
 enum AppSection { settings, clusters }
 
@@ -81,7 +82,7 @@ class SectionShell extends ConsumerWidget {
                     children: [
                       if (wide && !customWindow)
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
+                          padding: pagePaddingOf(context).copyWith(bottom: 0),
                           child: Semantics(
                             header: true,
                             child: Text(

@@ -6,6 +6,7 @@ import '../../../../application/settings/app_settings_controller.dart';
 import '../../../../domain/common/result.dart';
 import '../../../../domain/settings/app_settings.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../core/layout/page_spacing.dart';
 import 'seed_color_dialog.dart';
 
 /// 明暗, 配色与语言选择只在保存成功后生效
@@ -71,7 +72,7 @@ class SettingsContent extends HookConsumerWidget {
       children: [
         Expanded(
           child: ListView(
-            padding: const EdgeInsets.all(16),
+            padding: pagePaddingOf(context),
             children: [
               ListTile(
                 key: const ValueKey('connect-model'),
@@ -95,6 +96,7 @@ class SettingsContent extends HookConsumerWidget {
                 onChanged: (value) =>
                     save(() => controller.setAppearance(value)),
               ),
+              const SizedBox(height: 24),
               _ColorPreferences(
                 settings: settings,
                 enabled: !busy.value,
@@ -104,6 +106,7 @@ class SettingsContent extends HookConsumerWidget {
                     save(() => controller.setSeedColor(value)),
                 onEditColor: editColor,
               ),
+              const SizedBox(height: 24),
               language,
             ],
           ),
@@ -112,7 +115,7 @@ class SettingsContent extends HookConsumerWidget {
         if (busy.value) const LinearProgressIndicator(),
         if (error.value)
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: pagePaddingOf(context),
             child: Semantics(
               liveRegion: true,
               child: Text(strings.settingsSaveFailure),
@@ -159,6 +162,7 @@ class _ColorPreferences extends StatelessWidget {
           onChanged: (value) => onModeChanged(value),
         ),
         if (settings.colorMode == AppColorMode.custom) ...[
+          const SizedBox(height: 16),
           Wrap(
             spacing: 8,
             runSpacing: 8,
@@ -195,7 +199,6 @@ class _ColorPreferences extends StatelessWidget {
               onPressed: enabled ? onEditColor : null,
             ),
           ),
-          const SizedBox(height: 16),
         ],
       ],
     );
@@ -229,7 +232,11 @@ class _ChoiceSection<T extends Enum> extends StatelessWidget {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(title, style: Theme.of(context).textTheme.titleLarge),
+        Semantics(
+          header: true,
+          child: Text(title, style: Theme.of(context).textTheme.titleLarge),
+        ),
+        const SizedBox(height: 8),
         for (final entry in choices.entries)
           RadioListTile<T>(
             key: ValueKey('settings-$id-${entry.key.name}'),
@@ -237,7 +244,6 @@ class _ChoiceSection<T extends Enum> extends StatelessWidget {
             value: entry.key,
             enabled: enabled,
           ),
-        const SizedBox(height: 16),
       ],
     ),
   );
