@@ -388,4 +388,23 @@ void main() {
     store.writeGate!.complete();
     expect(await result, isA<Success<void>>());
   });
+
+  test('作用域销毁后排队的保存返回取消, 不再写入存储', () async {
+    await container.read(appSettingsControllerProvider.future);
+    store.writeGate = Completer<void>();
+    final controller = container.read(appSettingsControllerProvider.notifier);
+    final first = controller.setLanguage(AppLanguage.english);
+    final queued = controller.setAppearance(AppAppearance.dark);
+    await Future<void>.delayed(Duration.zero);
+    expect(store.writes, 1);
+    container.dispose();
+    store.writeGate!.complete();
+    expect(await first, isA<Success<void>>());
+    expect((await queued as Failure<void>).error.kind, FailureKind.cancelled);
+    expect(store.writes, 1);
+    expect(
+      (await LocalAppSettingsRepository(store).load()).getOrThrow(),
+      const AppSettings(language: AppLanguage.english),
+    );
+  });
 }

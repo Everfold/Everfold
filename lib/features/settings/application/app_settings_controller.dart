@@ -120,6 +120,10 @@ final class AppSettingsController extends AsyncNotifier<AppSettings> {
   Future<Result<void>> _update(AppSettings Function(AppSettings) update) {
     final repository = ref.read(appSettingsRepositoryProvider);
     final operation = _pendingWrite.then((_) async {
+      // 排队期间作用域可能已销毁, future getter 本身也会访问 Ref。
+      if (!ref.mounted) {
+        return const Failure<void>(AppFailure(FailureKind.cancelled));
+      }
       final AppSettings current;
       try {
         current = await future;
