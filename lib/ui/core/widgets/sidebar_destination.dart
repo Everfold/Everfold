@@ -33,47 +33,56 @@ class SidebarDestination extends StatelessWidget {
       color: foreground,
     ).merge(drawerTheme.iconTheme?.resolve(states));
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: Material(
-        type: MaterialType.transparency,
-        child: ListTile(
-          selected: selected,
-          selectedTileColor:
-              drawerTheme.indicatorColor ??
-              theme.colorScheme.secondaryContainer,
-          shape: drawerTheme.indicatorShape ?? const StadiumBorder(),
-          minTileHeight: drawerTheme.tileHeight ?? 56,
-          visualDensity: VisualDensity.standard,
-          dense: false,
-          minLeadingWidth: 24,
-          horizontalTitleGap: 12,
-          contentPadding: EdgeInsetsDirectional.only(
-            start: 16,
-            end: trailing == null ? 16 : 8,
-          ),
-          titleTextStyle: labelStyle,
-          textColor: labelStyle.color,
-          selectedColor: labelStyle.color,
-          iconColor: iconTheme.color,
-          leading: leading == null
-              ? null
-              : IconTheme(data: iconTheme, child: leading!),
-          title: Tooltip(
-            message: label,
-            excludeFromSemantics: true,
-            child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
-          ),
-          // 末尾操作使用独立焦点路径, 不让按钮或菜单的焦点带亮整行。
-          trailing: trailing == null
-              ? null
-              : Focus(
-                  parentNode: FocusScope.of(context),
-                  canRequestFocus: false,
-                  skipTraversal: true,
-                  child: trailing!,
+    // 将每行作为同一遍历分组, 保持名称和末尾操作的视觉顺序。
+    return FocusTraversalGroup(
+      child: Builder(
+        builder: (context) => Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Material(
+            type: MaterialType.transparency,
+            child: ListTile(
+              selected: selected,
+              selectedTileColor:
+                  drawerTheme.indicatorColor ??
+                  theme.colorScheme.secondaryContainer,
+              shape: drawerTheme.indicatorShape ?? const StadiumBorder(),
+              minTileHeight: drawerTheme.tileHeight ?? 56,
+              visualDensity: VisualDensity.standard,
+              dense: false,
+              minLeadingWidth: 24,
+              horizontalTitleGap: 12,
+              contentPadding: EdgeInsetsDirectional.only(
+                start: 16,
+                end: trailing == null ? 16 : 8,
+              ),
+              titleTextStyle: labelStyle,
+              textColor: labelStyle.color,
+              selectedColor: labelStyle.color,
+              iconColor: iconTheme.color,
+              leading: leading == null
+                  ? null
+                  : IconTheme(data: iconTheme, child: leading!),
+              title: Tooltip(
+                message: label,
+                excludeFromSemantics: true,
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-          onTap: onTap,
+              ),
+              // 末尾操作使用独立焦点路径, 不让按钮或菜单的焦点带亮整行。
+              trailing: trailing == null
+                  ? null
+                  : Focus(
+                      parentNode: Focus.of(context),
+                      canRequestFocus: false,
+                      skipTraversal: true,
+                      child: trailing!,
+                    ),
+              onTap: onTap,
+            ),
+          ),
         ),
       ),
     );

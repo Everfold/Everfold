@@ -335,6 +335,52 @@ void main() {
     );
   }
 
+  for (final width in [390.0, 1280.0]) {
+    testWidgets('$width 会话与更多操作按视觉顺序正反向遍历', (tester) async {
+      await pumpApp(tester, size: Size(width, 900));
+      final sessions = container(tester)
+          .read(sessionsControllerProvider.notifier);
+      sessions.setDraft(null, 'First task');
+      final first = sessions.submit(null)!;
+      sessions.setDraft(null, 'Second task');
+      final second = sessions.submit(null)!;
+      await tester.pumpAndSettle();
+      if (width < 840) {
+        await tester.tap(find.byIcon(Icons.menu));
+        await tester.pumpAndSettle();
+      }
+      FocusNode row(String id) => Focus.of(
+        tester.element(
+          find
+              .descendant(
+                of: find.byKey(ValueKey('session-$id')),
+                matching: find.byType(Text),
+              )
+              .first,
+        ),
+      );
+      FocusNode menu(String id) => tester
+          .widget<IconButton>(find.byKey(ValueKey('session-menu-$id')))
+          .focusNode!;
+      final order = [row(first), menu(first), row(second), menu(second)];
+      order.first.requestFocus();
+      await tester.pumpAndSettle();
+      for (final target in order.skip(1)) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pumpAndSettle();
+        expect(target.hasPrimaryFocus, isTrue);
+      }
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+      for (final target in order.reversed.skip(1)) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pumpAndSettle();
+        expect(target.hasPrimaryFocus, isTrue);
+      }
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
   testWidgets('会话菜单支持键盘打开、关闭后恢复按钮焦点并选择操作', (tester) async {
     await pumpApp(tester);
     final ref = container(tester);
@@ -352,10 +398,8 @@ void main() {
     final rowFocus = Focus.of(tester.element(title));
     rowFocus.requestFocus();
     await tester.pump();
-    for (var i = 0; i < 20 && !focus.hasPrimaryFocus; i++) {
-      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
-      await tester.pumpAndSettle();
-    }
+    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    await tester.pumpAndSettle();
     expect(focus.hasPrimaryFocus, isTrue);
     expect(rowFocus.hasFocus, isFalse);
     await tester.sendKeyEvent(LogicalKeyboardKey.enter);
