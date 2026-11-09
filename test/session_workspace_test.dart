@@ -53,6 +53,46 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  for (final (locale, size, scale) in [
+    (const Locale('zh'), const Size(1280, 900), 1.0),
+    (const Locale('en'), const Size(320, 240), 2.0),
+  ]) {
+    testWidgets('$locale 错误页可返回工作台并保留草稿', (tester) async {
+      await pumpApp(tester, locale: locale, size: size, scale: scale);
+      final ref = ProviderScope.containerOf(
+        tester.element(find.byType(SessionPage)),
+      );
+      final sessions = ref.read(sessionsControllerProvider.notifier);
+      sessions.setDraft(null, 'Keep draft');
+      final router = ref.read(appRouterProvider);
+      router.go('/unknown-page');
+      await tester.pumpAndSettle();
+      expect(
+        find.text(locale.languageCode == 'zh' ? '页面不存在' : 'Page not found'),
+        findsOneWidget,
+      );
+      final back = find.byKey(const ValueKey('error-return-to-workspace'));
+      await tester.ensureVisible(back);
+      await tester.pumpAndSettle();
+      expect(back.hitTestable(), findsOneWidget);
+      expect(
+        find.text(locale.languageCode == 'zh' ? '返回工作台' : 'Back to workspace'),
+        findsOneWidget,
+      );
+      await tester.tap(back);
+      await tester.pumpAndSettle();
+      expect(router.routerDelegate.state.uri.path, '/');
+      expect(
+        tester
+            .widget<TextField>(find.byKey(const ValueKey('prompt-input')))
+            .controller!
+            .text,
+        'Keep draft',
+      );
+      expect(tester.takeException(), isNull);
+    });
+  }
+
   for (final width in [390.0, 1280.0]) {
     testWidgets('宽度 $width 设置与集群独立导航, 返回恢复原会话草稿', (tester) async {
       await pumpApp(tester, size: Size(width, 900));

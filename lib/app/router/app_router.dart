@@ -98,7 +98,29 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context) => Scaffold(
           body: SafeArea(
             child: Center(
-              child: Text(AppLocalizations.of(context).errorPageNotFound),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      AppLocalizations.of(context).errorPageNotFound,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    FilledButton.tonalIcon(
+                      key: const ValueKey('error-return-to-workspace'),
+                      onPressed: () => context.go('/'),
+                      icon: const Icon(Icons.arrow_back),
+                      label: Text(
+                        AppLocalizations.of(context)
+                            .navigationReturnToWorkspace,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         ),
