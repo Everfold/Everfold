@@ -4,7 +4,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
 String layerOf(String path) {
-  final segments = p.split(path);
+  // 规则使用仓库相对路径, 与运行测试的主机路径风格无关。
+  path = path.replaceAll(r'\', '/');
+  final segments = p.posix.split(path);
   if (segments.first == 'features' && segments.length > 3) {
     return segments[2];
   }
@@ -26,6 +28,8 @@ String layerOf(String path) {
 }
 
 bool permits(String source, String target) {
+  source = source.replaceAll(r'\', '/');
+  target = target.replaceAll(r'\', '/');
   const allowed = {
     'domain': {'domain', 'foundation'},
     'foundation': {'foundation'},
@@ -56,8 +60,8 @@ bool permits(String source, String target) {
   final sourceLayer = layerOf(source);
   final targetLayer = layerOf(target);
   if (!(allowed[sourceLayer]?.contains(targetLayer) ?? false)) return false;
-  final from = p.split(source);
-  final to = p.split(target);
+  final from = p.posix.split(source);
+  final to = p.posix.split(target);
   if (from.first == 'features' && to.first == 'features' && from[1] != to[1]) {
     if (sourceLayer == 'data') return false;
     if (sourceLayer == 'presentation' && targetLayer == 'presentation') {
@@ -119,8 +123,17 @@ void main() {
       ('app/app_scope.dart', 'application/settings/controller.dart', false),
     ];
     for (final (source, target, expected) in checks) {
-      expect(permits(source, target), expected, reason: '$source -> $target');
+      for (final separator in ['/', r'\']) {
+        final from = source.replaceAll('/', separator);
+        final to = target.replaceAll('/', separator);
+        expect(permits(from, to), expected, reason: '$from -> $to');
+      }
     }
+  });
+
+  test('生成代码分类兼容 POSIX 和 Windows 路径', () {
+    expect(layerOf('src/rust/frb_generated.dart'), 'generated');
+    expect(layerOf(r'src\rust\frb_generated.dart'), 'generated');
   });
 
   test('源代码遵守功能模块与层间依赖约定', () {
