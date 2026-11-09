@@ -243,7 +243,7 @@ void main() {
           await tester.pumpAndSettle();
         }
 
-        Future<List<int>> background() async {
+        Future<List<int>> background({bool button = false}) async {
           final boundary = tester.renderObject<RenderRepaintBoundary>(
             find
                 .ancestor(of: entry, matching: find.byType(RepaintBoundary))
@@ -251,7 +251,9 @@ void main() {
           );
           // 采样胶囊内部无文字和图标处。只检查 selected 无法发现残留的焦点墨水。
           final point = boundary.globalToLocal(
-            tester.getTopLeft(entry) + const Offset(20, 28),
+            button
+                ? tester.getCenter(menu) + const Offset(10, 0)
+                : tester.getTopLeft(entry) + const Offset(20, 28),
           );
           final image = (await tester.runAsync(() => boundary.toImage()))!;
           final bytes = (await tester.runAsync(
@@ -270,6 +272,7 @@ void main() {
           await mouse.moveTo(const Offset(1100, 50));
           await tester.pumpAndSettle();
           final selectedBackground = await background();
+          final buttonBackground = await background(button: true);
           await click(menu);
           expect(find.text('Rename').hitTestable(), findsOneWidget);
           if (close == 'toggle') {
@@ -295,13 +298,18 @@ void main() {
             await click(find.widgetWithText(TextButton, 'Cancel'));
             expect(sessions.state.find(id), isNotNull);
           }
-          if (['rename', 'save', 'delete-cancel'].contains(close)) {
+          if (['toggle', 'rename', 'save', 'delete-cancel'].contains(close)) {
             await mouse.moveTo(const Offset(1100, 50));
             await tester.pumpAndSettle();
             expect(
               await background(),
               selectedBackground,
-              reason: 'after dialog',
+              reason: 'row after $close',
+            );
+            expect(
+              await background(button: true),
+              buttonBackground,
+              reason: 'menu button after $close',
             );
           }
           await click(newButton);
@@ -366,8 +374,48 @@ void main() {
     await tester.sendKeyEvent(LogicalKeyboardKey.enter);
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('rename-session-input')), findsOneWidget);
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(focus.hasPrimaryFocus, isTrue);
+    expect(rowFocus.hasFocus, isFalse);
     expect(tester.takeException(), isNull);
   });
+
+  for (final keyboardOpener in [false, true]) {
+    testWidgets('会话菜单混合输入按选择方式恢复焦点: 键盘打开=$keyboardOpener', (tester) async {
+      await pumpApp(tester);
+      final ref = container(tester);
+      final sessions = ref.read(sessionsControllerProvider.notifier);
+      sessions.setDraft(null, 'Existing task');
+      final id = sessions.submit(null)!;
+      ref.read(appRouterProvider).go('/sessions/$id');
+      await tester.pumpAndSettle();
+      final menu = find.byKey(ValueKey('session-menu-$id'));
+      final focus = tester.widget<IconButton>(menu).focusNode!;
+      if (keyboardOpener) {
+        focus.requestFocus();
+        await tester.pump();
+        await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+        await tester.pumpAndSettle();
+        await tester.tap(find.widgetWithText(MenuItemButton, 'Rename'));
+      } else {
+        await tester.tap(menu);
+        await tester.pumpAndSettle();
+        await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+        await tester.pumpAndSettle();
+        await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      }
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('rename-session-input')),
+        findsOneWidget,
+      );
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(focus.hasPrimaryFocus, !keyboardOpener);
+      expect(tester.takeException(), isNull);
+    });
+  }
 
   testWidgets('折叠侧栏保留会话分组的展开状态', (tester) async {
     await pumpApp(tester);
