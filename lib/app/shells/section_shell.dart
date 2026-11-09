@@ -4,6 +4,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../features/window/application/desktop_window_provider.dart';
 import '../../l10n/app_localizations.dart';
+import '../../shared/ui/layout/breakpoints.dart';
 import '../../shared/ui/layout/page_spacing.dart';
 import '../../features/settings/presentation/widgets/desktop_sidebar.dart';
 import '../../shared/ui/widgets/sidebar_destination.dart';
@@ -43,7 +44,7 @@ class SectionShell extends ConsumerWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final wide = constraints.maxWidth >= 840;
+        final wide = constraints.maxWidth >= expandedNavigationBreakpoint;
         final navigation = NavigationDrawer(
           key: ValueKey('${section.name}-section-navigation'),
           selectedIndex: null,

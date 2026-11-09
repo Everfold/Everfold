@@ -7,6 +7,7 @@ import '../../application/sessions_controller.dart';
 import '../../../window/application/desktop_window_provider.dart';
 import '../../domain/agent_session.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../shared/ui/layout/breakpoints.dart';
 import '../../../../shared/ui/widgets/adaptive_dialog.dart';
 import '../../../../shared/ui/widgets/back_dismissible_menu_anchor.dart';
 import '../../../settings/presentation/widgets/desktop_sidebar.dart';
@@ -50,7 +51,7 @@ class WorkspaceShell extends ConsumerWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         // 根据实际可用宽度切换布局, 不根据操作系统选择另一套界面
-        final wide = constraints.maxWidth >= 840;
+        final wide = constraints.maxWidth >= expandedNavigationBreakpoint;
         void navigate(String path, {bool push = false}) {
           if (!wide) Navigator.of(context).pop();
           if (location != path) {

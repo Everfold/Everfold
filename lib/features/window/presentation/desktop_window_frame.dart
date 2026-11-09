@@ -7,6 +7,7 @@ import 'package:material_ui/material_ui.dart';
 import '../application/desktop_window_provider.dart';
 import '../domain/desktop_window.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/ui/layout/breakpoints.dart';
 import '../../../shared/ui/widgets/operation_feedback.dart';
 
 /// 在路由内容之外保留窗口控制, 弹窗不会覆盖标题栏
@@ -81,7 +82,8 @@ class DesktopWindowFrame extends HookConsumerWidget {
                     child: Text(
                       title,
                       key: const ValueKey('workspace-page-title'),
-                      style: constraints.maxWidth >= 840
+                      style:
+                          constraints.maxWidth >= expandedNavigationBreakpoint
                           ? const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w400,

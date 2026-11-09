@@ -6,6 +6,7 @@ import 'package:material_ui/material_ui.dart';
 import '../features/sessions/application/sessions_controller.dart';
 import '../features/settings/domain/app_settings.dart';
 import '../l10n/app_localizations.dart';
+import '../shared/ui/layout/breakpoints.dart';
 import '../features/window/presentation/desktop_window_frame.dart';
 import 'shells/section_shell.dart';
 import '../features/sessions/presentation/views/workspace_shell.dart';
@@ -97,7 +98,8 @@ class DesktopAppFrame extends HookConsumerWidget {
     return LayoutBuilder(
       builder: (context, constraints) => DesktopWindowFrame(
         title: title,
-        onOpenDrawer: workspace && constraints.maxWidth < 840
+        onOpenDrawer:
+            workspace && constraints.maxWidth < expandedNavigationBreakpoint
             ? () => ref
                   .read(
                     section == null
