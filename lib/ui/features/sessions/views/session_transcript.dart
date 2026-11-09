@@ -87,9 +87,11 @@ class _SessionTranscriptState extends State<SessionTranscript> {
       },
       child: NotificationListener<UserScrollNotification>(
         onNotification: (notification) {
-          if (notification.depth == 0 &&
-              notification.direction != ScrollDirection.idle) {
-            _followingLatest = false;
+          if (notification.depth == 0) {
+            // 手动浏览时暂停跟随, 停在底部才恢复; 不响应内层代码等滚动。
+            _followingLatest =
+                notification.direction == ScrollDirection.idle &&
+                notification.metrics.extentAfter <= 1;
           }
           return false;
         },

@@ -4,6 +4,7 @@ import 'package:everfold/ui/features/sessions/views/session_transcript.dart';
 import 'package:everfold/ui/features/sessions/widgets/message_content.dart';
 import 'package:everfold/ui/features/sessions/widgets/message_markdown.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -207,6 +208,70 @@ void main() {
       expect(find.text(text), findsNothing);
       expect(tester.takeException(), isNull);
     });
+  }
+
+  for (final wheel in [false, true]) {
+    for (final keyboard in [false, true]) {
+      testWidgets('手动回到底部恢复跟随: 滚轮=$wheel 键盘挤压=$keyboard', (tester) async {
+        await pumpContent(
+          tester,
+          SessionTranscript(
+            revealLatestRequest: 1,
+            messages: List.generate(
+              30,
+              (index) => SessionMessage(
+                role: MessageRole.user,
+                content: 'Message $index\nTask details\nMore details',
+              ),
+            ),
+          ),
+          size: const Size(900, 900),
+        );
+        addTearDown(tester.view.resetViewInsets);
+        final list = find.byType(ListView);
+        final scrollable = find
+            .descendant(of: list, matching: find.byType(Scrollable))
+            .first;
+        final position = tester.state<ScrollableState>(scrollable).position;
+        Future<void> scroll(double delta) async {
+          if (wheel) {
+            await tester.sendEventToBinding(
+              PointerScrollEvent(
+                position: tester.getCenter(list),
+                scrollDelta: Offset(0, delta),
+              ),
+            );
+          } else {
+            await tester.drag(list, Offset(0, -delta));
+          }
+          await tester.pumpAndSettle();
+        }
+
+        void shrink(bool value) {
+          if (keyboard) {
+            tester.view.viewInsets = FakeViewPadding(bottom: value ? 300 : 0);
+          } else {
+            tester.view.physicalSize = Size(900, value ? 600 : 900);
+          }
+        }
+
+        expect(position.extentAfter, lessThanOrEqualTo(1));
+        await scroll(-400);
+        expect(position.extentAfter, greaterThan(100));
+        final readingOffset = position.pixels;
+        shrink(true);
+        await tester.pumpAndSettle();
+        expect(position.pixels, closeTo(readingOffset, 1));
+        shrink(false);
+        await tester.pumpAndSettle();
+        await scroll(800);
+        expect(position.extentAfter, lessThanOrEqualTo(1));
+        shrink(true);
+        await tester.pumpAndSettle();
+        expect(position.extentAfter, lessThanOrEqualTo(1));
+        expect(tester.takeException(), isNull);
+      });
+    }
   }
 
   testWidgets('320 宽双倍字号下长代码和宽表格水平滚动, 无布局溢出', (tester) async {
