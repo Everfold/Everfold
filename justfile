@@ -29,7 +29,7 @@ fmt:
   nixfmt flake.nix nix/*.nix
 
 android-emulator:
-  emulator -avd everfold -gpu host
+  emulator -avd everfold-36 -gpu host
 
 update:
   flutter pub upgrade

@@ -70,7 +70,7 @@ Set up Android development: [Setup](https://docs.flutter.dev/platform-integratio
 flutter doctor
 
 # Create AVD
-avdmanager create avd --name everfold --device pixel_9_pro --package 'system-images;android-36;google_apis;x86_64'
+avdmanager create avd --name everfold-36 --device pixel_9_pro --package 'system-images;android-36;google_apis;x86_64'
 
 # Run in Android Emulator
 just android-emulator
