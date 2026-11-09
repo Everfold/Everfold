@@ -2,14 +2,14 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
-import '../../application/settings/app_settings_controller.dart';
-import '../../domain/settings/app_settings.dart';
+import '../../features/settings/application/app_settings_controller.dart';
+import '../../features/settings/domain/app_settings.dart';
 import '../../l10n/app_localizations.dart';
 import '../../ui/core/widgets/section_shell.dart';
 import '../../ui/features/sessions/views/session_page.dart';
 import '../../ui/features/clusters/views/clusters_page.dart';
 import '../../ui/features/sessions/views/workspace_shell.dart';
-import '../../ui/features/settings/views/settings_page.dart';
+import '../../features/settings/presentation/views/settings_page.dart';
 import '../../ui/features/setup/views/setup_page.dart';
 
 /// 保留路由实例, 设置变更仅重新评估引导入口, 不重建导航栈

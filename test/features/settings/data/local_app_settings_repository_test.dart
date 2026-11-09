@@ -1,12 +1,12 @@
-import 'package:everfold/data/models/app_settings_dto.dart';
-import 'package:everfold/data/repositories/local_app_settings_repository.dart';
+import 'package:everfold/features/settings/data/models/app_settings_dto.dart';
+import 'package:everfold/features/settings/data/repositories/local_app_settings_repository.dart';
 import 'package:everfold/data/services/storage/preferences_store.dart';
 import 'package:everfold/domain/common/app_failure.dart';
 import 'package:everfold/domain/common/result.dart';
-import 'package:everfold/domain/settings/app_settings.dart';
+import 'package:everfold/features/settings/domain/app_settings.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../support/test_preferences_store.dart';
+import '../../../support/test_preferences_store.dart';
 
 void main() {
   test('首次运行默认跟随系统', () async {

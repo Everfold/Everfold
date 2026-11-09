@@ -17,7 +17,7 @@
 | 侧栏, 抽屉和页面标题 | [WorkspaceShell](../lib/ui/features/sessions/views/workspace_shell.dart) | `_WorkspaceNavigation`, `_WorkspaceBody` |
 | 欢迎区, 消息区和输入区 | [SessionPage](../lib/ui/features/sessions/views/session_page.dart) | `_SessionBody`, `_EmptySessionBody`, `_SessionComposer`, `_ComposerToolbar` |
 | 首次启动的阶段布局 | [SetupPage](../lib/ui/features/setup/views/setup_page.dart) | `_SetupIntroduction`, `_SetupModeChoices`, `_SetupActions` |
-| 语言, 明暗和颜色设置 | [SettingsContent](../lib/ui/features/settings/views/settings_page.dart) | `_ColorPreferences`, `_ChoiceSection` |
+| 语言, 明暗和颜色设置 | [SettingsContent](../lib/features/settings/presentation/views/settings_page.dart) | `_ColorPreferences`, `_ChoiceSection` |
 | 集群列表与连接弹窗 | [ClustersPage](../lib/ui/features/clusters/views/clusters_page.dart) | `_ClusterEntry`, `_ClusterConnectionDialog` |
 
 阅读单个文件时, 先看公开页面的 `build` 返回值, 再跳到不熟悉的区块定义. 先弄清位置关系, 再追踪具体按钮的回调

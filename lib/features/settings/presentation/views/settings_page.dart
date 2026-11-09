@@ -2,12 +2,12 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
-import '../../../../application/settings/app_settings_controller.dart';
+import '../../application/app_settings_controller.dart';
 import '../../../../domain/common/result.dart';
-import '../../../../domain/settings/app_settings.dart';
+import '../../domain/app_settings.dart';
 import '../../../../l10n/app_localizations.dart';
-import '../../../core/layout/page_spacing.dart';
-import '../../../core/widgets/operation_feedback.dart';
+import '../../../../ui/core/layout/page_spacing.dart';
+import '../../../../ui/core/widgets/operation_feedback.dart';
 import 'seed_color_dialog.dart';
 
 /// 明暗, 配色与语言选择只在保存成功后生效

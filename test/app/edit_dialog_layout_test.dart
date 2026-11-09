@@ -5,7 +5,7 @@ import 'package:everfold/core/config/app_config.dart';
 import 'package:everfold/data/services/storage/preferences_store.dart';
 import 'package:everfold/l10n/app_localizations.dart';
 import 'package:everfold/ui/features/sessions/views/session_page.dart';
-import 'package:everfold/ui/features/settings/views/seed_color_dialog.dart';
+import 'package:everfold/features/settings/presentation/views/seed_color_dialog.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

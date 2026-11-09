@@ -1,9 +1,9 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../domain/common/app_failure.dart';
-import '../../domain/common/result.dart';
-import '../../domain/settings/app_settings.dart';
-import '../../domain/settings/app_settings_repository.dart';
+import '../../../domain/common/app_failure.dart';
+import '../../../domain/common/result.dart';
+import '../domain/app_settings.dart';
+import '../domain/app_settings_repository.dart';
 
 /// 由应用装配层提供的仓储依赖, Application 不导入具体 Data 实现
 final appSettingsRepositoryProvider = Provider<AppSettingsRepository>((ref) {

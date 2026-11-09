@@ -17,8 +17,8 @@ Controller 不导入 Data, App 或设计系统. 页面不直接创建 Dio, 访�
 | 需要实现的部分 | 可参考文件 |
 | --- | --- |
 | 领域模型与仓储契约 | lib/domain/settings/ |
-| DTO 与本地仓储 | lib/data/models/app_settings_dto.dart, lib/data/repositories/local_app_settings_repository.dart |
-| Controller 与依赖声明 | lib/application/settings/app_settings_controller.dart |
+| DTO 与本地仓储 | lib/features/settings/data/models/app_settings_dto.dart, lib/features/settings/data/repositories/local_app_settings_repository.dart |
+| Controller 与依赖声明 | lib/features/settings/application/app_settings_controller.dart |
 | 依赖装配与路由 | lib/app/app_scope.dart, lib/app/router/app_router.dart |
 | 异步内容与错误展示 | lib/ui/core/widgets/async_value_view.dart, lib/ui/core/error/failure_message.dart |
 

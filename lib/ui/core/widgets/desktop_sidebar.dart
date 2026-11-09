@@ -2,9 +2,9 @@ import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
-import '../../../application/settings/app_settings_controller.dart';
+import '../../../features/settings/application/app_settings_controller.dart';
 import '../../../domain/common/result.dart';
-import '../../../domain/settings/app_settings.dart';
+import '../../../features/settings/domain/app_settings.dart';
 import '../../../l10n/app_localizations.dart';
 import 'operation_feedback.dart';
 

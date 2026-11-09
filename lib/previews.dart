@@ -6,7 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:talker/talker.dart';
 import 'package:material_ui/material_ui.dart';
 
-import 'application/settings/app_settings_controller.dart';
+import 'features/settings/application/app_settings_controller.dart';
 import 'app/router/app_router.dart';
 import 'app/app_scope.dart';
 import 'app/everfold_app.dart';
@@ -14,7 +14,7 @@ import 'core/config/app_config.dart';
 import 'data/services/storage/preferences_store.dart';
 import 'l10n/app_localizations.dart';
 import 'domain/sessions/agent_session.dart';
-import 'domain/settings/app_settings.dart';
+import 'features/settings/domain/app_settings.dart';
 import 'domain/window/desktop_window.dart';
 import 'ui/features/sessions/views/session_transcript.dart';
 import 'ui/features/sessions/views/workspace_context_dialog.dart';

@@ -1,14 +1,14 @@
 import 'dart:async';
 
-import 'package:everfold/application/settings/app_settings_controller.dart';
-import 'package:everfold/data/repositories/local_app_settings_repository.dart';
+import 'package:everfold/features/settings/application/app_settings_controller.dart';
+import 'package:everfold/features/settings/data/repositories/local_app_settings_repository.dart';
 import 'package:everfold/domain/common/app_failure.dart';
 import 'package:everfold/domain/common/result.dart';
-import 'package:everfold/domain/settings/app_settings.dart';
+import 'package:everfold/features/settings/domain/app_settings.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../support/test_preferences_store.dart';
+import '../../../support/test_preferences_store.dart';
 
 void main() {
   late TestPreferencesStore store;

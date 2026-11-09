@@ -4,7 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../application/sessions/sessions_controller.dart';
-import '../domain/settings/app_settings.dart';
+import '../features/settings/domain/app_settings.dart';
 import '../l10n/app_localizations.dart';
 import '../ui/core/widgets/desktop_window_frame.dart';
 import '../ui/core/widgets/section_shell.dart';

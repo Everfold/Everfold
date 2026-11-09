@@ -1,4 +1,4 @@
-import '../../domain/settings/app_settings.dart';
+import '../../domain/app_settings.dart';
 
 /// 持久化格式与领域设置之间的转换
 final class AppSettingsDto {

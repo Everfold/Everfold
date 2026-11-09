@@ -1,5 +1,5 @@
-import 'package:everfold/data/models/app_settings_dto.dart';
-import 'package:everfold/domain/settings/app_settings.dart';
+import 'package:everfold/features/settings/data/models/app_settings_dto.dart';
+import 'package:everfold/features/settings/domain/app_settings.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

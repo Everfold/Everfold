@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:everfold/app/app_scope.dart';
 import 'package:everfold/app/everfold_app.dart';
 import 'package:everfold/app/router/app_router.dart';
-import 'package:everfold/application/settings/app_settings_controller.dart';
+import 'package:everfold/features/settings/application/app_settings_controller.dart';
 import 'package:everfold/core/config/app_config.dart';
-import 'package:everfold/domain/settings/app_settings.dart';
+import 'package:everfold/features/settings/domain/app_settings.dart';
 import 'package:everfold/ui/features/sessions/views/session_page.dart';
 import 'package:flutter_test/flutter_test.dart';
 

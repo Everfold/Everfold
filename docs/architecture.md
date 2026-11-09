@@ -2,7 +2,7 @@
 
 ## 快速入口
 
-从 `lib/app/app_scope.dart` 查看依赖装配, 从 `lib/application/settings/app_settings_controller.dart` 查看异步业务状态的写法
+从 `lib/app/app_scope.dart` 查看依赖装配, 从 `lib/features/settings/application/app_settings_controller.dart` 查看异步业务状态的写法
 
 阅读页面骨架, 布局区块和控件回调时, 从 [UI 布局阅读指南](ui_layout.md) 开始
 

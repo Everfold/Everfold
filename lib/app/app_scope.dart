@@ -2,14 +2,14 @@ import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:talker/talker.dart';
 
-import '../application/settings/app_settings_controller.dart';
+import '../features/settings/application/app_settings_controller.dart';
 import '../application/window/desktop_window_provider.dart';
 import '../domain/window/desktop_window.dart';
 import '../application/sessions/sessions_controller.dart';
 import '../data/services/storage/workspace_selector.dart';
 import '../core/config/app_config.dart';
 import '../core/logging/app_error_reporter.dart';
-import '../data/repositories/local_app_settings_repository.dart';
+import '../features/settings/data/repositories/local_app_settings_repository.dart';
 import '../data/services/storage/preferences_store.dart';
 import 'observers/app_provider_observer.dart';
 import 'providers/infrastructure_providers.dart';

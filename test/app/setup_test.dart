@@ -2,13 +2,13 @@ import 'dart:convert';
 
 import 'package:everfold/app/app_scope.dart';
 import 'package:everfold/application/clusters/clusters_controller.dart';
-import 'package:everfold/application/settings/app_settings_controller.dart';
+import 'package:everfold/features/settings/application/app_settings_controller.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:everfold/app/everfold_app.dart';
 import 'package:everfold/core/config/app_config.dart';
-import 'package:everfold/data/models/app_settings_dto.dart';
+import 'package:everfold/features/settings/data/models/app_settings_dto.dart';
 import 'package:everfold/data/services/storage/preferences_store.dart';
-import 'package:everfold/domain/settings/app_settings.dart';
+import 'package:everfold/features/settings/domain/app_settings.dart';
 import 'package:everfold/ui/features/sessions/views/session_page.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
