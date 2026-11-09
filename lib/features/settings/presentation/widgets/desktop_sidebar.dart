@@ -70,7 +70,11 @@ class _DesktopSidebarState extends ConsumerState<DesktopSidebar> {
     final rtl = Directionality.of(context) == TextDirection.rtl;
     void resize(double value) => _save(
       () => controller.setSidebarWidthFraction(
-        clamp(value) / widget.availableWidth,
+        // 像素换算可能让 15% 略低于下限, 保存前在比例空间再次约束。
+        (clamp(value) / widget.availableWidth).clamp(
+          AppSettings.minSidebarWidthFraction,
+          AppSettings.maxSidebarWidthFraction,
+        ),
       ),
     );
     void expand() => _save(() => controller.setSidebarCollapsed(false));

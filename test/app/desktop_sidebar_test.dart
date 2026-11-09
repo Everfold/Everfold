@@ -613,6 +613,30 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  for (final keyboard in [false, true]) {
+    testWidgets('非整数侧栏宽度可保存最小比例: 键盘=$keyboard', (tester) async {
+      final store = await pumpApp(tester, size: const Size(857, 900));
+      if (keyboard) {
+        Focus.of(tester.element(handle)).requestFocus();
+        await tester.pump();
+        await tester.sendKeyEvent(LogicalKeyboardKey.home);
+      } else {
+        await tester.drag(handle, const Offset(-500, 0));
+      }
+      await tester.pumpAndSettle();
+      expect(store.writes, 1);
+      expect(
+        AppSettingsDto.fromJson(jsonDecode(store.value!))
+            .settings
+            .sidebarWidthFraction,
+        0.15,
+      );
+      expect(tester.getSize(sidebar).width, closeTo(857 * 0.15, 0.001));
+      expect(find.text('Unable to save settings. Try again'), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
   testWidgets('15% 到 50% 宽度下导航文字保持在选中背景内', (tester) async {
     await pumpApp(tester, size: const Size(840, 900));
     final ref = container(tester);
