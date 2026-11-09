@@ -4,7 +4,10 @@
   "@sessionMoreActions": {
     "description": "会话菜单按钮的提示和无障碍标签, 包含完整会话名。",
     "placeholders": {
-      "name": {"type": "String", "example": "整理文档"}
+      "name": {
+        "type": "String",
+        "example": "整理文档"
+      }
     }
   },
   "commonMore": "更多",
