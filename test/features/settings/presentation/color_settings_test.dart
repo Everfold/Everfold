@@ -6,7 +6,7 @@ import 'package:everfold/features/settings/application/app_settings_controller.d
 import 'package:everfold/core/config/app_config.dart';
 import 'package:everfold/data/services/storage/preferences_store.dart';
 import 'package:everfold/features/settings/domain/app_settings.dart';
-import 'package:everfold/ui/features/sessions/views/session_page.dart';
+import 'package:everfold/features/sessions/presentation/views/session_page.dart';
 import 'package:everfold/features/settings/presentation/views/settings_page.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';

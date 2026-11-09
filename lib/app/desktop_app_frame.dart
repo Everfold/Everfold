@@ -3,12 +3,12 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
-import '../application/sessions/sessions_controller.dart';
+import '../features/sessions/application/sessions_controller.dart';
 import '../features/settings/domain/app_settings.dart';
 import '../l10n/app_localizations.dart';
 import '../ui/core/widgets/desktop_window_frame.dart';
 import '../ui/core/widgets/section_shell.dart';
-import '../ui/features/sessions/views/workspace_shell.dart';
+import '../features/sessions/presentation/views/workspace_shell.dart';
 
 /// 将当前栈顶页面映射为窗口标题, 不依据 push 时可能不变的浏览器地址
 class DesktopAppFrame extends HookConsumerWidget {

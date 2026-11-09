@@ -13,11 +13,11 @@ import 'app/everfold_app.dart';
 import 'core/config/app_config.dart';
 import 'data/services/storage/preferences_store.dart';
 import 'l10n/app_localizations.dart';
-import 'domain/sessions/agent_session.dart';
+import 'features/sessions/domain/agent_session.dart';
 import 'features/settings/domain/app_settings.dart';
 import 'domain/window/desktop_window.dart';
-import 'ui/features/sessions/views/session_transcript.dart';
-import 'ui/features/sessions/views/workspace_context_dialog.dart';
+import 'features/sessions/presentation/views/session_transcript.dart';
+import 'features/sessions/presentation/views/workspace_context_dialog.dart';
 
 /// 首次启动预览, 不访问生产偏好或原生服务
 @Preview(name: 'Setup · Mobile', size: Size(390, 844))

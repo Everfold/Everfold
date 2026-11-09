@@ -5,11 +5,11 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:path/path.dart' as p;
 
-import '../../../../application/sessions/sessions_controller.dart';
-import '../../../../domain/sessions/agent_session.dart';
+import '../../application/sessions_controller.dart';
+import '../../domain/agent_session.dart';
 import '../../../../l10n/app_localizations.dart';
-import '../../../core/widgets/operation_feedback.dart';
-import '../../../core/widgets/back_dismissible_menu_anchor.dart';
+import '../../../../ui/core/widgets/operation_feedback.dart';
+import '../../../../ui/core/widgets/back_dismissible_menu_anchor.dart';
 import 'session_transcript.dart';
 import 'workspace_context_dialog.dart';
 

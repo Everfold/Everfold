@@ -1,7 +1,7 @@
 import 'package:flutter/rendering.dart';
 import 'package:material_ui/material_ui.dart';
 
-import '../../../../domain/sessions/agent_session.dart';
+import '../../domain/agent_session.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../widgets/message_content.dart';
 

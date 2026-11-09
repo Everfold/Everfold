@@ -1,6 +1,6 @@
 # UI 布局阅读指南
 
-先打开 `lib/ui/features/sessions/views/workspace_shell.dart`, 找到 `WorkspaceShell.build` 最后的 `return Scaffold`. 这里决定侧栏, 抽屉和正文的位置, 不需要先读完重命名或删除的回调
+先打开 `lib/features/sessions/presentation/views/workspace_shell.dart`, 找到 `WorkspaceShell.build` 最后的 `return Scaffold`. 这里决定侧栏, 抽屉和正文的位置, 不需要先读完重命名或删除的回调
 
 ## 按三个层次阅读
 
@@ -14,8 +14,8 @@
 
 | 想看什么 | 从哪里开始 | 继续看哪些区块 |
 | --- | --- | --- |
-| 侧栏, 抽屉和页面标题 | [WorkspaceShell](../lib/ui/features/sessions/views/workspace_shell.dart) | `_WorkspaceNavigation`, `_WorkspaceBody` |
-| 欢迎区, 消息区和输入区 | [SessionPage](../lib/ui/features/sessions/views/session_page.dart) | `_SessionBody`, `_EmptySessionBody`, `_SessionComposer`, `_ComposerToolbar` |
+| 侧栏, 抽屉和页面标题 | [WorkspaceShell](../lib/features/sessions/presentation/views/workspace_shell.dart) | `_WorkspaceNavigation`, `_WorkspaceBody` |
+| 欢迎区, 消息区和输入区 | [SessionPage](../lib/features/sessions/presentation/views/session_page.dart) | `_SessionBody`, `_EmptySessionBody`, `_SessionComposer`, `_ComposerToolbar` |
 | 首次启动的阶段布局 | [SetupPage](../lib/ui/features/setup/views/setup_page.dart) | `_SetupIntroduction`, `_SetupModeChoices`, `_SetupActions` |
 | 语言, 明暗和颜色设置 | [SettingsContent](../lib/features/settings/presentation/views/settings_page.dart) | `_ColorPreferences`, `_ChoiceSection` |
 | 集群列表与连接弹窗 | [ClustersPage](../lib/ui/features/clusters/views/clusters_page.dart) | `_ClusterEntry`, `_ClusterConnectionDialog` |
@@ -89,7 +89,7 @@ WorkspaceShell
 ## 表单与消息的进一步阅读
 
 1. [ConnectionForm](../lib/ui/features/setup/views/connection_form.dart): 先看 State 的 `build`, 再看 `_buildFields` 和 `_buildAction`. `_input` 和 `_certificate` 负责重复字段的排列, 控制器和 1 秒计时器仍由原来的 State 持有. `layoutBuilder` 允许集群连接在可用宽度小于 600dp, 或扣除键盘后的可用高度小于 480dp 时使用全屏 Dialog, 把主操作放在 AppBar 右侧; 其余尺寸使用 AlertDialog 的底部操作区. 共享字段滚动区用稳定 GlobalKey 保留切换外壳时的焦点与编辑状态, 表单控制器与连接计时器不随尺寸切换重建
-2. [SessionTranscript](../lib/ui/features/sessions/views/session_transcript.dart): 列表按需创建 `_MessageEntry`, 每条消息包含正文, 可选摘要和工具组. `_ToolEntry` 单独折叠工具输出, `MessageContent` 决定是否折叠长内容, `MessageMarkdown` 处理助手正文的 Markdown
+2. [SessionTranscript](../lib/features/sessions/presentation/views/session_transcript.dart): 列表按需创建 `_MessageEntry`, 每条消息包含正文, 可选摘要和工具组. `_ToolEntry` 单独折叠工具输出, `MessageContent` 决定是否折叠长内容, `MessageMarkdown` 处理助手正文的 Markdown
 
 每次进入会话页都显示底部, 包括直接打开, 会话间切换, 从新建页进入, 以及从设置或集群页返回; 关闭菜单或弹窗, 编辑草稿和窗口尺寸变化不视为重新进入. 主动提交后也显示最新消息, 列表按实际消息高度完成定位; 在底部时跟随追加内容和键盘引起的可用高度变化. 用户向上滚动浏览历史, 或主动展开及收起长正文, 思考摘要和工具输出后停止跟随, 普通内容更新保留阅读位置. 提交触发的定位请求随会话隔离, 不带到其他会话.
 

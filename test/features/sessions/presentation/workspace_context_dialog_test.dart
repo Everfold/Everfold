@@ -1,5 +1,5 @@
 import 'package:everfold/l10n/app_localizations.dart';
-import 'package:everfold/ui/features/sessions/views/workspace_context_dialog.dart';
+import 'package:everfold/features/sessions/presentation/views/workspace_context_dialog.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';

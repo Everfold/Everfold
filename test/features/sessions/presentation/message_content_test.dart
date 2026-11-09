@@ -1,8 +1,8 @@
-import 'package:everfold/domain/sessions/agent_session.dart';
+import 'package:everfold/features/sessions/domain/agent_session.dart';
 import 'package:everfold/l10n/app_localizations.dart';
-import 'package:everfold/ui/features/sessions/views/session_transcript.dart';
-import 'package:everfold/ui/features/sessions/widgets/message_content.dart';
-import 'package:everfold/ui/features/sessions/widgets/message_markdown.dart';
+import 'package:everfold/features/sessions/presentation/views/session_transcript.dart';
+import 'package:everfold/features/sessions/presentation/widgets/message_content.dart';
+import 'package:everfold/features/sessions/presentation/widgets/message_markdown.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_test/flutter_test.dart';

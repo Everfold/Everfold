@@ -1,7 +1,7 @@
 import 'package:characters/characters.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../domain/sessions/agent_session.dart';
+import '../domain/agent_session.dart';
 
 // 按用户可见字符截取, 避免截断 Emoji 或组合音标; 只用于自动命名。
 String _defaultSessionTitle(String prompt) {

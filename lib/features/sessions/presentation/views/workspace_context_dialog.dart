@@ -1,8 +1,8 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../l10n/app_localizations.dart';
-import '../../../core/widgets/adaptive_dialog.dart';
-import '../../../core/widgets/copy_text.dart';
+import '../../../../ui/core/widgets/adaptive_dialog.dart';
+import '../../../../ui/core/widgets/copy_text.dart';
 
 enum WorkspaceContextAction { replace, remove }
 

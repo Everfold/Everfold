@@ -1,5 +1,5 @@
-import 'package:everfold/application/sessions/sessions_controller.dart';
-import 'package:everfold/domain/sessions/agent_session.dart';
+import 'package:everfold/features/sessions/application/sessions_controller.dart';
+import 'package:everfold/features/sessions/domain/agent_session.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

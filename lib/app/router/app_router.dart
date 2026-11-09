@@ -6,9 +6,9 @@ import '../../features/settings/application/app_settings_controller.dart';
 import '../../features/settings/domain/app_settings.dart';
 import '../../l10n/app_localizations.dart';
 import '../../ui/core/widgets/section_shell.dart';
-import '../../ui/features/sessions/views/session_page.dart';
+import '../../features/sessions/presentation/views/session_page.dart';
 import '../../ui/features/clusters/views/clusters_page.dart';
-import '../../ui/features/sessions/views/workspace_shell.dart';
+import '../../features/sessions/presentation/views/workspace_shell.dart';
 import '../../features/settings/presentation/views/settings_page.dart';
 import '../../ui/features/setup/views/setup_page.dart';
 

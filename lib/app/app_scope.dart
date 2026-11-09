@@ -5,7 +5,7 @@ import 'package:talker/talker.dart';
 import '../features/settings/application/app_settings_controller.dart';
 import '../application/window/desktop_window_provider.dart';
 import '../domain/window/desktop_window.dart';
-import '../application/sessions/sessions_controller.dart';
+import '../features/sessions/application/sessions_controller.dart';
 import '../data/services/storage/workspace_selector.dart';
 import '../core/config/app_config.dart';
 import '../core/logging/app_error_reporter.dart';

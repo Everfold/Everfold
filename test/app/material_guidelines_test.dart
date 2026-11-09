@@ -5,7 +5,7 @@ import 'package:everfold/app/everfold_app.dart';
 import 'package:everfold/app/router/app_router.dart';
 import 'package:everfold/core/config/app_config.dart';
 import 'package:everfold/data/services/storage/preferences_store.dart';
-import 'package:everfold/ui/features/sessions/views/session_page.dart';
+import 'package:everfold/features/sessions/presentation/views/session_page.dart';
 import 'package:everfold/features/settings/presentation/views/settings_page.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
