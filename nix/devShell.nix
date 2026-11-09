@@ -23,7 +23,7 @@ pkgs.mkShell rec {
     cargo-binstall
     rustupCompat
 
-    temurin-bin
+    temurin-bin-21
     androidPackages.androidsdk
 
     just
@@ -35,7 +35,7 @@ pkgs.mkShell rec {
     LD_LIBRARY_PATH = lib.makeLibraryPath buildInputs;
     FLUTTER_ROOT = "${flutter}";
     RUST_SRC_PATH = "${rustToolchain}/lib/rustlib/src/rust/library";
-    JAVA_HOME = "${jdk17}";
+    JAVA_HOME = "${temurin-bin-21}";
     ANDROID_HOME = androidSdkRoot;
     ANDROID_SDK_ROOT = androidSdkRoot;
     ANDROID_NDK_HOME = "${androidSdkRoot}/ndk/28.2.13676358";
