@@ -7,13 +7,34 @@ void main() {
   test('源代码遵守层间依赖约定', () {
     final root = p.absolute('lib');
     const allowed = {
-      'domain': {'domain'},
-      'application': {'application', 'domain', 'core'},
-      'data': {'data', 'domain', 'core'},
+      'domain': {'domain', 'foundation'},
+      'foundation': {'foundation'},
+      'infrastructure': {'infrastructure', 'domain', 'foundation'},
+      'application': {'application', 'domain', 'core', 'foundation'},
+      'data': {'data', 'domain', 'core', 'foundation', 'infrastructure'},
       'core': {'core'},
-      'ui': {'ui', 'application', 'domain', 'core', 'l10n'},
-      'app': {'app', 'application', 'domain', 'data', 'core', 'ui', 'l10n'},
+      'ui': {'ui', 'application', 'domain', 'core', 'foundation', 'l10n'},
+      'app': {
+        'app',
+        'application',
+        'domain',
+        'data',
+        'core',
+        'ui',
+        'foundation',
+        'infrastructure',
+        'l10n',
+      },
     };
+    String layerOf(String path) {
+      final segments = p.split(path);
+      if (segments.first == 'features') {
+        return segments[2] == 'presentation' ? 'ui' : segments[2];
+      }
+      if (segments.first == 'shared') return segments[1];
+      return segments.first;
+    }
+
     final imports = RegExp(
       r"""^\s*(?:import|export)\s+['"]([^'"]+)['"]""",
       multiLine: true,
@@ -24,8 +45,7 @@ void main() {
     ).listSync(recursive: true, followLinks: false).whereType<File>()) {
       if (p.extension(file.path) != '.dart') continue;
       final relative = p.relative(file.path, from: root);
-      final segments = p.split(relative);
-      final layer = segments.first;
+      final layer = layerOf(relative);
       final permitted = allowed[layer];
       if (permitted == null) continue;
       for (final match in imports.allMatches(file.readAsStringSync())) {
@@ -71,7 +91,7 @@ void main() {
           violations.add('$relative: import escapes lib: $imported');
           continue;
         }
-        final targetLayer = p.split(p.relative(target, from: root)).first;
+        final targetLayer = layerOf(p.relative(target, from: root));
         if (!permitted.contains(targetLayer)) {
           violations.add(
             '$relative: $layer cannot import $targetLayer ($imported)',
