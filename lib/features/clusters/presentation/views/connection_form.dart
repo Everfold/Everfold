@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:material_ui/material_ui.dart';
 
-import '../../../../domain/clusters/cluster_connection.dart';
+import '../../domain/cluster_connection.dart';
 import '../../../../l10n/app_localizations.dart';
 
 enum _ConnectionStatus { idle, connecting, succeeded }

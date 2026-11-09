@@ -1,5 +1,5 @@
-import 'package:everfold/application/clusters/clusters_controller.dart';
-import 'package:everfold/domain/clusters/cluster_connection.dart';
+import 'package:everfold/features/clusters/application/clusters_controller.dart';
+import 'package:everfold/features/clusters/domain/cluster_connection.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

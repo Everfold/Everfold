@@ -1,4 +1,4 @@
-import '../../../../domain/clusters/cluster_connection.dart';
+import '../../domain/cluster_connection.dart';
 import '../../../../l10n/app_localizations.dart';
 
 String clusterServiceLabel(AppLocalizations strings, ClusterService service) =>

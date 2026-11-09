@@ -2,15 +2,15 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
-import '../../../../application/clusters/clusters_controller.dart';
-import '../../../../features/settings/application/app_settings_controller.dart';
+import '../../../clusters/application/clusters_controller.dart';
+import '../../../settings/application/app_settings_controller.dart';
 import '../../../../application/window/desktop_window_provider.dart';
 import '../../../../domain/common/result.dart';
-import '../../../../features/settings/domain/app_settings.dart';
+import '../../../settings/domain/app_settings.dart';
 import '../../../../l10n/app_localizations.dart';
-import '../../../core/layout/page_spacing.dart';
-import '../../clusters/views/cluster_labels.dart';
-import 'connection_form.dart';
+import '../../../../ui/core/layout/page_spacing.dart';
+import '../../../clusters/presentation/views/cluster_labels.dart';
+import '../../../clusters/presentation/views/connection_form.dart';
 
 /// 组合首次启动的阶段内容, 保存反馈和底部操作区
 ///

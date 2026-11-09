@@ -1,6 +1,6 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../domain/clusters/cluster_connection.dart';
+import '../domain/cluster_connection.dart';
 
 final clustersControllerProvider =
     NotifierProvider<ClustersController, List<ClusterConnection>>(

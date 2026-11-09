@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:everfold/app/app_scope.dart';
-import 'package:everfold/application/clusters/clusters_controller.dart';
+import 'package:everfold/features/clusters/application/clusters_controller.dart';
 import 'package:everfold/features/settings/application/app_settings_controller.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:everfold/app/everfold_app.dart';
@@ -14,7 +14,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:talker/talker.dart';
 
-import '../support/test_preferences_store.dart';
+import '../../../support/test_preferences_store.dart';
 
 void main() {
   Future<void> pumpApp(WidgetTester tester, PreferencesStore store) async {

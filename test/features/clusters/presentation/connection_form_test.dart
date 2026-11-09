@@ -1,5 +1,5 @@
 import 'package:everfold/l10n/app_localizations.dart';
-import 'package:everfold/ui/features/setup/views/connection_form.dart';
+import 'package:everfold/features/clusters/presentation/views/connection_form.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 

@@ -7,10 +7,10 @@ import '../../features/settings/domain/app_settings.dart';
 import '../../l10n/app_localizations.dart';
 import '../../ui/core/widgets/section_shell.dart';
 import '../../features/sessions/presentation/views/session_page.dart';
-import '../../ui/features/clusters/views/clusters_page.dart';
+import '../../features/clusters/presentation/views/clusters_page.dart';
 import '../../features/sessions/presentation/views/workspace_shell.dart';
 import '../../features/settings/presentation/views/settings_page.dart';
-import '../../ui/features/setup/views/setup_page.dart';
+import '../../features/setup/presentation/views/setup_page.dart';
 
 /// 保留路由实例, 设置变更仅重新评估引导入口, 不重建导航栈
 final appRouterProvider = Provider<GoRouter>((ref) {
