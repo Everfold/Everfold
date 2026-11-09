@@ -394,7 +394,11 @@ class _WorkspaceNavigation extends StatelessWidget {
                     builder: (context, menu, focusNode) => IconButton(
                       focusNode: focusNode,
                       key: ValueKey('session-menu-${session.id}'),
-                      tooltip: strings.commonMore,
+                      tooltip: strings.sessionMoreActions(
+                        session.title.isEmpty
+                            ? strings.sessionNew
+                            : session.title,
+                      ),
                       onPressed: () => menu.isOpen ? menu.close() : menu.open(),
                       icon: const Icon(Icons.more_vert),
                     ),

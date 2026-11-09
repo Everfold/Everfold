@@ -98,6 +98,12 @@ abstract class AppLocalizations {
     Locale('zh'),
   ];
 
+  /// 会话菜单按钮的提示和无障碍标签, 包含完整会话名。
+  ///
+  /// In zh, this message translates to:
+  /// **'{name}的更多操作'**
+  String sessionMoreActions(String name);
+
   /// 打开更多操作菜单的按钮标签。
   ///
   /// In zh, this message translates to:

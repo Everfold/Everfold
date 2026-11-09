@@ -1,5 +1,12 @@
 {
   "@@locale": "zh",
+  "sessionMoreActions": "{name}的更多操作",
+  "@sessionMoreActions": {
+    "description": "会话菜单按钮的提示和无障碍标签, 包含完整会话名。",
+    "placeholders": {
+      "name": {"type": "String", "example": "整理文档"}
+    }
+  },
   "commonMore": "更多",
   "@commonMore": {
     "description": "打开更多操作菜单的按钮标签。"

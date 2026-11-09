@@ -10,6 +10,11 @@ class AppLocalizationsZh extends AppLocalizations {
   AppLocalizationsZh([String locale = 'zh']) : super(locale);
 
   @override
+  String sessionMoreActions(String name) {
+    return '$name的更多操作';
+  }
+
+  @override
   String get commonMore => '更多';
 
   @override

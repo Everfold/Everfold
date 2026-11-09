@@ -93,6 +93,46 @@ void main() {
     });
   }
 
+  for (final (locale, width) in [
+    (const Locale('zh'), 390.0),
+    (const Locale('en'), 1280.0),
+  ]) {
+    testWidgets('$locale 会话菜单读屏标签区分会话并跟随重命名', (tester) async {
+      await pumpApp(tester, locale: locale, size: Size(width, 900));
+      final semantics = tester.ensureSemantics();
+      try {
+        final ref = ProviderScope.containerOf(
+          tester.element(find.byType(SessionPage)),
+        );
+        final sessions = ref.read(sessionsControllerProvider.notifier);
+        sessions.setDraft(null, 'First');
+        final first = sessions.submit(null)!;
+        sessions.setDraft(null, 'Second');
+        final second = sessions.submit(null)!;
+        await tester.pumpAndSettle();
+        if (width < 840) {
+          await tester.tap(find.byIcon(Icons.menu));
+          await tester.pumpAndSettle();
+        }
+        String label(String name) => locale.languageCode == 'zh'
+            ? '$name的更多操作'
+            : 'More actions for $name';
+        final firstMenu = find.byKey(ValueKey('session-menu-$first'));
+        final secondMenu = find.byKey(ValueKey('session-menu-$second'));
+        expect(tester.getSemantics(firstMenu).tooltip, label('First'));
+        expect(tester.getSemantics(secondMenu).tooltip, label('Second'));
+        final renamed = '完整名称 ' * 10;
+        sessions.rename(first, renamed);
+        await tester.pumpAndSettle();
+        expect(tester.getSemantics(firstMenu).tooltip, label(renamed.trim()));
+        expect(tester.getSemantics(secondMenu).tooltip, label('Second'));
+        expect(tester.takeException(), isNull);
+      } finally {
+        semantics.dispose();
+      }
+    });
+  }
+
   for (final width in [390.0, 1280.0]) {
     testWidgets('宽度 $width 设置与集群独立导航, 返回恢复原会话草稿', (tester) async {
       await pumpApp(tester, size: Size(width, 900));

@@ -10,6 +10,11 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String sessionMoreActions(String name) {
+    return 'More actions for $name';
+  }
+
+  @override
   String get commonMore => 'More';
 
   @override

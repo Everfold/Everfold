@@ -1,5 +1,6 @@
 {
   "@@locale": "en",
+  "sessionMoreActions": "More actions for {name}",
   "commonMore": "More",
   "commonAdd": "Add",
   "commonLoading": "Loading",
