@@ -2,7 +2,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../l10n/app_localizations.dart';
-import '../../../../ui/core/widgets/adaptive_dialog.dart';
+import '../../../../shared/ui/widgets/adaptive_dialog.dart';
 
 /// 校验 RGB 输入后返回不透明 ARGB, 保存由设置页统一处理
 class SeedColorDialog extends HookWidget {

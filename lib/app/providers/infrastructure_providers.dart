@@ -3,11 +3,11 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:talker/talker.dart';
 
-import '../../core/config/app_config.dart';
-import '../../core/logging/app_error_reporter.dart';
-import '../../data/services/network/api_client.dart';
-import '../../data/services/network/safe_network_log_interceptor.dart';
-import '../../data/services/storage/preferences_store.dart';
+import '../../shared/foundation/config/app_config.dart';
+import '../../infrastructure/logging/app_error_reporter.dart';
+import '../../infrastructure/network/api_client.dart';
+import '../../infrastructure/network/safe_network_log_interceptor.dart';
+import '../../infrastructure/storage/preferences_store.dart';
 
 /// 构建配置, 测试可通过 overrideWithValue 替换
 final appConfigProvider = Provider<AppConfig>(

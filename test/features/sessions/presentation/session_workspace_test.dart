@@ -1,11 +1,11 @@
-import 'package:everfold/ui/core/widgets/sidebar_destination.dart';
+import 'package:everfold/shared/ui/widgets/sidebar_destination.dart';
 import 'package:everfold/app/app_scope.dart';
 import 'package:flutter/services.dart';
 import 'package:everfold/app/everfold_app.dart';
 import 'package:everfold/app/router/app_router.dart';
 import 'package:everfold/features/sessions/application/sessions_controller.dart';
-import 'package:everfold/core/config/app_config.dart';
-import 'package:everfold/data/services/storage/preferences_store.dart';
+import 'package:everfold/shared/foundation/config/app_config.dart';
+import 'package:everfold/infrastructure/storage/preferences_store.dart';
 import 'package:everfold/features/sessions/domain/agent_session.dart';
 import 'package:everfold/features/sessions/presentation/views/session_page.dart';
 import 'package:everfold/features/sessions/presentation/views/session_transcript.dart';

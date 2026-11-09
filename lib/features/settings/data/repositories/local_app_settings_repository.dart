@@ -1,11 +1,11 @@
 import 'dart:convert';
 
-import '../../../../domain/common/app_failure.dart';
-import '../../../../domain/common/result.dart';
+import '../../../../shared/foundation/app_failure.dart';
+import '../../../../shared/foundation/result.dart';
 import '../../domain/app_settings.dart';
 import '../../domain/app_settings_repository.dart';
 import '../models/app_settings_dto.dart';
-import '../../../../data/services/storage/preferences_store.dart';
+import '../../../../infrastructure/storage/preferences_store.dart';
 
 /// 使用版本化存储键保存应用设置, 不在读取失败时覆盖已有数据
 final class LocalAppSettingsRepository implements AppSettingsRepository {

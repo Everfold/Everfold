@@ -4,11 +4,11 @@
 
 ## 实现顺序
 
-1. 在 `domain/<feature>/` 定义不可变模型与仓储契约, 用 Result 表达预期失败
-2. 在 `data/` 添加 DTO, 数据访问和仓储实现, 完成外部格式到领域模型的转换
-3. 在 `application/<feature>/` 定义仓储 Provider 和 Controller, 协调加载与写入
+1. 在 `features/<feature>/domain/` 定义不可变模型与仓储契约, 用 Result 表达预期失败
+2. 在 `features/<feature>/data/` 添加 DTO, 数据访问和仓储实现, 完成外部格式到领域模型的转换
+3. 在 `features/<feature>/application/` 定义仓储 Provider 和 Controller, 协调加载与写入
 4. 在 AppScope 装配仓储实现, 在 app/router 注册页面
-5. 在 `ui/features/<feature>/` 编写界面, 同时在 test 的对应目录添加测试
+5. 在 `features/<feature>/presentation/` 编写界面, 同时在 test/features/<feature>/ 的对应目录添加测试
 
 Controller 不导入 Data, App 或设计系统. 页面不直接创建 Dio, 访问数据库或调用平台插件
 
@@ -16,13 +16,15 @@ Controller 不导入 Data, App 或设计系统. 页面不直接创建 Dio, 访�
 
 | 需要实现的部分 | 可参考文件 |
 | --- | --- |
-| 领域模型与仓储契约 | lib/domain/settings/ |
+| 领域模型与仓储契约 | lib/features/settings/domain/ |
 | DTO 与本地仓储 | lib/features/settings/data/models/app_settings_dto.dart, lib/features/settings/data/repositories/local_app_settings_repository.dart |
 | Controller 与依赖声明 | lib/features/settings/application/app_settings_controller.dart |
 | 依赖装配与路由 | lib/app/app_scope.dart, lib/app/router/app_router.dart |
-| 异步内容与错误展示 | lib/ui/core/widgets/async_value_view.dart, lib/ui/core/error/failure_message.dart |
+| 异步内容与错误展示 | lib/shared/ui/widgets/async_value_view.dart, lib/shared/ui/error/failure_message.dart |
 
-仅进程内状态可参考 sessions 模块, 不要求预先创建仓储或数据库. 平台目录选择通过 Application 声明的能力 Provider 与 AppScope 装配, 页面不导入插件\n\n新增跨模块业务规则时, 可以在 Application 中提取用例, 不要求为每个仓储方法增加一层转发类
+仅进程内状态可参考 sessions 模块, 不要求预先创建仓储或数据库. 平台目录选择通过 Application 声明的能力 Provider 与 AppScope 装配, 页面不导入插件
+
+新增跨模块业务规则时, 可以在 Application 中提取用例, 不要求为每个仓储方法增加一层转发类
 
 ## 页面与状态
 
@@ -59,3 +61,11 @@ Locale, ThemeMode 和 ColorScheme 映射位于 app/everfold_app.dart, 不把 Flu
 测试系统颜色时通过 DynamicColorPlugin.channel 替换平台回复, 不访问真实系统设置. 系统色平台支持与刷新限制见 architecture.md, 原生插件变更需要完整重启应用
 
 路由实例独立于设置, 修改明暗, 配色与语言不重建导航栈. 窄屏和宽屏布局按可用窗口空间适配, 不通过切换设计系统实现
+
+## 模块归属
+
+只创建有实际内容的层. presentation 管理界面交互, application 管理状态与协调, domain 保留纯 Dart 规则, data 实现领域仓储. 底层网络、存储和原生调用放入 infrastructure; 通用 UI 放入 shared/ui, 少量通用值类型放入 shared/foundation
+
+跨功能调用优先使用对方明确公开的 application/domain 能力. 当前展示复用只允许 setup 使用集群连接表单, 以及会话/应用外壳使用设置模块侧栏. 增加跨功能展示依赖时应明确归属并更新依赖测试, 不将所有业务代码搬进 shared
+
+Controller 名称和 Riverpod 写法继续保留. 不为简单操作新增空 ViewModel、Repository 或转发 UseCase. 对复杂页面状态进行拆分时, 先确定共享业务数据的唯一所有者

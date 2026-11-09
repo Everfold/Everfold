@@ -1,8 +1,8 @@
 import 'package:everfold/app/app_scope.dart';
 import 'package:everfold/app/everfold_app.dart';
 import 'package:everfold/features/sessions/application/sessions_controller.dart';
-import 'package:everfold/core/config/app_config.dart';
-import 'package:everfold/data/services/storage/preferences_store.dart';
+import 'package:everfold/shared/foundation/config/app_config.dart';
+import 'package:everfold/infrastructure/storage/preferences_store.dart';
 import 'package:everfold/l10n/app_localizations.dart';
 import 'package:everfold/features/sessions/presentation/views/session_page.dart';
 import 'package:everfold/features/settings/presentation/views/seed_color_dialog.dart';

@@ -5,7 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../features/settings/application/app_settings_controller.dart';
 import '../../features/settings/domain/app_settings.dart';
 import '../../l10n/app_localizations.dart';
-import '../../ui/core/widgets/section_shell.dart';
+import '../shells/section_shell.dart';
 import '../../features/sessions/presentation/views/session_page.dart';
 import '../../features/clusters/presentation/views/clusters_page.dart';
 import '../../features/sessions/presentation/views/workspace_shell.dart';

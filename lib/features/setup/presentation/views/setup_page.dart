@@ -4,11 +4,11 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../clusters/application/clusters_controller.dart';
 import '../../../settings/application/app_settings_controller.dart';
-import '../../../../application/window/desktop_window_provider.dart';
-import '../../../../domain/common/result.dart';
+import '../../../window/application/desktop_window_provider.dart';
+import '../../../../shared/foundation/result.dart';
 import '../../../settings/domain/app_settings.dart';
 import '../../../../l10n/app_localizations.dart';
-import '../../../../ui/core/layout/page_spacing.dart';
+import '../../../../shared/ui/layout/page_spacing.dart';
 import '../../../clusters/presentation/views/cluster_labels.dart';
 import '../../../clusters/presentation/views/connection_form.dart';
 

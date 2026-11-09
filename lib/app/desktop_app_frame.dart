@@ -6,8 +6,8 @@ import 'package:material_ui/material_ui.dart';
 import '../features/sessions/application/sessions_controller.dart';
 import '../features/settings/domain/app_settings.dart';
 import '../l10n/app_localizations.dart';
-import '../ui/core/widgets/desktop_window_frame.dart';
-import '../ui/core/widgets/section_shell.dart';
+import '../features/window/presentation/desktop_window_frame.dart';
+import 'shells/section_shell.dart';
 import '../features/sessions/presentation/views/workspace_shell.dart';
 
 /// 将当前栈顶页面映射为窗口标题, 不依据 push 时可能不变的浏览器地址

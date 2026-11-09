@@ -4,14 +4,14 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../application/sessions_controller.dart';
-import '../../../../application/window/desktop_window_provider.dart';
+import '../../../window/application/desktop_window_provider.dart';
 import '../../domain/agent_session.dart';
 import '../../../../l10n/app_localizations.dart';
-import '../../../../ui/core/widgets/adaptive_dialog.dart';
-import '../../../../ui/core/widgets/back_dismissible_menu_anchor.dart';
-import '../../../../ui/core/widgets/desktop_sidebar.dart';
-import '../../../../ui/core/widgets/destructive_confirmation_dialog.dart';
-import '../../../../ui/core/widgets/sidebar_destination.dart';
+import '../../../../shared/ui/widgets/adaptive_dialog.dart';
+import '../../../../shared/ui/widgets/back_dismissible_menu_anchor.dart';
+import '../../../settings/presentation/widgets/desktop_sidebar.dart';
+import '../../../../shared/ui/widgets/destructive_confirmation_dialog.dart';
+import '../../../../shared/ui/widgets/sidebar_destination.dart';
 
 /// 连接窗口顶栏中的菜单按钮与当前工作区抽屉, 生命周期跟随页面作用域
 final workspaceScaffoldKeyProvider = Provider<GlobalKey<ScaffoldState>>(

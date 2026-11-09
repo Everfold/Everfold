@@ -6,9 +6,9 @@ import 'package:material_ui/material_ui.dart';
 import '../../application/clusters_controller.dart';
 import '../../domain/cluster_connection.dart';
 import '../../../../l10n/app_localizations.dart';
-import '../../../../ui/core/layout/page_spacing.dart';
-import '../../../../ui/core/widgets/adaptive_dialog.dart';
-import '../../../../ui/core/widgets/destructive_confirmation_dialog.dart';
+import '../../../../shared/ui/layout/page_spacing.dart';
+import '../../../../shared/ui/widgets/adaptive_dialog.dart';
+import '../../../../shared/ui/widgets/destructive_confirmation_dialog.dart';
 import 'connection_form.dart';
 import 'cluster_labels.dart';
 

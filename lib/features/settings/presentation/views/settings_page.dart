@@ -3,11 +3,11 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../application/app_settings_controller.dart';
-import '../../../../domain/common/result.dart';
+import '../../../../shared/foundation/result.dart';
 import '../../domain/app_settings.dart';
 import '../../../../l10n/app_localizations.dart';
-import '../../../../ui/core/layout/page_spacing.dart';
-import '../../../../ui/core/widgets/operation_feedback.dart';
+import '../../../../shared/ui/layout/page_spacing.dart';
+import '../../../../shared/ui/widgets/operation_feedback.dart';
 import 'seed_color_dialog.dart';
 
 /// 明暗, 配色与语言选择只在保存成功后生效

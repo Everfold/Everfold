@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:everfold/domain/window/desktop_window.dart';
+import 'package:everfold/features/window/domain/desktop_window.dart';
 
 /// 记录窗口请求并发送原生状态变化, 不触碰测试进程的实际窗口
 final class TestDesktopWindow implements DesktopWindow {

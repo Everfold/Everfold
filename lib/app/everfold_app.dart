@@ -5,7 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import '../features/settings/application/app_settings_controller.dart';
 import '../features/settings/domain/app_settings.dart';
 import '../l10n/app_localizations.dart';
-import '../ui/core/widgets/async_value_view.dart';
+import '../shared/ui/widgets/async_value_view.dart';
 import 'router/app_router.dart';
 import 'desktop_app_frame.dart';
 

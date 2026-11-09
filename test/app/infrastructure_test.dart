@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:everfold/app/observers/app_provider_observer.dart';
 import 'package:everfold/app/providers/infrastructure_providers.dart';
-import 'package:everfold/core/config/app_config.dart';
-import 'package:everfold/core/logging/app_error_reporter.dart';
-import 'package:everfold/data/services/network/safe_network_log_interceptor.dart';
+import 'package:everfold/shared/foundation/config/app_config.dart';
+import 'package:everfold/infrastructure/logging/app_error_reporter.dart';
+import 'package:everfold/infrastructure/network/safe_network_log_interceptor.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:talker/talker.dart';

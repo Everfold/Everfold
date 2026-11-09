@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:everfold/features/settings/application/app_settings_controller.dart';
 import 'package:everfold/features/settings/data/repositories/local_app_settings_repository.dart';
-import 'package:everfold/domain/common/app_failure.dart';
-import 'package:everfold/domain/common/result.dart';
+import 'package:everfold/shared/foundation/app_failure.dart';
+import 'package:everfold/shared/foundation/result.dart';
 import 'package:everfold/features/settings/domain/app_settings.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

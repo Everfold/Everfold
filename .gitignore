@@ -389,5 +389,5 @@ app.*.map.json
 .widget_preview/
 
 # Preserve source files even when global Git rules ignore Nix result* outputs.
-!/lib/domain/common/result.dart
-!/test/domain/common/result_test.dart
+!/lib/shared/foundation/result.dart
+!/test/shared/foundation/result_test.dart

@@ -1,4 +1,4 @@
-import '../../../domain/common/result.dart';
+import '../../../shared/foundation/result.dart';
 import 'app_settings.dart';
 
 /// 应用设置的持久化契约

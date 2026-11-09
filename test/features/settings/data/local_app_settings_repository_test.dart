@@ -1,8 +1,8 @@
 import 'package:everfold/features/settings/data/models/app_settings_dto.dart';
 import 'package:everfold/features/settings/data/repositories/local_app_settings_repository.dart';
-import 'package:everfold/data/services/storage/preferences_store.dart';
-import 'package:everfold/domain/common/app_failure.dart';
-import 'package:everfold/domain/common/result.dart';
+import 'package:everfold/infrastructure/storage/preferences_store.dart';
+import 'package:everfold/shared/foundation/app_failure.dart';
+import 'package:everfold/shared/foundation/result.dart';
 import 'package:everfold/features/settings/domain/app_settings.dart';
 import 'package:flutter_test/flutter_test.dart';
 

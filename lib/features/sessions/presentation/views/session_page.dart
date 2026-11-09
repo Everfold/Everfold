@@ -8,8 +8,8 @@ import 'package:path/path.dart' as p;
 import '../../application/sessions_controller.dart';
 import '../../domain/agent_session.dart';
 import '../../../../l10n/app_localizations.dart';
-import '../../../../ui/core/widgets/operation_feedback.dart';
-import '../../../../ui/core/widgets/back_dismissible_menu_anchor.dart';
+import '../../../../shared/ui/widgets/operation_feedback.dart';
+import '../../../../shared/ui/widgets/back_dismissible_menu_anchor.dart';
 import 'session_transcript.dart';
 import 'workspace_context_dialog.dart';
 

@@ -1,7 +1,7 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../domain/common/app_failure.dart';
-import '../../../domain/common/result.dart';
+import '../../../shared/foundation/app_failure.dart';
+import '../../../shared/foundation/result.dart';
 import '../domain/app_settings.dart';
 import '../domain/app_settings_repository.dart';
 

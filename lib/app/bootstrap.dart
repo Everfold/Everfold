@@ -2,9 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:talker/talker.dart';
 
-import '../core/config/app_config.dart';
-import '../data/services/window/desktop_window_factory.dart';
-import '../core/logging/app_error_reporter.dart';
+import '../shared/foundation/config/app_config.dart';
+import '../infrastructure/window/desktop_window_factory.dart';
+import '../infrastructure/logging/app_error_reporter.dart';
 import 'app_scope.dart';
 import 'everfold_app.dart';
 

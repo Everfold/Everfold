@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:everfold/data/services/storage/preferences_store.dart';
+import 'package:everfold/infrastructure/storage/preferences_store.dart';
 
 /// 外观与路由测试从已初始化状态开始, 存储失败和读写计数仍交给原存储
 final class InitializedPreferencesStore implements PreferencesStore {

@@ -3,7 +3,7 @@ import 'package:markdown/markdown.dart' as md;
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../l10n/app_localizations.dart';
-import '../../../../ui/core/widgets/copy_text.dart';
+import '../../../../shared/ui/widgets/copy_text.dart';
 
 // 仅解析文本, 不加载远程图片, 执行 HTML 或自动打开链接
 class MessageMarkdown extends HookWidget {

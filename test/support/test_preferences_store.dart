@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:everfold/data/services/storage/preferences_store.dart';
+import 'package:everfold/infrastructure/storage/preferences_store.dart';
 
 /// 为失败与并发测试提供可控的存储行为
 final class TestPreferencesStore implements PreferencesStore {

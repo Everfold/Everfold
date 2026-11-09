@@ -3,14 +3,14 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:talker/talker.dart';
 
 import '../features/settings/application/app_settings_controller.dart';
-import '../application/window/desktop_window_provider.dart';
-import '../domain/window/desktop_window.dart';
+import '../features/window/application/desktop_window_provider.dart';
+import '../features/window/domain/desktop_window.dart';
 import '../features/sessions/application/sessions_controller.dart';
-import '../data/services/storage/workspace_selector.dart';
-import '../core/config/app_config.dart';
-import '../core/logging/app_error_reporter.dart';
+import '../infrastructure/storage/workspace_selector.dart';
+import '../shared/foundation/config/app_config.dart';
+import '../infrastructure/logging/app_error_reporter.dart';
 import '../features/settings/data/repositories/local_app_settings_repository.dart';
-import '../data/services/storage/preferences_store.dart';
+import '../infrastructure/storage/preferences_store.dart';
 import 'observers/app_provider_observer.dart';
 import 'providers/infrastructure_providers.dart';
 

@@ -2,65 +2,55 @@
 
 ## 快速入口
 
-从 `lib/app/app_scope.dart` 查看依赖装配, 从 `lib/features/settings/application/app_settings_controller.dart` 查看异步业务状态的写法
+从 `lib/app/app_scope.dart` 查看依赖装配, 从 `lib/features/settings/application/app_settings_controller.dart` 查看异步状态协调. 页面布局见 [UI 布局阅读指南](ui_layout.md), 迁移记录见 [功能模块迁移计划](structure_migration.md)
 
-阅读页面骨架, 布局区块和控件回调时, 从 [UI 布局阅读指南](ui_layout.md) 开始
+采用按功能组织的分层架构, Controller 承担 MVVM 中的状态与命令职责, Riverpod 负责订阅和依赖注入. 本次结构迁移保留原有 Controller, 不要求一个页面对应一个类
 
 ```text
 lib/
-├── main.dart
-├── app/                          # 启动, 装配, 路由, 窗口外壳, Provider 观察器
-│   ├── bootstrap.dart
-│   ├── app_scope.dart
-│   ├── everfold_app.dart
+├── app/                     # 启动、装配、路由、跨功能外壳
 │   ├── providers/
-│   ├── observers/
-│   └── router/
-├── application/                  # 用例协调与 Riverpod 状态
-│   ├── settings/
-│   ├── clusters/
-│   ├── sessions/
-│   └── window/
-├── domain/                       # 纯 Dart 模型, 仓储契约, Result
-│   ├── common/
-│   ├── settings/
-│   ├── clusters/
-│   ├── sessions/
-│   └── window/
-├── data/                         # DTO, 仓储实现, 外部访问
-│   ├── models/
-│   ├── repositories/
-│   └── services/
-│       ├── network/
-│       ├── storage/
-│       └── window/
-├── core/                         # 非业务配置与安全错误报告
-├── ui/                           # Material 展示层
-│   ├── core/
-│   └── features/                  # setup, clusters, sessions, settings
+│   ├── router/
+│   └── shells/
+├── features/
+│   ├── settings/            # application、domain、data、presentation
+│   ├── sessions/            # application、domain、presentation
+│   ├── clusters/            # application、domain、presentation
+│   ├── setup/               # presentation, 复用设置进度和集群连接表单
+│   └── window/              # application、domain、presentation
+├── infrastructure/          # network、storage、window、logging
+├── shared/
+│   ├── foundation/          # Result、错误分类、构建配置
+│   └── ui/                  # 通用组件、布局、错误文案映射
 ├── l10n/
-├── src/rust/                     # 保留现有原生桥接代码
-└── previews.dart
+├── src/rust/                # 原生桥接生成代码, 保持生成器输出位置
+├── previews.dart
+└── main.dart
 ```
+
+不存在实际实现时不创建空目录. 会话和集群仍是进程内状态, 没有提前创建仓储或数据库
 
 ## 依赖方向
 
 ```text
-UI -> Application -> Domain
-Data -> Domain
-App -> 组装 UI, Application 与 Data
-
-Core -> 不反向依赖上述业务层
-Domain -> 不依赖 Flutter, Riverpod, Dio 或平台插件
+Presentation -> Application -> Domain -> Shared Foundation
+Data -> Domain + Infrastructure + Shared Foundation
+Infrastructure -> Domain + Shared Foundation
+Shared UI -> Shared Foundation + l10n
+App -> 装配上述模块
 ```
 
-Application 通过仓储契约访问数据, 不导入具体 Data 实现. AppScope 使用 Provider override 连接契约与实现, 因此测试和预览可以替换存储而不修改业务代码
+Domain 保持纯 Dart, 不依赖 Flutter、Riverpod、网络库或平台插件. Application 不访问 Data 实现或平台插件; 通过仓储契约和注入能力协调操作. 页面不直接访问网络、存储或原生桥接
 
-缺少必须装配的仓储时会明确失败, 不会在生产环境静默退回内存仓储. 应用入口和组件预览必须经过 AppScope, 单元测试可以用 ProviderContainer 显式覆盖仓储 Provider
+功能之间可以引用明确的 application/domain 能力. Presentation 的跨功能复用限定为集群连接表单、集群标签和设置模块的可调侧栏; 不开放任意页面内部实现. feature/data 只使用自身领域和数据实现. 通用 shared/ui 不引用具体功能
 
-桌面窗口通过 Domain 的 `DesktopWindow` 契约暴露命令与原生状态流, Application 不导入窗口插件. `bootstrap` 仅为桌面装配 `window_manager` 实现, `AppScope` 管理服务释放. Web 工厂通过条件导出避开 FFI, 手机工厂不读取窗口句柄, 测试和 Widget Previewer 使用独立替代实现. 标题栏主题沿用现有 Material 主题, 不新增窗口主题设置
+带设置依赖的 DesktopSidebar 归 features/settings/presentation/widgets. SectionShell 组合设置与集群导航, 归 app/shells. 窗口契约、Provider 和界面归 features/window, window_manager 实现归 infrastructure/window
 
-`test/architecture/layer_dependencies_test.dart` 检查受管目录的直接 import/export 方向, 不是完整的依赖图分析器. `l10n/` 和原生生成代码不参与此检查
+控件焦点、滚动、动画和展开状态留在 Widget/Hooks. 跨页面业务状态由功能 Controller 持有. 接入后端后按实际需要引入仓储和页面 ViewModel, 明确共享数据的唯一来源, 不新增纯转发 UseCase
+
+AppScope 使用 Provider override 装配契约与实现. 必须装配的仓储缺失时明确失败; 预览和测试使用显式替代实现. 平台工厂保留条件导出, Web 不加载原生窗口实现
+
+`test/architecture/layer_dependencies_test.dart` 检查直接 import/export (包括条件导出)、功能内部依赖、共享层隔离和旧目录回流, 不声称是完整依赖图分析器. 生成的 l10n 和原生桥接代码单独保留. 功能测试位于 test/features, 通用测试位于 test/shared、test/infrastructure; 跨功能流程和应用外壳测试位于 test/app
 
 ## 已贯通的技术模块
 
@@ -104,7 +94,7 @@ GoRouter 将未完成初始化的用户重定向到 /setup. 引导顺序为 intr
 
 连接页提供局域网, 自部署与测试云. 当前按钮固定等待 1 秒后进入成功状态, 用户点击下一步后保存 complete 阶段并进入工作区. 保存失败时保持连接成功与冻结状态, 可重试下一步, 不重复等待连接. 尚无真实认证, 登录会话或凭据持久化, 不能将初始化完成视为已认证. 账号与证书选择只保留在页面内存中, 返回或重启后丢弃. 非敏感地址与验证方式在确认后交给 ClustersController, 随当前运行结束而释放
 
-ShellRoute 保持侧栏与页面共享. 宽度达到 840 时在左侧显示 NavigationDrawer, 更窄时将同一组件放入抽屉. 导航上方是新建会话与可折叠历史, 底部通过 footer 固定集群和设置入口. 导航宽度与底部 ListTile 的选中样式使用标准组件的默认实现. 路由包括 /, /sessions/:id, /settings 和多集群管理页 /cloud. 设置变化刷新路由判断, 不重建路由实例或导航栈
+ShellRoute 保持侧栏与页面共享. 宽度达到 840 时在左侧显示 NavigationDrawer, 更窄时将同一组件放入抽屉. 导航上方是新建会话与可折叠历史, 底部通过 footer 固定集群和设置入口. 展开侧栏宽度支持窗口宽度的 15% 到 50%, 可拖动和折叠; 导航选中样式沿用标准主题. 路由包括 /, /sessions/:id, /settings 和多集群管理页 /cloud. 设置变化刷新路由判断, 不重建路由实例或导航栈
 
 SessionsController 管理进程内会话, 草稿, 预设和工作区路径. 提交只创建 pending 的用户消息, 不调用模型或创建助手回复. 暂不增加会话仓储或数据库, 也不自动恢复会话
 

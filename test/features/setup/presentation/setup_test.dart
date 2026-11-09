@@ -5,9 +5,9 @@ import 'package:everfold/features/clusters/application/clusters_controller.dart'
 import 'package:everfold/features/settings/application/app_settings_controller.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:everfold/app/everfold_app.dart';
-import 'package:everfold/core/config/app_config.dart';
+import 'package:everfold/shared/foundation/config/app_config.dart';
 import 'package:everfold/features/settings/data/models/app_settings_dto.dart';
-import 'package:everfold/data/services/storage/preferences_store.dart';
+import 'package:everfold/infrastructure/storage/preferences_store.dart';
 import 'package:everfold/features/settings/domain/app_settings.dart';
 import 'package:everfold/features/sessions/presentation/views/session_page.dart';
 import 'package:flutter_test/flutter_test.dart';

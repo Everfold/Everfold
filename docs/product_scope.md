@@ -54,7 +54,7 @@
 
 界面复用 material_ui 的 Scaffold, NavigationDrawer, ListTile, 标准按钮, 菜单, 对话框和输入控件, 不新增自定义主题或手绘控件. 语言与完整个性化设置由设置页的 SettingsContent 展示, 连接表单独立为 ConnectionForm
 
-导航宽度, 列表项选中状态和组件样式交给库的默认实现, 不手工设置侧栏宽度. 菜单统一使用 MenuAnchor 和标准菜单按钮, 预设使用 RadioMenuButton
+侧栏展开宽度支持窗口宽度的 15% 到 50%, 可拖动、折叠并持久化偏好; 列表项选中状态和组件样式沿用标准主题. 菜单统一使用 MenuAnchor 和标准菜单按钮, 预设使用 RadioMenuButton
 
 普通对话框按 M3 建议将整个弹窗限制为最大 560dp, 不把正文宽度误当成弹窗宽度. 页面不添加无规范依据的固定宽度上限, 保留必要的内边距, 滚动和键盘避让
 
