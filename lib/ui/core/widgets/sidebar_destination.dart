@@ -64,7 +64,15 @@ class SidebarDestination extends StatelessWidget {
             excludeFromSemantics: true,
             child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
           ),
-          trailing: trailing,
+          // 末尾操作使用独立焦点路径, 不让按钮或菜单的焦点带亮整行。
+          trailing: trailing == null
+              ? null
+              : Focus(
+                  parentNode: FocusScope.of(context),
+                  canRequestFocus: false,
+                  skipTraversal: true,
+                  child: trailing!,
+                ),
           onTap: onTap,
         ),
       ),

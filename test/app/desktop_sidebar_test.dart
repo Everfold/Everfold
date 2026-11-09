@@ -205,7 +205,14 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  for (final close in ['new', 'toggle', 'escape', 'rename']) {
+  for (final close in [
+    'new',
+    'toggle',
+    'escape',
+    'rename',
+    'save',
+    'delete-cancel',
+  ]) {
     testWidgets(
       '会话菜单 $close 关闭并新建后不残留灰色背景',
       (tester) async {
@@ -229,6 +236,7 @@ void main() {
         Future<void> click(Finder target) async {
           final point = tester.getCenter(target);
           await mouse.moveTo(point);
+          await tester.pumpAndSettle();
           await mouse.down(point);
           await tester.pump(const Duration(milliseconds: 20));
           await mouse.up();
@@ -259,6 +267,9 @@ void main() {
         final before = await background();
         for (var i = 0; i < 3; i++) {
           await click(title);
+          await mouse.moveTo(const Offset(1100, 50));
+          await tester.pumpAndSettle();
+          final selectedBackground = await background();
           await click(menu);
           expect(find.text('Rename').hitTestable(), findsOneWidget);
           if (close == 'toggle') {
@@ -266,10 +277,32 @@ void main() {
           } else if (close == 'escape') {
             await tester.sendKeyEvent(LogicalKeyboardKey.escape);
             await tester.pumpAndSettle();
-          } else if (close == 'rename') {
+          } else if (close == 'rename' || close == 'save') {
             await click(find.widgetWithText(MenuItemButton, 'Rename'));
-            await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+            if (close == 'save') {
+              await tester.enterText(
+                find.byKey(const ValueKey('rename-session-input')),
+                'Renamed $i',
+              );
+              await click(find.widgetWithText(TextButton, 'Save'));
+              expect(sessions.state.find(id)!.title, 'Renamed $i');
+            } else {
+              await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+              await tester.pumpAndSettle();
+            }
+          } else if (close == 'delete-cancel') {
+            await click(find.widgetWithText(MenuItemButton, 'Delete'));
+            await click(find.widgetWithText(TextButton, 'Cancel'));
+            expect(sessions.state.find(id), isNotNull);
+          }
+          if (['rename', 'save', 'delete-cancel'].contains(close)) {
+            await mouse.moveTo(const Offset(1100, 50));
             await tester.pumpAndSettle();
+            expect(
+              await background(),
+              selectedBackground,
+              reason: 'after dialog',
+            );
           }
           await click(newButton);
           await mouse.moveTo(const Offset(1100, 50));
@@ -304,8 +337,19 @@ void main() {
     await tester.pumpAndSettle();
     final menu = find.byKey(ValueKey('session-menu-$id'));
     final focus = tester.widget<IconButton>(menu).focusNode!;
-    focus.requestFocus();
+    final title = find.descendant(
+      of: find.byKey(ValueKey('session-$id')),
+      matching: find.byType(Text),
+    );
+    final rowFocus = Focus.of(tester.element(title));
+    rowFocus.requestFocus();
     await tester.pump();
+    for (var i = 0; i < 20 && !focus.hasPrimaryFocus; i++) {
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pumpAndSettle();
+    }
+    expect(focus.hasPrimaryFocus, isTrue);
+    expect(rowFocus.hasFocus, isFalse);
     await tester.sendKeyEvent(LogicalKeyboardKey.enter);
     await tester.pumpAndSettle();
     expect(find.text('Rename').hitTestable(), findsOneWidget);
